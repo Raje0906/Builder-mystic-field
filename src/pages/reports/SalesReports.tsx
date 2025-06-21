@@ -1,0 +1,597 @@
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import {
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  ShoppingCart,
+  Download,
+  Calendar,
+  Store,
+  Users,
+} from "lucide-react";
+import {
+  generateMonthlyReport,
+  generateQuarterlyReport,
+  generateAnnualReport,
+} from "@/lib/dataUtils";
+import { stores, products } from "@/lib/mockData";
+import { Report } from "@/types";
+
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+
+export function SalesReports() {
+  const [reportType, setReportType] = useState<
+    "monthly" | "quarterly" | "annually"
+  >("monthly");
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear(),
+  );
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    new Date().getMonth() + 1,
+  );
+  const [selectedQuarter, setSelectedQuarter] = useState<number>(
+    Math.ceil((new Date().getMonth() + 1) / 3),
+  );
+  const [report, setReport] = useState<Report | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    generateReport();
+  }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
+
+  const generateReport = async () => {
+    setIsLoading(true);
+    try {
+      let generatedReport: Report;
+
+      switch (reportType) {
+        case "monthly":
+          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
+          break;
+        case "quarterly":
+          generatedReport = generateQuarterlyReport(
+            selectedYear,
+            selectedQuarter,
+          );
+          break;
+        case "annually":
+          generatedReport = generateAnnualReport(selectedYear);
+          break;
+        default:
+          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
+      }
+
+      setReport(generatedReport);
+    } catch (error) {
+      console.error("Error generating report:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getStoreName = (storeId: string) => {
+    return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
+  };
+
+  const getProductName = (productId: string) => {
+    return products.find((p) => p.id === productId)?.name || "Unknown Product";
+  };
+
+  const formatPeriod = () => {
+    switch (reportType) {
+      case "monthly":
+        return `${new Date(selectedYear, selectedMonth - 1).toLocaleString("default", { month: "long" })} ${selectedYear}`;
+      case "quarterly":
+        return `Q${selectedQuarter} ${selectedYear}`;
+      case "annually":
+        return `${selectedYear}`;
+      default:
+        return "";
+    }
+  };
+
+  const exportReport = () => {
+    if (!report) return;
+
+    const data = {
+      period: formatPeriod(),
+      reportType,
+      generated: new Date().toISOString(),
+      sales: report.sales,
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sales-report-${reportType}-${selectedYear}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Sales Reports</h1>
+          <p className="text-gray-600 mt-2">
+            Analyze sales performance and trends
+          </p>
+        </div>
+        <Button onClick={exportReport} disabled={!report}>
+          <Download className="w-4 h-4 mr-2" />
+          Export Report
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Report Configuration
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div>
+              <label className="text-sm font-medium">Report Type</label>
+              <Select
+                value={reportType}
+                onValueChange={(value: any) => setReportType(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                  <SelectItem value="annually">Annually</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Year</label>
+              <Select
+                value={selectedYear.toString()}
+                onValueChange={(value) => setSelectedYear(parseInt(value))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {reportType === "monthly" && (
+              <div>
+                <label className="text-sm font-medium">Month</label>
+                <Select
+                  value={selectedMonth.toString()}
+                  onValueChange={(value) => setSelectedMonth(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const month = i + 1;
+                      const monthName = new Date(2024, i).toLocaleString(
+                        "default",
+                        { month: "long" },
+                      );
+                      return (
+                        <SelectItem key={month} value={month.toString()}>
+                          {monthName}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {reportType === "quarterly" && (
+              <div>
+                <label className="text-sm font-medium">Quarter</label>
+                <Select
+                  value={selectedQuarter.toString()}
+                  onValueChange={(value) => setSelectedQuarter(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Q1 (Jan-Mar)</SelectItem>
+                    <SelectItem value="2">Q2 (Apr-Jun)</SelectItem>
+                    <SelectItem value="3">Q3 (Jul-Sep)</SelectItem>
+                    <SelectItem value="4">Q4 (Oct-Dec)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="flex items-end">
+              <Button onClick={generateReport} className="w-full">
+                Generate Report
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {report && (
+        <>
+          {/* Key Metrics */}
+          <div className="grid gap-4 md:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Revenue
+                </CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  ₹{(report.sales.totalRevenue / 100000).toFixed(1)}L
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {formatPeriod()}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Total Sales
+                </CardTitle>
+                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {report.sales.totalTransactions}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Completed transactions
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Avg Order Value
+                </CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  ₹{Math.round(report.sales.averageOrderValue).toLocaleString()}
+                </div>
+                <p className="text-xs text-muted-foreground">Per transaction</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Best Store
+                </CardTitle>
+                <Store className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-lg font-bold">
+                  {getStoreName(
+                    report.sales.storePerformance.reduce((a, b) =>
+                      a.revenue > b.revenue ? a : b,
+                    ).storeId,
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">Highest revenue</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Store Performance Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Store Performance</CardTitle>
+                <CardDescription>Revenue comparison by store</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={report.sales.storePerformance}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ff" />
+                    <XAxis
+                      dataKey="storeId"
+                      tickFormatter={(value) =>
+                        getStoreName(value).split(" - ")[1] || "Store"
+                      }
+                      axisLine={true}
+                      tickLine={true}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis
+                      tickFormatter={(value) =>
+                        `₹${(value / 1000).toFixed(0)}K`
+                      }
+                      axisLine={true}
+                      tickLine={true}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip
+                      formatter={(value: any) => [
+                        `₹${value.toLocaleString()}`,
+                        "Revenue",
+                      ]}
+                      labelFormatter={(label) => getStoreName(label)}
+                      contentStyle={{
+                        backgroundColor: "#f8fafc",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: "6px",
+                      }}
+                    />
+                    <Bar
+                      dataKey="revenue"
+                      fill="#3b82f6"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Top Products Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Products by Revenue</CardTitle>
+                <CardDescription>Best selling products</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={report.sales.topProducts}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name.split(" ")[0]} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="revenue"
+                    >
+                      {report.sales.topProducts.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: any) => [
+                        `₹${value.toLocaleString()}`,
+                        "Revenue",
+                      ]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Top Products Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Products</CardTitle>
+                <CardDescription>
+                  Products by quantity sold and revenue
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Revenue</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {report.sales.topProducts.map((product, index) => (
+                      <TableRow key={product.productId}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">#{index + 1}</Badge>
+                            {product.name}
+                          </div>
+                        </TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>
+                          ₹{product.revenue.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Store Performance Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Store Performance</CardTitle>
+                <CardDescription>
+                  Revenue and transactions by store
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Store</TableHead>
+                      <TableHead>Transactions</TableHead>
+                      <TableHead>Revenue</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {report.sales.storePerformance
+                      .sort((a, b) => b.revenue - a.revenue)
+                      .map((store, index) => (
+                        <TableRow key={store.storeId}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">#{index + 1}</Badge>
+                              {getStoreName(store.storeId)}
+                            </div>
+                          </TableCell>
+                          <TableCell>{store.transactions}</TableCell>
+                          <TableCell>
+                            ₹{store.revenue.toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Report Summary</CardTitle>
+              <CardDescription>
+                {formatPeriod()} Sales Performance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-3">
+                  <h4 className="font-semibold">Key Insights</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      Total revenue: ₹
+                      {report.sales.totalRevenue.toLocaleString()}
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      {report.sales.totalTransactions} transactions completed
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      Average order value: ₹
+                      {Math.round(
+                        report.sales.averageOrderValue,
+                      ).toLocaleString()}
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      Best performing store:{" "}
+                      {getStoreName(
+                        report.sales.storePerformance.reduce((a, b) =>
+                          a.revenue > b.revenue ? a : b,
+                        ).storeId,
+                      )}
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold">Recommendations</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      Focus on promoting top-selling products
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      Analyze underperforming stores for improvement
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                      Consider inventory optimization based on sales data
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                      Implement customer retention strategies
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </div>
+  );
+}
