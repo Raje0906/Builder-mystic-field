@@ -95,56 +95,87 @@ router.get(
   }
 );
 
-// POST /api/customers - Create a new customer
+// GET /api/customers/search - Search for customers by email or phone
+router.get(
+  "/search",
+  [
+    query("email").optional().isEmail().normalizeEmail(),
+    query("phone").optional().isString().trim()
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { email, phone } = req.query;
+      
+      if (!email && !phone) {
+        return res.status(400).json({
+          success: false,
+          message: "Either email or phone must be provided"
+        });
+      }
+      
+      const query = {};
+      if (email) query.email = email.toLowerCase();
+      if (phone) query.phone = phone;
+      
+      const customers = await Customer.find(query).limit(1).lean();
+      
+      res.json({
+        success: true,
+        data: customers
+      });
+    } catch (error) {
+      console.error("Error searching customers:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error searching customers"
+      });
+    }
+  }
+);
+
+// POST /api/customers - Create a new customer or return existing one
 router.post(
   "/",
   [
-    body("name").notEmpty().trim().withMessage("Name is required"),
-    body("email").optional().isEmail().withMessage("Invalid email"),
-    body("phone").notEmpty().withMessage("Phone number is required"),
-    body("address").isObject().withMessage("Address is required"),
-    body("address.line1").notEmpty().withMessage("Address line 1 is required"),
-    body("address.city").notEmpty().withMessage("City is required"),
-    body("address.state").notEmpty().withMessage("State is required"),
-    body("address.pincode").notEmpty().withMessage("Pincode is required")
+    body("name").trim().notEmpty().withMessage("Name is required"),
+    body("email").isEmail().normalizeEmail().withMessage("Please enter a valid email"),
+    body("phone").trim().notEmpty().withMessage("Phone number is required"),
+    body("address.line1").trim().notEmpty().withMessage("Address line 1 is required"),
+    body("address.city").trim().notEmpty().withMessage("City is required"),
+    body("address.state").trim().notEmpty().withMessage("State is required"),
+    body("address.pincode").trim().notEmpty().withMessage("Pincode is required"),
   ],
   handleValidationErrors,
   async (req, res) => {
     try {
       const { name, email, phone, address } = req.body;
       
-      // Check if customer with same email already exists
-      if (email) {
-        const existingCustomer = await Customer.findOne({ email });
-        if (existingCustomer) {
-          return res.status(400).json({
-            success: false,
-            message: "A customer with this email already exists"
-          });
-        }
-      }
-
-      // Check if customer with same phone already exists
-      const existingPhone = await Customer.findOne({ phone });
-      if (existingPhone) {
-        return res.status(400).json({
-          success: false,
-          message: "A customer with this phone number already exists"
+      // Check if customer with this email already exists
+      let customer = await Customer.findOne({ email: email.toLowerCase() });
+      
+      if (customer) {
+        // Update customer info if it exists
+        customer.name = name || customer.name;
+        customer.phone = phone || customer.phone;
+        customer.address = { ...customer.address, ...address };
+        customer.updatedAt = new Date();
+        
+        await customer.save();
+        
+        return res.status(200).json({
+          success: true,
+          message: "Customer updated successfully",
+          data: customer
         });
       }
-
-      // Ensure address has all required fields
+      
+      // Create new customer if doesn't exist
       const customerData = {
         name,
-        email,
+        email: email.toLowerCase(),
         phone,
-        address: {
-          line1: address.line1,
-          line2: address.line2 || '',
-          city: address.city,
-          state: address.state,
-          pincode: address.pincode
-        }
+        address
       };
       
       // Create new customer

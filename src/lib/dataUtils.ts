@@ -2,9 +2,8 @@ import {
   Customer,
   Product,
   Sale,
-  Repair,
-  SearchFilters,
   BarcodeResult,
+  SearchFilters,
   Report,
 } from "@/types";
 import { customers, products, sales, repairs, stores } from "./mockData";
@@ -213,13 +212,13 @@ export const getProducts = async (): Promise<Product[]> => {
   }
 };
 
-export const updateProductStock = (
+export const updateProductStock = async (
   productId: string,
   quantity: number,
-): boolean => {
-  const products = getProducts();
-  const product = products.find((p) => p.id === productId);
-
+): Promise<boolean> => {
+  // Find the product in the database
+  const products = await getProducts();
+  const product = (await products).find((p: Product) => p.id === productId);
   if (!product || product.stock < quantity) return false;
 
   product.stock -= quantity;
@@ -268,15 +267,33 @@ export const addSale = (sale: Omit<Sale, "id" | "date">): Sale => {
 };
 
 // Repair operations
+// Helper function to find customer by email or phone
+const findCustomerByEmailOrPhone = async (email: string, phone: string): Promise<Customer | null> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || '/api';
+    const response = await fetch(`${apiUrl}/customers/search?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to search for customer');
+    }
+    
+    const result = await response.json();
+    return result.data && result.data.length > 0 ? result.data[0] : null;
+  } catch (error) {
+    console.error('Error finding customer:', error);
+    return null;
+  }
+};
+
 // Helper function to parse repair data with proper types
 const parseRepair = (data: any): Repair => ({
   ...data,
-  _id: data._id || `local-${Date.now()}`,
-  dateReceived: data.dateReceived ? new Date(data.dateReceived) : new Date(),
+  id: data._id || data.id,
+  customer: data.customer?._id || data.customer || '',
+  dateReceived: new Date(data.dateReceived || Date.now()),
   estimatedCompletion: data.estimatedCompletion ? new Date(data.estimatedCompletion) : undefined,
-  actualCompletion: data.actualCompletion ? new Date(data.actualCompletion) : undefined,
-  createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
-  updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
+  createdAt: new Date(data.createdAt || Date.now()),
+  updatedAt: new Date(data.updatedAt || Date.now()),
   parts: Array.isArray(data.parts) ? data.parts : [],
   notes: Array.isArray(data.notes) ? data.notes : [],
   customerNotified: data.customerNotified || { whatsapp: false, email: false }
@@ -311,259 +328,129 @@ export const getRepairs = async (): Promise<Repair[]> => {
   }
 };
 
-// Extend the Repair type to include customer info
-interface RepairWithCustomer extends Omit<Repair, "_id" | "createdAt" | "updatedAt"> {
-  customerName?: string;
+// Define the base Repair interface
+export interface Repair {
+  _id: string;
+  customer: string | Customer;
+  customerId?: string;
+  deviceType: string;
+  brand: string;
+  model: string;
+  serialNumber: string;
+  issueDescription: string;
+  issue?: string; // Alias for issueDescription
+  diagnosis: string;
+  repairCost: number;
+  partsCost: number;
+  laborCost: number;
+  actualCost?: number;
+  priority: 'low' | 'medium' | 'high';
+  status: string;
+  notes: string[];
+  dateReceived: string | Date;
+  estimatedCompletion?: string | Date;
+  actualCompletion?: string | Date;
+  customerNotified?: {
+    whatsapp: boolean;
+    email: boolean;
+    lastNotified?: string; // Add missing property
+  };
   contactInfo?: {
     whatsappNumber: string;
     notificationEmail: string;
     consentGiven: boolean;
     consentDate: string;
   };
+  storeId?: string; // Add missing property
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
-// Define the structure for the repair data we'll send to the API
-interface RepairSubmission {
-  customer: string;
-  deviceType: string;
-  brand: string;
-  model: string;
-  serialNumber: string;
-  issueDescription: string;
-  diagnosis: string;
-  repairCost: number;
-  partsCost: number;
-  laborCost: number;
-  priority: 'low' | 'medium' | 'high';
-  status: string;
-  notes: string[];
-  dateReceived: string;
+// Extend the Repair type to include customer info
+export interface RepairWithCustomer extends Omit<Repair, 'customer' | 'customerId'> {
+  customer?: string | Customer;
+  customerId?: string;
+  customerName?: string;
 }
 
-export const addRepair = async (
-  repairData: RepairWithCustomer
-): Promise<Repair> => {
-  try {
-    // Create customer data with required fields
-    const customerData: Omit<Customer, 'id' | 'dateAdded' | 'totalPurchases'> = {
-      name: repairData.customerName || 'Unknown Customer',
-      email: repairData.contactInfo?.notificationEmail || '',
-      phone: repairData.contactInfo?.whatsappNumber || '',
-      address: {
-        line1: '',
-        city: 'Unknown',
-        state: '',
-        pincode: '',
-        country: ''
-      },
-      status: 'active',
-      totalPurchases: 0,
-      dateAdded: new Date().toISOString()
-    };
+// Helper function to create a minimal customer
+const createMinimalCustomer = async (data: any): Promise<Customer> => {
+  const customerData = {
+    name: data.name || 'Unknown Customer',
+    email: data.email || '',
+    phone: data.phone || '',
+    address: {
+      line1: data.address?.line1 || '',
+      city: data.address?.city || 'Unknown',
+      state: data.address?.state || '',
+      pincode: data.address?.pincode || '',
+      country: data.address?.country || ''
+    },
+    city: data.city || data.address?.city || 'Unknown',
+    status: 'active' as const,
+    dateAdded: new Date().toISOString()
+  };
 
-    // Create customer first
-    const customer = await addCustomer(customerData);
-    
-    // Prepare repair data for API with proper typing
-    const repairToSend: RepairSubmission = {
-      customer: customer.id, // Use the created customer's ID
-      deviceType: (repairData as any).deviceType || 'Laptop',
-      brand: (repairData as any).deviceInfo?.brand || 'Unknown',
-      model: (repairData as any).deviceInfo?.model || 'Unknown',
-      serialNumber: (repairData as any).deviceInfo?.serialNumber || '',
-      issueDescription: (repairData as any).issue || 'No description provided',
-      diagnosis: 'Pending diagnosis',
-      repairCost: 0,
-      partsCost: 0,
-      laborCost: 0,
-      priority: 'medium',
-      status: 'received',
-      notes: [
-        `Issue reported: ${(repairData as any).issue || 'No description'}`,
-        `Contact: ${customerData.phone} | ${customerData.email}`
-      ],
-      dateReceived: new Date().toISOString()
-    };
+  // Remove undefined values to avoid validation errors
+  Object.keys(customerData).forEach(key => 
+    (customerData as any)[key] === undefined && delete (customerData as any)[key]
+  );
 
-    // Log the data being sent for debugging
-    console.log('Sending repair data:', JSON.stringify(repairToSend, null, 2));
-
-    // Use the backend URL from environment variables or default to localhost:3002
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const apiUrl = `${baseUrl}/api/repairs`;
-    console.log('Making API request to:', apiUrl);
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(repairToSend),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          `API request failed with status ${response.status}: ${errorData.message || 'Unknown error'}`
-        );
-      }
-
-        const result = await response.json();
-      console.log('Repair created successfully:', result);
-      
-      // Parse dates and ensure consistent structure
-      const repairWithDates: Repair = {
-        ...result,
-        dateReceived: new Date(result.dateReceived || Date()),
-        estimatedCompletion: result.estimatedCompletion ? new Date(result.estimatedCompletion) : undefined,
-      };
-
-      return repairWithDates;
-    } catch (error) {
-      console.error('Error creating repair via API:', error);
-      
-      // Fallback to localStorage if API fails
-      console.warn('Falling back to localStorage for repair data');
-      const repairs = await getRepairs();
-      const newRepair: Repair = {
-        ...repairData,
-        id: `local-${Date.now()}`,
-        dateReceived: new Date(),
-        status: 'received',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      
-      const updatedRepairs = [...repairs, newRepair];
-      localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(updatedRepairs));
-      
-      return newRepair;
-    }
-  } catch (error) {
-    console.error('Error in addRepair:', error);
-    throw error;
-  }
+  return await addCustomer(customerData);
 };
 
-export const updateRepair = async (
-  id: string,
-  updates: Partial<Repair>,
-): Promise<Repair | null> => {
-  try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/repairs/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(updates),
-      credentials: 'include'
-    });
-
-    if (response.ok) {
-      const updatedRepair = await response.json();
-      return parseRepair(updatedRepair);
-    }
-    
-    // If API fails, fall back to localStorage
-    const repairs = await getRepairs();
-    const index = repairs.findIndex((r: Repair) => r._id === id);
-
-    if (index === -1) return null;
-
-    // If marking as completed, ensure we have completion timestamp
-    if (updates.status === "completed" && !updates.actualCompletion) {
-      updates.actualCompletion = new Date().toISOString();
-    }
-
-    // If marking as delivered, ensure customer notification is tracked
-    if (updates.status === "delivered" && !updates.customerNotified?.lastNotified) {
-      updates.customerNotified = {
-        whatsapp: true,
-        email: true,
-        lastNotified: new Date().toISOString(),
-      };
-    }
-
-    const updatedRepair = { ...repairs[index], ...updates, updatedAt: new Date().toISOString() };
-    repairs[index] = updatedRepair;
-    
-    // Save to localStorage
-    localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(repairs));
-
-    console.log(`Repair ${id} status updated to: ${updates.status}`);
-    if (updates.status === "completed") {
-      console.log(`Repair ${id} completed on: ${updates.actualCompletion}`);
-    }
-
-    return updatedRepair;
-  } catch (error) {
-    console.error('Error updating repair:', error);
-    throw error;
-  }
-};
+// ...
 
 // Search functionality
 export const searchCustomers = async (filters: SearchFilters): Promise<Customer[]> => {
   const { query, field } = filters;
 
   if (!query.trim()) {
-    return getCustomers();
+    return [];
   }
 
   try {
-    // Use the main customers endpoint with search parameter
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
     const searchParams = new URLSearchParams({
       search: query,
-      field: field || 'all' // Include the field in the search parameters
+      limit: '10' // Limit results to 10 for better performance
+    });
+    
+    // Use the main customers endpoint with search parameter
+    const response = await fetch(`${baseUrl}/api/customers?${searchParams}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
     });
 
-    const apiUrl = import.meta.env.VITE_API_URL || '/api';
-    const response = await fetch(`${apiUrl}/customers?${searchParams}`);
-    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to search customers');
+      console.error('Search failed:', errorData);
+      throw new Error(errorData.message || `Failed to search customers: ${response.status}`);
     }
 
     const result = await response.json();
-    return result.data || [];
+    return Array.isArray(result.data) ? result.data : [];
   } catch (error) {
     console.error('Error searching customers:', error);
-    // Fallback to local filtering if API fails
-    const customers = await getCustomers();
-    const searchQuery = query.toLowerCase();
-    
-    return customers.filter((customer) => {
-      switch (field) {
-        case "name":
-          return customer.name?.toLowerCase().includes(searchQuery) || false;
-        case "email":
-          return customer.email?.toLowerCase().includes(searchQuery) || false;
-        case "phone":
-          return customer.phone?.includes(query) || false;
-        default:
-          return (
-            customer.name?.toLowerCase().includes(searchQuery) ||
-            customer.email?.toLowerCase().includes(searchQuery) ||
-            customer.phone?.includes(query) ||
-            false
-          );
-      }
-    });
+    return [];
   }
 };
 
 export const searchByBarcode = async (barcode: string): Promise<Product | null> => {
   try {
-    const response = await fetch(`http://localhost:3000/api/products/barcode/${barcode}`);
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const response = await fetch(`${baseUrl}/api/products/barcode/${barcode}`, {
+      credentials: 'include'
+    });
+    
     if (!response.ok) {
       if (response.status === 404) return null;
       throw new Error('Failed to search by barcode');
     }
+    
     const result = await response.json();
     return result.data || null;
   } catch (error) {
@@ -574,11 +461,16 @@ export const searchByBarcode = async (barcode: string): Promise<Product | null> 
 
 export const searchBySerialNumber = async (serialNumber: string): Promise<Product | null> => {
   try {
-    const response = await fetch(`http://localhost:3000/api/products/serial/${serialNumber}`);
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const response = await fetch(`${baseUrl}/api/products/serial/${serialNumber}`, {
+      credentials: 'include'
+    });
+    
     if (!response.ok) {
       if (response.status === 404) return null;
       throw new Error('Failed to search by serial number');
     }
+    
     const result = await response.json();
     return result.data || null;
   } catch (error) {
@@ -588,141 +480,107 @@ export const searchBySerialNumber = async (serialNumber: string): Promise<Produc
 };
 
 // Report generation
-export const generateMonthlyReport = (year: number, month: number): Report => {
-  const salesData = getSales().filter((sale) => {
-    const saleDate = new Date(sale.date);
-    return saleDate.getFullYear() === year && saleDate.getMonth() + 1 === month;
-  });
-
-  const repairsData = getRepairs().filter((repair) => {
-    const repairDate = new Date(repair.dateReceived);
-    return (
-      repairDate.getFullYear() === year && repairDate.getMonth() + 1 === month
-    );
-  });
-
-  return {
-    period: "monthly",
-    year,
-    month,
-    sales: calculateSalesMetrics(salesData),
-    repairs: calculateRepairMetrics(repairsData),
-  };
+export const generateMonthlyReport = async (year: number, month: number): Promise<Report> => {
+  try {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const response = await fetch(`${baseUrl}/api/reports/monthly?year=${year}&month=${month}`, {
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to generate monthly report');
+    }
+    
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error generating monthly report:', error);
+    throw error;
+  }
 };
 
-export const generateQuarterlyReport = (
-  year: number,
-  quarter: number,
-): Report => {
-  const startMonth = (quarter - 1) * 3 + 1;
-  const endMonth = quarter * 3;
-
-  const salesData = getSales().filter((sale) => {
-    const saleDate = new Date(sale.date);
-    const saleMonth = saleDate.getMonth() + 1;
-    return (
-      saleDate.getFullYear() === year &&
-      saleMonth >= startMonth &&
-      saleMonth <= endMonth
-    );
-  });
-
-  const repairsData = getRepairs().filter((repair) => {
-    const repairDate = new Date(repair.dateReceived);
-    const repairMonth = repairDate.getMonth() + 1;
-    return (
-      repairDate.getFullYear() === year &&
-      repairMonth >= startMonth &&
-      repairMonth <= endMonth
-    );
-  });
-
-  return {
-    period: "quarterly",
-    year,
-    quarter,
-    sales: calculateSalesMetrics(salesData),
-    repairs: calculateRepairMetrics(repairsData),
-  };
+export const generateQuarterlyReport = async (year: number, quarter: number): Promise<Report> => {
+  try {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const response = await fetch(`${baseUrl}/api/reports/quarterly?year=${year}&quarter=${quarter}`, {
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to generate quarterly report');
+    }
+    
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error generating quarterly report:', error);
+    throw error;
+  }
 };
 
-export const generateAnnualReport = (year: number): Report => {
-  const salesData = getSales().filter((sale) => {
-    const saleDate = new Date(sale.date);
-    return saleDate.getFullYear() === year;
-  });
-
-  const repairsData = getRepairs().filter((repair) => {
-    const repairDate = new Date(repair.dateReceived);
-    return repairDate.getFullYear() === year;
-  });
-
-  return {
-    period: "annually",
-    year,
-    sales: calculateSalesMetrics(salesData),
-    repairs: calculateRepairMetrics(repairsData),
-  };
+export const generateAnnualReport = async (year: number): Promise<Report> => {
+  try {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const response = await fetch(`${baseUrl}/api/reports/annual?year=${year}`, {
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to generate annual report');
+    }
+    
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error generating annual report:', error);
+    throw error;
+  }
 };
 
-// Helper functions for report calculations
-const calculateSalesMetrics = (salesData: Sale[]) => {
-  const totalRevenue = salesData.reduce(
-    (sum, sale) => sum + sale.finalAmount,
-    0,
-  );
-  const totalTransactions = salesData.length;
-  const averageOrderValue =
-    totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+// Add repair function
+export const addRepair = async (repairData: any): Promise<Repair> => {
+  try {
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    console.log('Sending repair data:', JSON.stringify(repairData, null, 2));
+    
+    const response = await fetch(`${baseUrl}/api/repairs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(repairData),
+      credentials: 'include',
+    });
 
-  // Top products
-  const productSales = salesData.reduce(
-    (acc, sale) => {
-      const key = sale.productId;
-      if (!acc[key]) {
-        acc[key] = { quantity: 0, revenue: 0 };
-      }
-      acc[key].quantity += sale.quantity;
-      acc[key].revenue += sale.finalAmount;
-      return acc;
-    },
-    {} as Record<string, { quantity: number; revenue: number }>,
-  );
-
-  const products = getProducts();
-  const topProducts = Object.entries(productSales)
-    .map(([productId, data]) => {
-      const product = products.find((p) => p.id === productId);
-      return {
-        productId,
-        name: product?.name || "Unknown Product",
-        quantity: data.quantity,
-        revenue: data.revenue,
-      };
-    })
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 5);
-
-  // Store performance
-  const storePerformance = stores.map((store) => {
-    const storeSales = salesData.filter((sale) => sale.storeId === store.id);
-    return {
-      storeId: store.id,
-      revenue: storeSales.reduce((sum, sale) => sum + sale.finalAmount, 0),
-      transactions: storeSales.length,
-    };
-  });
-
-  return {
-    totalRevenue,
-    totalTransactions,
-    averageOrderValue,
-    topProducts,
-    storePerformance,
-  };
+    const responseData = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      console.error('Repair creation failed:', responseData);
+      throw new Error(
+        `API request failed with status ${response.status}: ${responseData.message || 'Unknown error'}`
+      );
+    }
+    
+    console.log('Repair created successfully:', responseData);
+    return responseData.data || responseData;
+  } catch (error) {
+    console.error('Error adding repair:', error);
+    throw error;
+  }
 };
 
-const calculateRepairMetrics = (repairsData: Repair[]) => {
+// Define repair metrics interface
+interface RepairMetrics {
+  totalRepairs: number;
+  completedRepairs: number;
+  completionRate: number;
+  averageRepairTime: number;
+  topIssues: Array<{ issue: string; count: number }>;
+}
+
+// Calculate repair metrics
+const calculateRepairMetrics = async (repairsPromise: Promise<Repair[]>): Promise<RepairMetrics> => {
+  const repairsData = await repairsPromise;
   const totalRepairs = repairsData.length;
   const completedRepairs = repairsData.filter(
     (r) => r.status === "completed",
@@ -749,17 +607,14 @@ const calculateRepairMetrics = (repairsData: Repair[]) => {
         }, 0) / completedRepairsWithTime.length
       : 0;
 
-  // Top issues
-  const issueCount = repairsData.reduce(
-    (acc, repair) => {
-      const issue = repair.issue.toLowerCase();
-      acc[issue] = (acc[issue] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  // Find the most common repair issue
+  const issues = repairsData.reduce((acc, repair) => {
+    const issue = repair.issue || repair.issueDescription || 'Unknown';
+    acc[issue] = (acc[issue] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
-  const topIssues = Object.entries(issueCount)
+  const topIssues = Object.entries(issues)
     .map(([issue, count]) => ({ issue, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);

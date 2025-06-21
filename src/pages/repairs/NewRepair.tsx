@@ -156,44 +156,32 @@ export function NewRepair() {
       
       // Create repair data object with all required properties
       const repairData = {
-        customerId: selectedCustomer.id,
-        deviceInfo: {
-          brand: formData.deviceBrand,
-          model: formData.deviceModel,
-          serialNumber: formData.serialNumber || 'N/A',
-          imei: formData.imei || ''
-        },
+        customer: selectedCustomer.id, // The backend expects 'customer' field with customer ID
+        deviceType: 'Laptop', // Default device type, can be made dynamic if needed
         brand: formData.deviceBrand,
         model: formData.deviceModel,
         serialNumber: formData.serialNumber || 'N/A',
-        imei: formData.imei || '',
-        issue: formData.issue,
+        issueDescription: formData.issue,
         diagnosis: formData.diagnosis || 'Pending diagnosis',
-        estimatedCost: parseFloat(String(formData.estimatedCost)) || 0,
-        actualCost: 0, // Will be updated later
-        parts: [], // Will be added later
-        labor: 0, // Will be calculated later
-        status: 'received' as const,
-        priority: (formData.priority || 'medium') as 'low' | 'medium' | 'high' | 'urgent',
-        storeId: store?.id || '',
-        technicianId: formData.technicianId || '',
-        dateReceived: new Date().toISOString(),
-        estimatedCompletion: estimatedCompletion.toISOString(),
+        repairCost: parseFloat(String(formData.estimatedCost)) || 0,
+        partsCost: 0, // Will be updated later
+        laborCost: 0, // Will be calculated later
+        status: 'received',
+        priority: (formData.priority || 'medium') as 'low' | 'medium' | 'high',
+        estimatedCompletion: estimatedCompletion,
         notes: [
           `Issue reported: ${formData.issue}`,
           `Estimated cost: ₹${formData.estimatedCost}`,
           `WhatsApp contact: ${formData.whatsappNumber || 'Not provided'}`,
           `Email contact: ${formData.notificationEmail || 'Not provided'}`
-        ],
-        customerNotified: {
-          whatsapp: false,
-          email: false
-        },
+        ].join('\n'),
+        // Additional fields that might be required
+        technician: employees.find(e => e.id === formData.technicianId)?.name || '',
+        store: store?.name || '',
         contactInfo: {
           whatsappNumber: formData.whatsappNumber || '',
-          notificationEmail: formData.notificationEmail || '',
-          consentGiven: formData.notificationConsent || false,
-          consentDate: new Date().toISOString()
+          email: formData.notificationEmail || '',
+          consent: formData.notificationConsent || false
         }
       };
       

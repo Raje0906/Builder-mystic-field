@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench } from "lucide-react";
+import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check } from "lucide-react";
 
 interface Repair {
   ticketNumber: string;
@@ -36,7 +36,54 @@ export function TrackRepair() {
   const [searchBy, setSearchBy] = useState<"ticket" | "phone" | "email">("ticket");
   const [foundRepairs, setFoundRepairs] = useState<Repair[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isCompleting, setIsCompleting] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
+  
+  // Button is now available to all users
+
+  const handleCompleteRepair = async (ticketNumber: string) => {
+    if (!window.confirm('Are you sure you want to mark this repair as complete? This will notify the customer.')) {
+      return;
+    }
+
+    try {
+      setIsCompleting(prev => ({ ...prev, [ticketNumber]: true }));
+      
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const response = await axios.post(
+        `${baseUrl}/api/repairs/${ticketNumber}/complete`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.data.success) {
+        toast({
+          title: "Success",
+          description: "Repair marked as completed and customer has been notified.",
+          variant: "default",
+        });
+        
+        // Refresh the repairs list
+        await searchRepairs();
+      }
+    } catch (error) {
+      console.error('Error completing repair:', error);
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || 'Failed to mark repair as completed',
+        variant: "destructive",
+      });
+    } finally {
+      setIsCompleting(prev => ({ ...prev, [ticketNumber]: false }));
+    }
+  };
 
   const searchRepairs = async () => {
     if (!searchQuery.trim()) {
@@ -138,14 +185,14 @@ export function TrackRepair() {
       console.error("Error searching repairs:", error);
       let errorMessage = "Failed to search for repairs. ";
       
-      if (error.message.includes('404')) {
+      if ((error as Error).message.includes('404')) {
         errorMessage = "No repairs found with the provided details.";
-      } else if (error.message.includes('400')) {
+      } else if ((error as Error).message.includes('400')) {
         errorMessage = "Invalid search parameters. Please check your input.";
-      } else if (error.message.includes('Network Error')) {
+      } else if ((error as Error).message.includes('Network Error')) {
         errorMessage = "Unable to connect to the server. Please check your connection.";
       } else {
-        errorMessage += error.message || 'Please try again later.';
+        errorMessage += (error as Error).message || 'Please try again later.';
       }
       
       toast({
@@ -154,7 +201,6 @@ export function TrackRepair() {
         variant: "destructive",
       });
       setFoundRepairs([]); // Clear any previous results on error
-      setFoundRepairs([]);
     } finally {
       setIsSearching(false);
     }
@@ -289,7 +335,7 @@ export function TrackRepair() {
           <h2 className="text-xl font-semibold">
             {foundRepairs.length} {foundRepairs.length === 1 ? 'Repair Found' : 'Repairs Found'}
           </h2>
-          {foundRepairs.map((repair) => (
+          {foundRepairs.map((repair: Repair) => (
             <Card key={repair.ticketNumber} className="overflow-hidden">
               <CardHeader className="bg-gray-50 p-4 border-b">
                 <div className="flex justify-between items-start">
@@ -419,6 +465,24 @@ export function TrackRepair() {
                             <div className="absolute left-0 top-1 h-2 w-2 rounded-full border-2 border-gray-300"></div>
                             <div className="text-sm text-muted-foreground">
                               <p>Awaiting completion</p>
+                              <Button 
+                                size="sm" 
+                                className="mt-2" 
+                                onClick={() => handleCompleteRepair(repair.ticketNumber)}
+                                disabled={isCompleting[repair.ticketNumber]}
+                              >
+                                {isCompleting[repair.ticketNumber] ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Completing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Check className="mr-2 h-4 w-4" />
+                                    Mark as Complete
+                                  </>
+                                )}
+                              </Button>
                             </div>
                           </div>
                         )}
