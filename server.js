@@ -44,6 +44,8 @@ import repairRoutes from "./routes/repairs.js";
 import notificationRoutes from "./routes/notifications.js";
 import storeRoutes from "./routes/stores.js";
 import inventoryRoutes from "./routes/inventory.js";
+import authRoutes from "./routes/auth.js";
+import reportsRoutes from "./routes/reports.js";
 
 // Import middleware
 import errorHandler from "./middleware/errorHandler.js";
@@ -159,13 +161,15 @@ app.get("/api/test-repair", (req, res) => {
 
 // API Routes with debug logging
 const apiRoutes = [
+  { path: '/api/auth', router: authRoutes },
   { path: '/api/customers', router: customerRoutes },
   { path: '/api/products', router: productRoutes },
   { path: '/api/sales', router: saleRoutes },
   { path: '/api/repairs', router: repairRoutes },
   { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
   { path: '/api/stores', router: storeRoutes },
-  { path: '/api/inventory', router: inventoryRoutes }
+  { path: '/api/inventory', router: inventoryRoutes },
+  { path: '/api/reports', router: reportsRoutes }
 ];
 
 apiRoutes.forEach(route => {

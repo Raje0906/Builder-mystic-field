@@ -1,9 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Bell, Search, Settings, Wifi, WifiOff } from "lucide-react";
+import { Bell, Search, Settings, Wifi, WifiOff, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const getPageTitle = (pathname: string): string => {
   const pathMap: Record<string, string> = {
@@ -38,6 +40,7 @@ export function Header() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const [isOnline, setIsOnline] = React.useState(navigator.onLine);
+  const { user, logout } = useAuth();
 
   React.useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -51,6 +54,19 @@ export function Header() {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const getUserInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 lg:px-8">
@@ -149,21 +165,47 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Settings */}
+          {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Settings className="w-5 h-5" />
+              <Button variant="ghost" className="flex items-center gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="" alt={user?.name} />
+                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                    {user ? getUserInitials(user.name) : "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden md:block text-left">
+                  <p className="text-sm font-medium">{user?.name}</p>
+                  <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+                </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Store Settings</DropdownMenuItem>
-              <DropdownMenuItem>User Management</DropdownMenuItem>
-              <DropdownMenuItem>Backup Data</DropdownMenuItem>
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium">{user?.name}</p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+                <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+                {user?.store && (
+                  <p className="text-xs text-gray-500">{user.store.name}</p>
+                )}
+              </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Sign Out</DropdownMenuItem>
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                Profile Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                Preferences
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -244,101 +244,60 @@ router.post(
   handleValidationErrors,
   async (req, res) => {
     try {
-      const { customer, store, items, paymentMethod, paymentDetails } =
+      const { customer, store, items, paymentMethod, paymentDetails, notes } =
         req.body;
 
-      // Verify customer exists
-      const customerDoc = await Customer.findById(customer);
-      if (!customerDoc || !customerDoc.isActive) {
-        return res.status(404).json({
-          success: false,
-          message: "Customer not found",
-        });
-      }
+      let totalAmount = 0;
+      const populatedItems = [];
 
-      // Verify products exist and calculate totals
-      let subtotal = 0;
-      const processedItems = [];
-
+      // Verify products and calculate total
       for (const item of items) {
         const product = await Product.findById(item.product);
-        if (!product || !product.isActive) {
+        if (!product) {
           return res.status(404).json({
             success: false,
             message: `Product with ID ${item.product} not found`,
           });
         }
-
-        // Check inventory availability
-        const inventory = product.getInventoryByStore(store);
-        if (
-          !inventory ||
-          inventory.quantity - inventory.reserved < item.quantity
-        ) {
+        if (product.stock < item.quantity) {
           return res.status(400).json({
             success: false,
-            message: `Insufficient inventory for product: ${product.name}`,
+            message: `Not enough stock for ${product.name}`,
           });
         }
-
-        const discount = item.discount || 0;
-        const totalPrice =
-          item.unitPrice * item.quantity * (1 - discount / 100);
-
-        processedItems.push({
-          ...item,
-          totalPrice,
-        });
-
-        subtotal += totalPrice;
-
-        // Reserve inventory
-        await product.reserveInventory(store, item.quantity);
+        const totalPrice = item.quantity * item.unitPrice;
+        totalAmount += totalPrice;
+        populatedItems.push({ ...item, totalPrice });
       }
 
-      // Calculate tax and total
-      const taxRate = 18; // Can be made configurable
-      const taxAmount = subtotal * (taxRate / 100);
-      const totalAmount = subtotal + taxAmount;
-
-      // Create sale
-      const sale = new Sale({
+      // Create new sale
+      const newSale = new Sale({
         customer,
         store,
-        items: processedItems,
-        subtotal,
-        taxAmount,
+        items: populatedItems,
         totalAmount,
         paymentMethod,
         paymentDetails,
-        ...req.body,
+        notes,
       });
 
-      await sale.save();
+      await newSale.save();
 
-      // Update inventory (reduce reserved and actual quantity)
-      for (const item of processedItems) {
-        const product = await Product.findById(item.product);
-        await product.releaseReservedInventory(store, item.quantity);
-        await product.updateInventory(store, item.quantity, "subtract");
+      // Update product stock
+      for (const item of populatedItems) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity },
+        });
       }
 
-      // Add loyalty points to customer (1 point per ₹100 spent)
-      const loyaltyPoints = Math.floor(totalAmount / 100);
-      if (loyaltyPoints > 0) {
-        await customerDoc.addLoyaltyPoints(loyaltyPoints);
-      }
-
-      await sale.populate([
-        { path: "customer", select: "name email phone" },
-        { path: "store", select: "name code address" },
-        { path: "items.product", select: "name brand model sku" },
-      ]);
+      const populatedSale = await Sale.findById(newSale._id)
+        .populate("customer", "name email")
+        .populate("items.product", "name brand");
 
       res.status(201).json({
         success: true,
         message: "Sale created successfully",
-        data: sale,
+        data: populatedSale,
       });
     } catch (error) {
       res.status(500).json({

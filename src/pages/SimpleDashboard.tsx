@@ -1,7 +1,18 @@
 import React from "react";
 import QuietSystemStatus from "../components/QuietSystemStatus";
+import { useDashboardStats } from "../hooks/useDashboardStats";
 
 export default function SimpleDashboard() {
+  const { stats, loading, error } = useDashboardStats();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -10,25 +21,25 @@ export default function SimpleDashboard() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-lg font-semibold">Sales</h3>
-          <p className="text-2xl font-bold text-blue-600">25</p>
+          <p className="text-2xl font-bold text-blue-600">{stats?.totalSales}</p>
           <p className="text-sm text-gray-500">This month</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-lg font-semibold">Revenue</h3>
-          <p className="text-2xl font-bold text-green-600">₹2,50,000</p>
+          <p className="text-2xl font-bold text-green-600">₹{stats?.totalRevenue.toLocaleString()}</p>
           <p className="text-sm text-gray-500">This month</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-lg font-semibold">Repairs</h3>
-          <p className="text-2xl font-bold text-orange-600">12</p>
+          <p className="text-2xl font-bold text-orange-600">{stats?.activeRepairs}</p>
           <p className="text-sm text-gray-500">Active</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-lg font-semibold">Customers</h3>
-          <p className="text-2xl font-bold text-purple-600">150</p>
+          <p className="text-2xl font-bold text-purple-600">{stats?.totalCustomers}</p>
           <p className="text-sm text-gray-500">Total</p>
         </div>
       </div>

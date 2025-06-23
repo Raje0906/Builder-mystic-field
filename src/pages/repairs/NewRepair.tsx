@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
 } from "@/lib/dataUtils";
 import { stores, employees } from "@/lib/mockData";
 import { CustomerSearch } from "@/components/customers/CustomerSearch";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Define the Repair interface
 export interface Repair {
@@ -82,6 +83,33 @@ export function NewRepair() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showCustomerSearch, setShowCustomerSearch] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Get user's store information
+  const getUserStore = () => {
+    if (!user) return null;
+    
+    // If user has a populated store object
+    if (user.store && user.store._id) {
+      return {
+        id: user.store._id,
+        name: user.store.name,
+        address: user.store.address
+      };
+    }
+    
+    // If user has a store_id string, find the store
+    if (user.store_id) {
+      return stores.find(store => store.id === user.store_id) || null;
+    }
+    
+    return null;
+  };
+
+  const userStore = getUserStore();
+  const isAdmin = user?.role === 'admin';
+
   const [formData, setFormData] = useState<RepairFormData>({
     deviceBrand: "",
     deviceModel: "",
@@ -91,14 +119,23 @@ export function NewRepair() {
     diagnosis: "",
     estimatedCost: 0,
     priority: "medium",
-    storeId: stores[0]?.id || "",
+    storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
     technicianId: employees.find((e) => e.role === "technician")?.id || "",
     estimatedDays: 3,
     whatsappNumber: "",
     notificationEmail: "",
     notificationConsent: false,
   });
-  const { toast } = useToast();
+
+  // Update store when user changes
+  useEffect(() => {
+    if (user && userStore) {
+      setFormData(prev => ({
+        ...prev,
+        storeId: isAdmin ? prev.storeId : (userStore.id || "")
+      }));
+    }
+  }, [user, userStore, isAdmin]);
 
   // Handle form input changes
   const handleInputChange = (field: keyof RepairFormData, value: string | number | boolean) => {
@@ -116,12 +153,22 @@ export function NewRepair() {
     return completionDate;
   };
 
+  // Strict validation: check if all required fields are filled
+  const isFormValid = useMemo(() => {
+    return (
+      !!selectedCustomer &&
+      !!formData.deviceBrand.trim() &&
+      !!formData.deviceModel.trim() &&
+      !!formData.issue.trim()
+    );
+  }, [selectedCustomer, formData.deviceBrand, formData.deviceModel, formData.issue]);
+
   const submitRepair = async () => {
     // Validate customer selection
-    if (!selectedCustomer) {
+    if (!selectedCustomer || !(selectedCustomer._id || selectedCustomer.id)) {
       toast({
         title: "Customer Required",
-        description: "Please select a customer for this repair",
+        description: "Please select a valid customer from the database.",
         variant: "destructive",
       });
       return;
@@ -151,38 +198,60 @@ export function NewRepair() {
     
     try {
       const estimatedCompletion = calculateEstimatedCompletion();
-      const store = stores[0]; // Get the first store as default
+      
+      // Get the correct store based on form data
+      const selectedStore = stores.find(store => store.id === formData.storeId) || userStore;
+      const store = selectedStore || stores[0]; // Fallback to first store if needed
+      
       const technician = employees.find((e) => e.id === formData.technicianId)?.name || '';
       
       // Create repair data object with all required properties
       const repairData = {
-        customer: selectedCustomer.id, // The backend expects 'customer' field with customer ID
-        deviceType: 'Laptop', // Default device type, can be made dynamic if needed
-        brand: formData.deviceBrand,
-        model: formData.deviceModel,
-        serialNumber: formData.serialNumber || 'N/A',
-        issueDescription: formData.issue,
-        diagnosis: formData.diagnosis || 'Pending diagnosis',
+        customer: selectedCustomer._id || selectedCustomer.id, // Required
+        customerId: selectedCustomer._id || selectedCustomer.id, // For backward compatibility
+        deviceType: 'Laptop', // Required
+        // Device information in nested object as expected by the API
+        deviceInfo: {
+          brand: formData.deviceBrand.trim(), // Required
+          model: formData.deviceModel.trim(), // Required
+          serialNumber: formData.serialNumber.trim() || 'N/A',
+          imei: formData.imei.trim() || 'N/A'
+        },
+        // Also include at root level for backward compatibility
+        brand: formData.deviceBrand.trim(),
+        model: formData.deviceModel.trim(),
+        serialNumber: formData.serialNumber.trim() || 'N/A',
+        imei: formData.imei.trim() || 'N/A',
+        issue: formData.issue.trim(), // Required
+        issueDescription: formData.issue.trim(), // For backward compatibility
+        diagnosis: (formData.diagnosis || 'Pending diagnosis').trim(),
+        estimatedCost: parseFloat(String(formData.estimatedCost)) || 0,
         repairCost: parseFloat(String(formData.estimatedCost)) || 0,
         partsCost: 0, // Will be updated later
         laborCost: 0, // Will be calculated later
+        actualCost: parseFloat(String(formData.estimatedCost)) || 0,
         status: 'received',
-        priority: (formData.priority || 'medium') as 'low' | 'medium' | 'high',
+        priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
         estimatedCompletion: estimatedCompletion,
+        storeId: formData.storeId,
+        technicianId: formData.technicianId,
+        technician: employees.find(e => e.id === formData.technicianId)?.name || '',
+        contactInfo: {
+          whatsappNumber: formData.whatsappNumber.trim() || '',
+          notificationEmail: formData.notificationEmail.trim() || '',
+          consentGiven: Boolean(formData.notificationConsent),
+          consentDate: new Date().toISOString()
+        },
         notes: [
           `Issue reported: ${formData.issue}`,
           `Estimated cost: ₹${formData.estimatedCost}`,
           `WhatsApp contact: ${formData.whatsappNumber || 'Not provided'}`,
-          `Email contact: ${formData.notificationEmail || 'Not provided'}`
+          `Email contact: ${formData.notificationEmail || 'Not provided'}`,
+          `Store: ${store?.name || 'Not specified'}`
         ].join('\n'),
-        // Additional fields that might be required
-        technician: employees.find(e => e.id === formData.technicianId)?.name || '',
-        store: store?.name || '',
-        contactInfo: {
-          whatsappNumber: formData.whatsappNumber || '',
-          email: formData.notificationEmail || '',
-          consent: formData.notificationConsent || false
-        }
+        warrantyPeriod: 30, // Default 30 days warranty
+        estimatedDays: formData.estimatedDays,
+        dateReceived: new Date().toISOString()
       };
       
       // Submit repair to the API
@@ -198,7 +267,7 @@ export function NewRepair() {
         diagnosis: "",
         estimatedCost: 0,
         priority: "medium",
-        storeId: store?.id || "",
+        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
         technicianId: employees.find((e) => e.role === "technician")?.id || "",
         estimatedDays: 3,
         whatsappNumber: "",
@@ -357,7 +426,7 @@ Thank you for choosing our repair service. Here are your repair details:
         repairCost: estimatedCost,
         partsCost: 0,
         laborCost: 0,
-        priority: formData.priority,
+        priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
         estimatedCompletion,
         storeId: formData.storeId,
         technicianId: formData.technicianId,
@@ -419,7 +488,7 @@ We'll keep you updated on the progress.
         diagnosis: "",
         estimatedCost: 0,
         priority: "medium",
-        storeId: stores[0].id,
+        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
         technicianId: employees.find((e) => e.role === "technician")?.id || "",
         estimatedDays: 3,
         whatsappNumber: "",
@@ -490,7 +559,7 @@ We'll keep you updated on the progress.
         diagnosis: "",
         estimatedCost: 0,
         priority: "medium",
-        storeId: stores[0].id,
+        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
         technicianId: employees.find((e) => e.role === "technician")?.id || "",
         estimatedDays: 3,
         whatsappNumber: "",
@@ -699,7 +768,7 @@ We'll keep you updated on the progress.
                     onChange={(e) =>
                       handleInputChange("deviceBrand", e.target.value)
                     }
-                    placeholder="e.g., Apple, Dell, HP"
+                    placeholder="e.g. Dell, HP, Apple"
                     required
                   />
                 </div>
@@ -712,7 +781,7 @@ We'll keep you updated on the progress.
                     onChange={(e) =>
                       handleInputChange("deviceModel", e.target.value)
                     }
-                    placeholder="e.g., MacBook Pro 14, XPS 13"
+                    placeholder="e.g. XPS 13, MacBook Pro"
                     required
                   />
                 </div>
@@ -757,7 +826,7 @@ We'll keep you updated on the progress.
                   id="issue"
                   value={formData.issue}
                   onChange={(e) => handleInputChange("issue", e.target.value)}
-                  placeholder="Describe the problem as reported by the customer..."
+                  placeholder="Describe the issue..."
                   rows={3}
                   required
                 />
@@ -790,23 +859,34 @@ We'll keep you updated on the progress.
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
                   <Label>Store Location</Label>
-                  <Select
-                    value={formData.storeId}
-                    onValueChange={(value) =>
-                      handleInputChange("storeId", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {stores.map((store) => (
-                        <SelectItem key={store.id} value={store.id}>
-                          {store.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {isAdmin ? (
+                    <Select
+                      value={formData.storeId}
+                      onValueChange={(value) =>
+                        handleInputChange("storeId", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {stores.map((store) => (
+                          <SelectItem key={store.id} value={store.id}>
+                            {store.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="flex items-center h-10 px-3 py-2 text-sm border rounded-md bg-gray-50">
+                      {userStore?.name || "Store not assigned"}
+                    </div>
+                  )}
+                  {!isAdmin && userStore && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Your assigned store: {userStore.name}
+                    </p>
+                  )}
                 </div>
 
                 <div>

@@ -1,5 +1,4 @@
-// Simple WhatsApp service implementation
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 /**
  * Sends a WhatsApp message using Twilio API
@@ -7,10 +6,10 @@ const fetch = require('node-fetch');
  * @param {string} message - The message to send
  * @returns {Promise<Object>} - The API response
  */
-async function sendWhatsAppNotification(to, message) {
+export async function sendWhatsAppNotification(to, message) {
   try {
     console.log(`[WhatsApp] Attempting to send message to ${to}`);
-    
+
     // Check if required environment variables are set
     if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE_NUMBER) {
       console.warn('[WhatsApp] Missing required environment variables. Message not sent.');
@@ -39,7 +38,7 @@ async function sendWhatsAppNotification(to, message) {
     );
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       console.error('[WhatsApp] Error sending message:', data);
       return { success: false, error: data.message || 'Failed to send WhatsApp message' };
@@ -52,19 +51,3 @@ async function sendWhatsAppNotification(to, message) {
     return { success: false, error: error.message };
   }
 }
-
-// For development/testing without Twilio
-async function sendWhatsAppNotificationMock(to, message) {
-  console.log(`[WhatsApp Mock] Would send to ${to}:\n${message}`);
-  return { success: true, mock: true, message: 'Mock WhatsApp message sent' };
-}
-
-// Use mock in development if Twilio credentials aren't set
-const activeSendFunction = 
-  (process.env.NODE_ENV === 'production' && process.env.TWILIO_ACCOUNT_SID) 
-    ? sendWhatsAppNotification 
-    : sendWhatsAppNotificationMock;
-
-module.exports = {
-  sendWhatsAppNotification: activeSendFunction
-};

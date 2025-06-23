@@ -1,59 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useInventory } from "../hooks/useInventory";
 
 export default function SimpleSalesInventory() {
-  const [products, setProducts] = useState([]);
-
-  // Mock product data
-  const mockProducts = [
-    {
-      id: "1",
-      name: "Dell Inspiron 15 3000",
-      brand: "Dell",
-      model: "Inspiron 15 3000",
-      sku: "DELL-INS-15-3000",
-      price: 42000,
-      stock: 25,
-      category: "laptop",
-      status: "active",
-    },
-    {
-      id: "2",
-      name: "HP Pavilion Gaming 15",
-      brand: "HP",
-      model: "Pavilion Gaming 15",
-      sku: "HP-PAV-GAME-15",
-      price: 65000,
-      stock: 15,
-      category: "laptop",
-      status: "active",
-    },
-    {
-      id: "3",
-      name: "MacBook Air M2",
-      brand: "Apple",
-      model: "MacBook Air M2",
-      sku: "APPLE-MBA-M2",
-      price: 115000,
-      stock: 8,
-      category: "laptop",
-      status: "active",
-    },
-    {
-      id: "4",
-      name: "Lenovo ThinkPad E14",
-      brand: "Lenovo",
-      model: "ThinkPad E14",
-      sku: "LEN-TP-E14",
-      price: 55000,
-      stock: 5,
-      category: "laptop",
-      status: "low_stock",
-    },
-  ];
-
-  useEffect(() => {
-    setProducts(mockProducts);
-  }, []);
+  const { products, loading, error } = useInventory();
 
   const getStockStatus = (stock) => {
     if (stock <= 5)
@@ -62,6 +11,13 @@ export default function SimpleSalesInventory() {
       return { color: "bg-yellow-100 text-yellow-800", text: "Medium" };
     return { color: "bg-green-100 text-green-800", text: "In Stock" };
   };
+
+  if (loading) return <div className="p-6">Loading inventory...</div>;
+  if (error) return <div className="p-6 text-red-500">Error: {error}</div>;
+
+  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
+  const lowStockItems = products.filter((p) => p.stock <= 5).length;
+  const activeProducts = products.filter((p) => p.isActive).length;
 
   return (
     <div className="p-6">
@@ -80,24 +36,17 @@ export default function SimpleSalesInventory() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Low Stock Items</h3>
-          <p className="text-2xl font-bold text-red-600">
-            {products.filter((p) => p.stock <= 5).length}
-          </p>
+          <p className="text-2xl font-bold text-red-600">{lowStockItems}</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Total Value</h3>
           <p className="text-2xl font-bold text-green-600">
-            ₹
-            {products
-              .reduce((sum, p) => sum + p.price * p.stock, 0)
-              .toLocaleString()}
+            ₹{totalValue.toLocaleString()}
           </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Active Products</h3>
-          <p className="text-2xl font-bold text-blue-600">
-            {products.filter((p) => p.status === "active").length}
-          </p>
+          <p className="text-2xl font-bold text-blue-600">{activeProducts}</p>
         </div>
       </div>
 
@@ -155,7 +104,7 @@ export default function SimpleSalesInventory() {
               {products.map((product) => {
                 const stockStatus = getStockStatus(product.stock);
                 return (
-                  <tr key={product.id} className="hover:bg-gray-50">
+                  <tr key={product._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">

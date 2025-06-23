@@ -45,7 +45,7 @@ import {
   addCustomer,
 } from "@/lib/dataUtils";
 import { Customer, SearchableFields, BarcodeResult } from "@/types";
-import { customers, products } from "@/lib/mockData";
+import { customers as mockCustomers } from "@/lib/mockData";
 
 interface CustomerSearchProps {
   onCustomerSelect?: (customer: Customer) => void;
@@ -62,6 +62,7 @@ export function CustomerSearch({
   const [isScanning, setIsScanning] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [noRealCustomers, setNoRealCustomers] = useState(false);
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -69,57 +70,33 @@ export function CustomerSearch({
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
+      setNoRealCustomers(false);
       return;
     }
 
     setIsLoading(true);
+    setNoRealCustomers(false);
 
     try {
-      if (searchField === "barcode") {
-        const product = await searchByBarcode(searchQuery);
-        if (product) {
-          // Find customer who bought this product
-          const results = await searchCustomers({
-            query: searchQuery,
-            field: searchField,
-          });
-          setSearchResults(results);
-        } else {
-          setSearchResults([]);
-          toast({
-            title: "Product not found",
-            description: "No product found with this barcode",
-            variant: "destructive",
-          });
-        }
-      } else if (searchField === "serialNumber") {
-        const product = await searchBySerialNumber(searchQuery);
-        if (product) {
-          const results = await searchCustomers({
-            query: searchQuery,
-            field: searchField,
-          });
-          setSearchResults(results);
-        } else {
-          setSearchResults([]);
-          toast({
-            title: "Product not found",
-            description: "No product found with this serial number",
-            variant: "destructive",
-          });
-        }
-      } else {
-        const results = await searchCustomers({
-          query: searchQuery,
-          field: searchField,
+      const results = await searchCustomers({
+        query: searchQuery,
+        field: searchField,
+      });
+      setSearchResults(results);
+      if (results.length === 0) {
+        setNoRealCustomers(true);
+        toast({
+          title: "No customers found",
+          description: "No real customers found in the database. Please add a new customer.",
+          variant: "destructive",
         });
-        setSearchResults(results);
       }
     } catch (error) {
-      console.error('Error searching customers:', error);
+      setNoRealCustomers(true);
+      setSearchResults([]);
       toast({
         title: "Search failed",
-        description: "An error occurred while searching for customers",
+        description: "Could not fetch customers from the backend.",
         variant: "destructive",
       });
     } finally {
@@ -353,7 +330,7 @@ export function CustomerSearch({
               variant="outline"
               onClick={() => {
                 // Simulate hardware scanner input
-                const mockBarcode = products[0].barcode;
+                const mockBarcode = mockCustomers[0].barcode;
                 handleBarcodeResult({ text: mockBarcode, format: "CODE_128" });
                 toast({
                   title: "Hardware Scanner",
@@ -525,10 +502,10 @@ export function CustomerSearch({
               No customers found
             </h3>
             <p className="text-gray-600 text-center mb-4">
-              No customers found with "{searchQuery}". Would you like to add a
-              new customer?
+              {noRealCustomers
+                ? "No real customers found in the database. Please add a new customer."
+                : `No customers found with "${searchQuery}". Would you like to add a new customer?`}
             </p>
-
             {showAddCustomer && (
               <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                 <DialogTrigger asChild>

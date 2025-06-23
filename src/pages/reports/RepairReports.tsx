@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -49,7 +49,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import {
-  generateMonthlyReport,
+  generateMonthlyRepairReport,
   generateQuarterlyReport,
   generateAnnualReport,
 } from "@/lib/dataUtils";
@@ -74,39 +74,41 @@ export function RepairReports() {
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    generateReport();
-  }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
-
-  const generateReport = async () => {
+  const generateReport = useCallback(async () => {
     setIsLoading(true);
     try {
-      let generatedReport: Report;
+      let generatedReport: Report | null = null;
 
       switch (reportType) {
         case "monthly":
-          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
+          generatedReport = await generateMonthlyRepairReport(selectedYear, selectedMonth);
           break;
         case "quarterly":
-          generatedReport = generateQuarterlyReport(
+          generatedReport = await generateQuarterlyReport(
             selectedYear,
             selectedQuarter,
           );
           break;
         case "annually":
-          generatedReport = generateAnnualReport(selectedYear);
+          generatedReport = await generateAnnualReport(selectedYear);
           break;
         default:
-          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
+          generatedReport = await generateMonthlyRepairReport(selectedYear, selectedMonth);
       }
 
       setReport(generatedReport);
     } catch (error) {
       console.error("Error generating report:", error);
+      setReport(null);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
+
+  // Generate report when dependencies change
+  useEffect(() => {
+    generateReport();
+  }, [generateReport]);
 
   const getStoreName = (storeId: string) => {
     return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
@@ -149,7 +151,7 @@ export function RepairReports() {
   };
 
   const calculateCompletionRate = () => {
-    if (!report || report.repairs.totalRepairs === 0) return 0;
+    if (!report || !report.repairs || report.repairs.totalRepairs === 0) return 0;
     return (
       (report.repairs.completedRepairs / report.repairs.totalRepairs) * 100
     );
@@ -169,6 +171,16 @@ export function RepairReports() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!report) {
+    return (
+      <div className="space-y-6">
+        <p className="text-center text-gray-500">
+          No report data available. Please select your desired report period.
+        </p>
       </div>
     );
   }

@@ -1,6 +1,9 @@
 // React import not needed with React 17+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Login } from "@/pages/Login";
 import Dashboard from "@/pages/SimpleDashboard";
 import SalesInventory from "@/pages/SimpleSalesInventory";
 import { SalesCustomers } from "@/pages/sales/SalesCustomers";
@@ -24,44 +27,54 @@ import { ThemeProvider } from "next-themes";
 function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
 
-            {/* Sales Routes */}
-            <Route path="sales" element={<SalesOverview />} />
-            <Route path="sales/inventory" element={<SalesInventory />} />
-            <Route path="sales/customers" element={<SalesCustomers />} />
-            <Route path="sales/new" element={<NewSale />} />
+            {/* Protected Routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<Dashboard />} />
 
-            {/* Repair Routes */}
-            <Route path="repairs" element={<RepairsOverview />} />
-            <Route path="repairs/new" element={<NewRepair />} />
-            <Route path="repairs/track" element={<TrackRepair />} />
+              {/* Sales Routes */}
+              <Route path="sales" element={<SalesOverview />} />
+              <Route path="sales/inventory" element={<SalesInventory />} />
+              <Route path="sales/customers" element={<SalesCustomers />} />
+              <Route path="sales/new" element={<NewSale />} />
 
-            {/* Report Routes */}
-            <Route path="reports" element={<ReportsOverview />} />
-            <Route path="reports/sales" element={<SalesReports />} />
-            <Route path="reports/repairs" element={<RepairReports />} />
-            <Route path="reports/stores" element={<StoreReports />} />
+              {/* Repair Routes */}
+              <Route path="repairs" element={<RepairsOverview />} />
+              <Route path="repairs/new" element={<NewRepair />} />
+              <Route path="repairs/track" element={<TrackRepair />} />
 
-            {/* Other Routes */}
-            <Route path="customers" element={<CustomerManagement />} />
-            <Route path="inventory">
-              <Route index element={<InventoryPage />} />
-              <Route path="new" element={<InventoryForm />} />
-              <Route path=":id" element={<InventoryForm />} />
-              <Route path=":id/edit" element={<InventoryForm />} />
+              {/* Report Routes */}
+              <Route path="reports" element={<ReportsOverview />} />
+              <Route path="reports/sales" element={<SalesReports />} />
+              <Route path="reports/repairs" element={<RepairReports />} />
+              <Route path="reports/stores" element={<StoreReports />} />
+
+              {/* Other Routes */}
+              <Route path="customers" element={<CustomerManagement />} />
+              <Route path="inventory">
+                <Route index element={<InventoryPage />} />
+                <Route path="new" element={<InventoryForm />} />
+                <Route path=":id" element={<InventoryForm />} />
+                <Route path=":id/edit" element={<InventoryForm />} />
+              </Route>
+              <Route path="test" element={<TestPage />} />
             </Route>
-            <Route path="test" element={<TestPage />} />
 
-            {/* Catch-all route for 404 */}
+            {/* Catch-all route for 404 - outside protected routes */}
             <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-        <Toaster />
-      </BrowserRouter>
+          </Routes>
+          <Toaster />
+        </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

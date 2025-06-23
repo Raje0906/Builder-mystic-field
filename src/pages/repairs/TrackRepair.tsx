@@ -86,7 +86,8 @@ export function TrackRepair() {
   };
 
   const searchRepairs = async () => {
-    if (!searchQuery.trim()) {
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) {
       toast({
         title: "Error",
         description: "Please enter a search query",
@@ -102,12 +103,22 @@ export function TrackRepair() {
       const params = new URLSearchParams();
       
       if (searchBy === "ticket") {
-        params.append("ticket", searchQuery.trim());
+        // For ticket search, use the exact value
+        params.append("ticket", trimmedQuery);
       } else if (searchBy === "phone") {
-        const phoneNumber = searchQuery.replace(/\D/g, "");
+        // Clean and format phone number - ensure it has at least 10 digits
+        const phoneNumber = trimmedQuery.replace(/\D/g, "");
+        if (phoneNumber.length < 10) {
+          throw new Error('Please enter a valid phone number with at least 10 digits');
+        }
         params.append("phone", phoneNumber);
       } else if (searchBy === "email") {
-        params.append("email", searchQuery.trim().toLowerCase());
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(trimmedQuery)) {
+          throw new Error('Please enter a valid email address');
+        }
+        params.append("email", trimmedQuery.toLowerCase());
       }
 
       const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
@@ -168,39 +179,61 @@ export function TrackRepair() {
         }
       } catch (error) {
         console.error('API Error:', error);
+        
+        // Handle different types of errors
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          const message = error.response.data?.message || 'Failed to search for repairs';
-          throw new Error(`Server responded with status ${error.response.status}: ${message}`);
+          const status = error.response.status;
+          let message = error.response.data?.message || 'Failed to search for repairs';
+          
+          // Customize message for different status codes
+          if (status === 404) {
+            if (message.includes('No customers found')) {
+              message = 'No repair records found with the provided details. Please check your search criteria.';
+            } else {
+              message = 'No repair records found. Please check your search criteria.';
+            }
+          } else if (status === 400) {
+            message = 'Invalid search parameters. Please check your input and try again.';
+          } else if (status >= 500) {
+            message = 'Server error. Please try again later.';
+          }
+          
+          throw new Error(message);
         } else if (error.request) {
           // The request was made but no response was received
-          throw new Error('No response from server. Please check your connection.');
+          throw new Error('No response from server. Please check your internet connection and try again.');
         } else {
           // Something happened in setting up the request that triggered an Error
-          throw new Error(`Request error: ${error.message}`);
+          throw new Error(error.message || 'An error occurred while processing your request');
         }
       }
     } catch (error) {
       console.error("Error searching repairs:", error);
-      let errorMessage = "Failed to search for repairs. ";
       
-      if ((error as Error).message.includes('404')) {
-        errorMessage = "No repairs found with the provided details.";
-      } else if ((error as Error).message.includes('400')) {
-        errorMessage = "Invalid search parameters. Please check your input.";
-      } else if ((error as Error).message.includes('Network Error')) {
-        errorMessage = "Unable to connect to the server. Please check your connection.";
-      } else {
-        errorMessage += (error as Error).message || 'Please try again later.';
+      // Default error message
+      let errorMessage = (error as Error).message || 'Failed to search for repairs. Please try again.';
+      
+      // Extract the actual error message if it's wrapped in a server response
+      if (errorMessage.includes('Server responded with status')) {
+        // Extract just the message part after the status code
+        const match = errorMessage.match(/Server responded with status \d+: (.+)/);
+        if (match && match[1]) {
+          errorMessage = match[1];
+        }
       }
       
+      // Show the error to the user
       toast({
-        title: "Error",
+        title: "Search Failed",
         description: errorMessage,
         variant: "destructive",
+        duration: 5000, // Show for 5 seconds
       });
-      setFoundRepairs([]); // Clear any previous results on error
+      
+      // Clear previous results
+      setFoundRepairs([]);
     } finally {
       setIsSearching(false);
     }

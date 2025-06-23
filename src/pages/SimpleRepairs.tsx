@@ -1,57 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useRepairs } from "../hooks/useRepairs";
 
 export default function SimpleRepairs() {
-  const [repairs, setRepairs] = useState([]);
-
-  // Mock repair data
-  const mockRepairs = [
-    {
-      id: "1",
-      ticketNumber: "RPR-20241210-0001",
-      customerName: "John Doe",
-      device: "Dell Inspiron 15",
-      problem: "Screen not working",
-      status: "in_progress",
-      priority: "high",
-      createdAt: "2024-12-09",
-      estimatedCost: 5000,
-    },
-    {
-      id: "2",
-      ticketNumber: "RPR-20241210-0002",
-      customerName: "Jane Smith",
-      device: "HP Pavilion",
-      problem: "Battery not charging",
-      status: "diagnosed",
-      priority: "medium",
-      createdAt: "2024-12-08",
-      estimatedCost: 3000,
-    },
-    {
-      id: "3",
-      ticketNumber: "RPR-20241210-0003",
-      customerName: "Mike Johnson",
-      device: "MacBook Air",
-      problem: "Keyboard not working",
-      status: "completed",
-      priority: "low",
-      createdAt: "2024-12-07",
-      estimatedCost: 8000,
-    },
-  ];
-
-  useEffect(() => {
-    setRepairs(mockRepairs);
-  }, []);
+  const { repairs, loading, error } = useRepairs();
 
   const getStatusColor = (status) => {
     switch (status) {
       case "completed":
+      case "delivered":
         return "bg-green-100 text-green-800";
-      case "in_progress":
+      case "in_repair":
         return "bg-blue-100 text-blue-800";
       case "diagnosed":
         return "bg-yellow-100 text-yellow-800";
+      case "received":
+        return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -70,6 +33,21 @@ export default function SimpleRepairs() {
     }
   };
 
+  if (loading) return <div className="p-6">Loading repairs...</div>;
+  if (error) return <div className="p-6 text-red-500">Error: {error}</div>;
+
+  const inProgressRepairs = repairs.filter(
+    (r) => r.status === "in_repair" || r.status === "diagnosed"
+  ).length;
+
+  const completedRepairs = repairs.filter(
+    (r) => r.status === "completed" || r.status === "delivered"
+  ).length;
+
+  const totalRevenue = repairs
+    .filter((r) => r.status === "completed" || r.status === "delivered")
+    .reduce((sum, r) => sum + r.totalCost, 0);
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -85,23 +63,16 @@ export default function SimpleRepairs() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">In Progress</h3>
-          <p className="text-2xl font-bold text-blue-600">
-            {repairs.filter((r) => r.status === "in_progress").length}
-          </p>
+          <p className="text-2xl font-bold text-blue-600">{inProgressRepairs}</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Completed</h3>
-          <p className="text-2xl font-bold text-green-600">
-            {repairs.filter((r) => r.status === "completed").length}
-          </p>
+          <p className="text-2xl font-bold text-green-600">{completedRepairs}</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Revenue</h3>
           <p className="text-2xl font-bold text-purple-600">
-            ₹
-            {repairs
-              .reduce((sum, r) => sum + r.estimatedCost, 0)
-              .toLocaleString()}
+            ₹{totalRevenue.toLocaleString()}
           </p>
         </div>
       </div>
@@ -158,30 +129,30 @@ export default function SimpleRepairs() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {repairs.map((repair) => (
-                <tr key={repair.id} className="hover:bg-gray-50">
+                <tr key={repair._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
-                        {repair.ticketNumber}
+                        {repair._id.slice(-6).toUpperCase()}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {repair.createdAt}
+                        {new Date(repair.receivedDate).toLocaleDateString()}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {repair.customerName}
+                    {repair.customer?.name || "N/A"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {repair.device}
+                    {`${repair.deviceType} ${repair.brand} ${repair.model}`}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {repair.problem}
+                    {repair.issueDescription}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                        repair.status,
+                        repair.status
                       )}`}
                     >
                       {repair.status.replace("_", " ")}
@@ -190,14 +161,14 @@ export default function SimpleRepairs() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(
-                        repair.priority,
+                        repair.priority
                       )}`}
                     >
                       {repair.priority}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ₹{repair.estimatedCost.toLocaleString()}
+                    ₹{repair.totalCost.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex gap-2">

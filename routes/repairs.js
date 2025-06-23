@@ -6,6 +6,19 @@ import { body, validationResult } from "express-validator";
 
 const router = express.Router();
 
+// Get all repairs
+router.get('/', async (req, res) => {
+  try {
+    const repairs = await Repair.find()
+      .populate('customer', 'name')
+      .sort({ receivedDate: -1 });
+    res.json({ success: true, data: repairs });
+  } catch (error) {
+    console.error('Error fetching repairs:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch repairs' });
+  }
+});
+
 // Debug all incoming requests to repairs router
 router.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
@@ -186,9 +199,16 @@ router.post(
   ],
   async (req, res) => {
     try {
+      // Debug: Log the incoming request data
+      console.log('=== REPAIR CREATION REQUEST ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Content-Type:', req.headers['content-type']);
+      
       // Check for validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log('=== VALIDATION ERRORS ===');
+        console.log('Errors:', JSON.stringify(errors.array(), null, 2));
         return res.status(400).json({
           success: false,
           errors: errors.array(),
@@ -263,10 +283,23 @@ router.post(
       // Populate customer details in the response
       const populatedRepair = await Repair.findById(savedRepair._id).populate('customer');
 
+      // Send notifications
+      let notificationResult = { whatsapp: { success: false }, email: { success: false } };
+      try {
+        const customerPop = populatedRepair.customer;
+        const store = { name: 'Laptop Store', contact: { phone: '+91 98765 43210', email: 'info@laptopstore.com' } };
+        const { sendRepairNotifications } = await import('../services/realNotificationService.js');
+        notificationResult = await sendRepairNotifications(populatedRepair, customerPop, store, 'status_updated');
+        console.log('Notification result:', notificationResult);
+      } catch (notifyError) {
+        console.error('Notification error:', notifyError);
+      }
+
       res.status(201).json({
         success: true,
         message: 'Repair created successfully',
         data: populatedRepair,
+        notification: notificationResult
       });
     } catch (error) {
       console.error('Error creating repair:', error);

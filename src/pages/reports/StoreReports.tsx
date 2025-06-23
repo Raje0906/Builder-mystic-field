@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -53,7 +53,7 @@ import {
   Target,
 } from "lucide-react";
 import {
-  generateMonthlyReport,
+  generateMonthlyStoreReport,
   generateQuarterlyReport,
   generateAnnualReport,
 } from "@/lib/dataUtils";
@@ -77,39 +77,38 @@ export function StoreReports() {
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    generateReport();
-  }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
-
-  const generateReport = async () => {
+  const generateReport = useCallback(async () => {
     setIsLoading(true);
     try {
-      let generatedReport: Report;
-
+      let generatedReport: Report | null = null;
       switch (reportType) {
         case "monthly":
-          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
+          generatedReport = await generateMonthlyStoreReport(selectedYear, selectedMonth);
           break;
         case "quarterly":
-          generatedReport = generateQuarterlyReport(
-            selectedYear,
-            selectedQuarter,
-          );
+          // You might need to create a quarterly store report endpoint as well
+          console.warn("Quarterly store report not implemented, using mock data.");
+          // generatedReport = await generateQuarterlyStoreReport(selectedYear, selectedQuarter);
           break;
         case "annually":
-          generatedReport = generateAnnualReport(selectedYear);
+          // You might need to create an annual store report endpoint as well
+          console.warn("Annual store report not implemented, using mock data.");
+          // generatedReport = await generateAnnualStoreReport(selectedYear);
           break;
-        default:
-          generatedReport = generateMonthlyReport(selectedYear, selectedMonth);
       }
-
       setReport(generatedReport);
     } catch (error) {
       console.error("Error generating report:", error);
+      setReport(null);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
+
+  // Generate report when dependencies change
+  useEffect(() => {
+    generateReport();
+  }, [generateReport]);
 
   const getStoreName = (storeId: string) => {
     return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
@@ -137,14 +136,17 @@ export function StoreReports() {
   };
 
   const calculateStoreMetrics = () => {
-    if (!report) return [];
+    if (!report || !report.sales || !report.repairs) return [];
+
+    const salesByStore = report.sales.storePerformance || [];
+    const repairsByStore = report.repairs.storePerformance || [];
 
     return stores.map((store) => {
-      const salesData = report.sales.storePerformance.find(
+      const salesData = salesByStore.find(
         (s) => s.storeId === store.id,
       ) || { revenue: 0, transactions: 0 };
 
-      const repairData = report.repairs.storePerformance.find(
+      const repairData = repairsByStore.find(
         (r) => r.storeId === store.id,
       ) || { repairs: 0, revenue: 0 };
 

@@ -460,41 +460,53 @@ export const searchByBarcode = async (barcode: string): Promise<Product | null> 
 };
 
 export const searchBySerialNumber = async (serialNumber: string): Promise<Product | null> => {
-  try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/products/serial/${serialNumber}`, {
-      credentials: 'include'
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) return null;
-      throw new Error('Failed to search by serial number');
-    }
-    
-    const result = await response.json();
-    return result.data || null;
-  } catch (error) {
-    console.error('Error searching by serial number:', error);
-    return null;
-  }
+  // Mock implementation, replace with API call
+  const products = await getProducts();
+  return products.find((p) => p.serialNumber === serialNumber) || null;
 };
 
 // Report generation
-export const generateMonthlyReport = async (year: number, month: number): Promise<Report> => {
+export const generateMonthlySalesReport = async (year: number, month: number): Promise<Report> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/reports/monthly?year=${year}&month=${month}`, {
-      credentials: 'include'
-    });
-    
+    const response = await fetch(`${apiUrl}/reports/sales/monthly?year=${year}&month=${month}`);
     if (!response.ok) {
-      throw new Error('Failed to generate monthly report');
+      throw new Error('Failed to generate monthly sales report');
     }
-    
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error('Error generating monthly report:', error);
+    console.error('Error generating monthly sales report:', error);
+    throw error;
+  }
+};
+
+export const generateMonthlyRepairReport = async (year: number, month: number): Promise<Report> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  try {
+    const response = await fetch(`${apiUrl}/reports/monthly?year=${year}&month=${month}`);
+    if (!response.ok) {
+      throw new Error('Failed to generate monthly repair report');
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error generating monthly repair report:', error);
+    throw error;
+  }
+};
+
+export const generateMonthlyStoreReport = async (year: number, month: number): Promise<Report> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  try {
+    const response = await fetch(`${apiUrl}/reports/store/monthly?year=${year}&month=${month}`);
+    if (!response.ok) {
+      throw new Error('Failed to generate monthly store report');
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error generating monthly store report:', error);
     throw error;
   }
 };
@@ -541,7 +553,9 @@ export const generateAnnualReport = async (year: number): Promise<Report> => {
 export const addRepair = async (repairData: any): Promise<Repair> => {
   try {
     const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    console.log('Sending repair data:', JSON.stringify(repairData, null, 2));
+    console.log('=== SENDING REPAIR DATA ===');
+    console.log('URL:', `${baseUrl}/api/repairs`);
+    console.log('Data:', JSON.stringify(repairData, null, 2));
     
     const response = await fetch(`${baseUrl}/api/repairs`, {
       method: 'POST',
@@ -555,13 +569,16 @@ export const addRepair = async (repairData: any): Promise<Repair> => {
     const responseData = await response.json().catch(() => ({}));
     
     if (!response.ok) {
-      console.error('Repair creation failed:', responseData);
+      console.error('=== REPAIR CREATION FAILED ===');
+      console.error('Status:', response.status);
+      console.error('Response:', JSON.stringify(responseData, null, 2));
       throw new Error(
         `API request failed with status ${response.status}: ${responseData.message || 'Unknown error'}`
       );
     }
     
-    console.log('Repair created successfully:', responseData);
+    console.log('=== REPAIR CREATED SUCCESSFULLY ===');
+    console.log('Response:', JSON.stringify(responseData, null, 2));
     return responseData.data || responseData;
   } catch (error) {
     console.error('Error adding repair:', error);
@@ -682,6 +699,7 @@ export const sendWhatsAppNotification = async (
   message: string,
 ): Promise<boolean> => {
   try {
+    console.log('[Notification] Attempting to send WhatsApp:', phone, message);
     const { realNotificationService } = await import(
       "@/services/realNotificationService"
     );
@@ -689,6 +707,7 @@ export const sendWhatsAppNotification = async (
       phone,
       message,
     );
+    console.log('[Notification] WhatsApp result:', result);
 
     // Show visual confirmation
     const event = new CustomEvent("whatsapp-sent", {
@@ -721,6 +740,7 @@ export const sendEmailNotification = async (
   htmlContent: string,
 ): Promise<boolean> => {
   try {
+    console.log('[Notification] Attempting to send Email:', email, subject);
     const { realNotificationService } = await import(
       "@/services/realNotificationService"
     );
@@ -729,6 +749,7 @@ export const sendEmailNotification = async (
       subject,
       htmlContent,
     );
+    console.log('[Notification] Email result:', result);
 
     // Show visual confirmation
     const event = new CustomEvent("email-sent", {
@@ -737,7 +758,7 @@ export const sendEmailNotification = async (
         subject,
         message: result.success
           ? "Email sent successfully"
-          : `Failed: ${result.error}`,
+          : result.error || "Email failed",
         timestamp: new Date().toISOString(),
         real: import.meta.env.VITE_ENABLE_REAL_NOTIFICATIONS === "true",
         messageId: result.messageId,
