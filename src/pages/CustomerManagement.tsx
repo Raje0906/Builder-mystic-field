@@ -70,6 +70,10 @@ export default function CustomerManagement() {
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const handleStatusFilter = (status: "all" | "active" | "inactive") => {
+    setStatusFilter(status);
+    // No need to call loadCustomers here as the useEffect will trigger it
+  };
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -77,18 +81,18 @@ export default function CustomerManagement() {
   const { toast } = useToast();
 
   useEffect(() => {
-    loadCustomers();
-  }, []);
+    loadCustomers(statusFilter);
+  }, [statusFilter]);
 
   useEffect(() => {
     filterCustomers();
-  }, [customers, searchQuery, statusFilter]);
+  }, [customers, searchQuery]);
 
-  const loadCustomers = async () => {
+  const loadCustomers = async (status: 'all' | 'active' | 'inactive' = 'active') => {
     try {
       setIsLoading(true);
-      const allCustomers = await getCustomers();
-      setCustomers(allCustomers);
+      const filteredCustomers = await getCustomers(status);
+      setCustomers(filteredCustomers);
     } catch (error) {
       console.error('Error loading customers:', error);
       toast({
@@ -102,23 +106,16 @@ export default function CustomerManagement() {
   };
 
   const filterCustomers = () => {
-    let filtered = customers;
+    let filtered = [...customers]; // Create a new array to avoid mutating the original
 
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (customer) =>
           customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          customer.phone.includes(searchQuery) ||
-          customer.city.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(
-        (customer) => customer.status === statusFilter,
+          (customer.email && customer.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (customer.phone && customer.phone.includes(searchQuery)) ||
+          (customer.city && customer.city.toLowerCase().includes(searchQuery.toLowerCase())),
       );
     }
 
@@ -126,32 +123,43 @@ export default function CustomerManagement() {
   };
 
   const handleAddCustomer = async (formData: FormData) => {
+    console.log('[handleAddCustomer] called with:', Object.fromEntries(formData.entries()));
     setIsLoading(true);
     try {
+      // Ensure all required address fields are present and not empty
+      const address = {
+        line1: (formData.get("line1") as string || '').trim(),
+        city: (formData.get("city") as string || '').trim(),
+        state: (formData.get("state") as string || '').trim(),
+        pincode: (formData.get("pincode") as string || '').trim(),
+        line2: (formData.get("address2") as string || '').trim(),
+      };
+      if (!address.line1 || !address.city || !address.state || !address.pincode) {
+        toast({
+          title: "Error",
+          description: "All address fields are required.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
       const newCustomer = await addCustomer({
         name: formData.get("name") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
-        address: {
-          line1: formData.get("address") as string,
-          city: formData.get("city") as string,
-          state: formData.get("state") as string || '',
-          pincode: formData.get("pincode") as string || '',
-          line2: formData.get("address2") as string || ''
-        } as Address,
-        // Keep the old city field for backward compatibility
-        city: formData.get("city") as string,
+        address,
         status: "active" as const,
         dateAdded: new Date().toISOString(),
         totalPurchases: 0
       });
 
-      setCustomers([...customers, newCustomer]);
       setShowAddDialog(false);
       toast({
         title: "Customer Added",
         description: `${newCustomer.name} has been added successfully`,
       });
+      // Reload customers from backend
+      await loadCustomers(statusFilter);
     } catch (error: any) {
       console.error('Error adding customer:', error);
       toast({
@@ -322,12 +330,13 @@ export default function CustomerManagement() {
           </Button>
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={() => { console.log('[DialogTrigger] Add Customer clicked'); }}>
                 <UserPlus className="w-4 h-4 mr-2" />
                 Add Customer
               </Button>
             </DialogTrigger>
             <DialogContent>
+              {console.log('[DialogContent] Add Customer dialog rendered')}
               <DialogHeader>
                 <DialogTitle>Add New Customer</DialogTitle>
                 <DialogDescription>
@@ -359,13 +368,23 @@ export default function CustomerManagement() {
                 </div>
 
                 <div>
-                  <Label htmlFor="add-address">Address</Label>
-                  <Textarea id="add-address" name="address" rows={2} />
+                  <Label htmlFor="add-line1">Address Line 1 *</Label>
+                  <Input id="add-line1" name="line1" required />
                 </div>
 
                 <div>
-                  <Label htmlFor="add-city">City</Label>
-                  <Input id="add-city" name="city" />
+                  <Label htmlFor="add-city">City *</Label>
+                  <Input id="add-city" name="city" required />
+                </div>
+
+                <div>
+                  <Label htmlFor="add-state">State *</Label>
+                  <Input id="add-state" name="state" required />
+                </div>
+
+                <div>
+                  <Label htmlFor="add-pincode">Pincode *</Label>
+                  <Input id="add-pincode" name="pincode" required />
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
@@ -538,7 +557,7 @@ export default function CustomerManagement() {
                     <TableCell>
                       <div>
                         <p className="font-medium">
-                          ₹{customer.totalPurchases.toLocaleString()}
+                          ₹{(customer.totalPurchases ?? 0).toLocaleString()}
                         </p>
                         <div className="flex gap-2 text-xs text-gray-500">
                           <span>{stats.totalSales} sales</span>
@@ -652,7 +671,7 @@ export default function CustomerManagement() {
                                       </div>
                                       <div>
                                         <strong>Total Purchases:</strong> ₹
-                                        {selectedCustomer.totalPurchases.toLocaleString()}
+                                        {(selectedCustomer.totalPurchases ?? 0).toLocaleString()}
                                       </div>
                                       {selectedCustomer.lastPurchase && (
                                         <div>

@@ -16,7 +16,7 @@ import ReportsOverview from "@/pages/SimpleReports";
 import { SalesReports } from "@/pages/reports/SalesReports";
 import { RepairReports } from "@/pages/reports/RepairReports";
 import { StoreReports } from "@/pages/reports/StoreReports";
-import CustomerManagement from "@/pages/OfflineAwareCustomers";
+import CustomerManagement from "@/pages/CustomerManagement";
 import InventoryPage from "@/pages/inventory/InventoryPage";
 import InventoryForm from "@/pages/inventory/InventoryForm";
 import TestPage from "@/pages/TestPage";

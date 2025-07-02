@@ -17,35 +17,42 @@ const STORAGE_KEYS = {
 
 // Initialize data in localStorage if not present
 export const initializeData = () => {
+  // Initialize with empty arrays if not present
   if (!localStorage.getItem(STORAGE_KEYS.CUSTOMERS)) {
-    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(customers));
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify([]));
   }
   if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) {
-    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify([]));
   }
   if (!localStorage.getItem(STORAGE_KEYS.SALES)) {
-    localStorage.setItem(STORAGE_KEYS.SALES, JSON.stringify(sales));
+    localStorage.setItem(STORAGE_KEYS.SALES, JSON.stringify([]));
   }
   if (!localStorage.getItem(STORAGE_KEYS.REPAIRS)) {
-    localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(repairs));
+    localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify([]));
   }
 };
 
 // Customer operations
-export const getCustomers = async (): Promise<Customer[]> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'active'): Promise<Customer[]> => {
+  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
   try {
-    const response = await fetch(`${apiUrl}/customers`);
+    const response = await fetch(`${apiUrl}/customers${status !== 'all' ? `?status=${status}` : ''}`);
     if (!response.ok) {
       throw new Error('Failed to fetch customers');
     }
     const data = await response.json();
-    return data.data || [];
+    return (data.data || []).map((customer) => ({
+      ...customer,
+      id: customer._id || customer.id,
+      dateAdded: customer.dateAdded || customer.createdAt,
+    }));
   } catch (error) {
     console.error('Error fetching customers:', error);
     // Fallback to local storage if API fails
     const localData = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
-    return localData ? JSON.parse(localData) : [];
+    const allCustomers = localData ? JSON.parse(localData) : [];
+    if (status === 'all') return allCustomers;
+    return allCustomers.filter((customer: Customer) => customer.status === status);
   }
 };
 
@@ -71,7 +78,7 @@ export const getCustomer = async (id: string): Promise<Customer | null> => {
 export const addCustomer = async (
   customer: Omit<Customer, "id" | "dateAdded" | "totalPurchases">,
 ): Promise<Customer> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
   try {
     // Ensure required address fields are present with defaults
     const { line1, city, state, pincode, ...restAddress } = customer.address || {};
