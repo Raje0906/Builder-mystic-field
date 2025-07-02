@@ -45,7 +45,6 @@ import {
   addCustomer,
 } from "@/lib/dataUtils";
 import { Customer, SearchableFields, BarcodeResult } from "@/types";
-import { customers as mockCustomers } from "@/lib/mockData";
 
 interface CustomerSearchProps {
   onCustomerSelect?: (customer: Customer) => void;

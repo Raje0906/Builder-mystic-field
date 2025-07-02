@@ -1,32 +1,17 @@
-console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
-console.log('EMAIL_USER:', process.env.EMAIL_USER);
-import nodemailer from 'nodemailer';
+// EmailJS Backend Service
+import emailjs from '@emailjs/nodejs';
 
-export async function sendEmailNotification(to, subject, html) {
-  try {
-   
+const SERVICE_ID = 'service_hpz532o';
+const TEMPLATE_ID = 'template_n0s86ti';
+const PUBLIC_KEY = 'IAgtIkM8K9OyLAgdP';
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT, 10),
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: `"Laptop Store" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
-
-    console.log('[Email] Message sent:', info.messageId);
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    console.error('[Email] Error sending email:', error);
-    return { success: false, error: error.message };
-  }
+async function sendEmailNotification(to, subject, message) {
+  const templateParams = {
+    to_email: to,
+    subject,
+    message,
+  };
+  return emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
 }
+
+export { sendEmailNotification }; 

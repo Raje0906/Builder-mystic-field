@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Store from "../models/StoreMongoose.js";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
@@ -83,18 +84,22 @@ async function seedAuthData() {
     const createdStores = await Store.insertMany(sampleStores);
     console.log(`Created ${createdStores.length} stores`);
 
-    // Create users with store assignments
-    const usersWithStores = sampleUsers.map((user, index) => {
-      // Assign all users a store_id (including admin)
+    // Create users with store assignments and hashed passwords
+    const usersWithStores = await Promise.all(sampleUsers.map(async (user, index) => {
       const storeIndex = index % createdStores.length;
       return {
         ...user,
         store_id: createdStores[storeIndex]._id
       };
-    });
+    }));
 
-    const createdUsers = await User.insertMany(usersWithStores);
-    console.log(`Created ${createdUsers.length} users`);
+    // Save users one by one to trigger pre-save hooks
+    const createdUsers = [];
+    for (const userData of usersWithStores) {
+      const user = new User(userData);
+      await user.save();
+      createdUsers.push(user);
+    }
 
     // Display created data
     console.log('\n📋 Created Stores:');

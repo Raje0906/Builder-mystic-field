@@ -48,6 +48,8 @@ const InventoryForm = () => {
     },
   });
 
+  const [products, setProducts] = useState<any[]>([]);
+
   // Load item data if in edit mode
   useEffect(() => {
     const loadItem = async () => {
@@ -78,6 +80,20 @@ const InventoryForm = () => {
   }, [id, form, navigate]);
   
   const location = useLocation();
+  
+  useEffect(() => {
+    // Load products for the dropdown
+    const loadProducts = async () => {
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        setProducts(Array.isArray(data.data?.products) ? data.data.products : []);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    };
+    loadProducts();
+  }, []);
   
   const onSubmit = async (values: FormValues) => {
     try {

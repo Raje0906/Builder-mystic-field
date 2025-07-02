@@ -72,8 +72,6 @@ async function startServer() {
     // Connect to MongoDB
     console.log('🔌 Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/laptop-store', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
     });
     console.log('✅ Connected to MongoDB');

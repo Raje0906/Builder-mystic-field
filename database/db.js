@@ -6,8 +6,6 @@ dotenv.config();
 
 // MongoDB connection options
 const mongoOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 3000,
   socketTimeoutMS: 10000,
   retryWrites: true,

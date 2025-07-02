@@ -44,9 +44,10 @@ import {
   ShoppingCart,
   Laptop,
 } from "lucide-react";
-import { getProducts } from "@/lib/dataUtils";
+import { getProducts, getSales } from "@/lib/dataUtils";
 import { stores } from "@/lib/mockData";
-import { Product } from "@/types";
+import { Product, Sale, Customer } from "@/types";
+import { getCustomers } from "@/lib/dataUtils";
 
 export function SalesInventory() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -60,6 +61,8 @@ export function SalesInventory() {
   const [stockQuantity, setStockQuantity] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const navigate = useNavigate();
 
   const updateStock = async (productId: string, newQuantity: number) => {
@@ -104,9 +107,12 @@ export function SalesInventory() {
   };
 
   useEffect(() => {
-    const allProducts = getProducts();
-    setProducts(allProducts);
-    setFilteredProducts(allProducts);
+    async function fetchData() {
+      setSales(await getSales());
+      getProducts().then(setProducts);
+      getCustomers().then(setCustomers);
+    }
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -183,6 +189,13 @@ export function SalesInventory() {
     (p) => p.stock <= p.minStock && p.stock > 0,
   ).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
+
+  // Get today's date in YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
+  const todaysSales = sales.filter(sale => sale.date === today);
+
+  const getProduct = (productId: string) => products.find(p => p.id === productId);
+  const getCustomer = (customerId: string) => customers.find(c => c.id === customerId);
 
   return (
     <div className="space-y-6">
@@ -621,6 +634,56 @@ export function SalesInventory() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <div className="max-w-3xl mx-auto my-10 space-y-8">
+        <h2 className="text-2xl font-bold mb-6 text-center">Today's Sales Receipts</h2>
+        {todaysSales.length === 0 && (
+          <div className="text-center text-gray-500">No sales recorded for today.</div>
+        )}
+        {todaysSales.map((sale) => {
+          const product = getProduct(sale.productId);
+          const customer = getCustomer(sale.customerId);
+          return (
+            <div key={sale.id} className="bg-white shadow-soft rounded-lg p-6 print:p-4 print:shadow-none print:bg-white">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-lg">Receipt #{sale.id}</span>
+                <span className="text-sm text-gray-500">{sale.date}</span>
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Customer:</span> {customer?.name || 'N/A'} ({customer?.phone || 'N/A'})
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Product:</span> {product?.name || 'N/A'} ({product?.brand} {product?.model})
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Quantity:</span> {sale.quantity}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Unit Price:</span> ₹{sale.unitPrice?.toLocaleString?.() || sale.unitPrice}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Discount:</span> ₹{sale.discount?.toLocaleString?.() || 0}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Tax:</span> ₹{sale.tax?.toLocaleString?.() || 0}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Total Amount:</span> ₹{sale.totalAmount?.toLocaleString?.() || 0}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Final Amount:</span> <span className="text-lg font-bold">₹{sale.finalAmount?.toLocaleString?.() || 0}</span>
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Payment Method:</span> {sale.paymentMethod.toUpperCase()}
+              </div>
+              <div className="mb-2">
+                <span className="font-medium">Status:</span> <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${sale.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>{sale.status}</span>
+              </div>
+              <div className="mt-4 text-center text-xs text-gray-400">Thank you for your purchase!</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

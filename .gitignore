@@ -13,6 +13,8 @@ build/
 .env
 .env.local
 .env.development.local
+.env.development
+.env.example
 .env.test.local
 .env.production.local
 

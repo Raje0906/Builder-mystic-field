@@ -8,8 +8,6 @@ const checkDatabase = async () => {
     
     console.log('🔄 Connecting to MongoDB...');
     await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 3000,
     });
     

@@ -23,6 +23,8 @@ import TestPage from "@/pages/TestPage";
 import NotFound from "@/pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import UserManagement from "@/pages/UserManagement";
+import { toast } from "@/hooks/use-toast";
 
 function App() {
   return (
@@ -67,6 +69,13 @@ function App() {
                 <Route path=":id/edit" element={<InventoryForm />} />
               </Route>
               <Route path="test" element={<TestPage />} />
+
+              {/* Admin-only: User Management */}
+              <Route path="users" element={
+                <ProtectedRoute requiredRoles={["admin"]}>
+                  <UserManagement />
+                </ProtectedRoute>
+              } />
             </Route>
 
             {/* Catch-all route for 404 - outside protected routes */}

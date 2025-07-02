@@ -1,171 +1,106 @@
-import React from "react";
-import { useInventory } from "../hooks/useInventory";
+import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function SimpleSalesInventory() {
-  const { products, loading, error } = useInventory();
+  const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const getStockStatus = (stock) => {
-    if (stock <= 5)
-      return { color: "bg-red-100 text-red-800", text: "Low Stock" };
-    if (stock <= 10)
-      return { color: "bg-yellow-100 text-yellow-800", text: "Medium" };
-    return { color: "bg-green-100 text-green-800", text: "In Stock" };
+  useEffect(() => {
+    fetchSales();
+    // eslint-disable-next-line
+  }, [date]);
+
+  const fetchSales = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(
+        `/api/sales?startDate=${date}&endDate=${date}`
+      );
+      const data = await res.json();
+      if (data.success) {
+        setSales(data.data.sales || []);
+      } else {
+        setError(data.message || "Failed to fetch sales");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  if (loading) return <div className="p-6">Loading inventory...</div>;
-  if (error) return <div className="p-6 text-red-500">Error: {error}</div>;
-
-  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
-  const lowStockItems = products.filter((p) => p.stock <= 5).length;
-  const activeProducts = products.filter((p) => p.isActive).length;
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Sales Inventory</h1>
-        <p className="text-gray-600">
-          Manage your product inventory and stock levels
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500">Total Products</h3>
-          <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Daily Sales Report</h1>
+          <p className="text-gray-600">View all sales made on a specific day</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500">Low Stock Items</h3>
-          <p className="text-2xl font-bold text-red-600">{lowStockItems}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500">Total Value</h3>
-          <p className="text-2xl font-bold text-green-600">
-            ₹{totalValue.toLocaleString()}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-sm font-medium text-gray-500">Active Products</h3>
-          <p className="text-2xl font-bold text-blue-600">{activeProducts}</p>
+        <div className="flex items-center gap-2">
+          <label htmlFor="date" className="font-medium text-gray-700">Select Date:</label>
+          <Input
+            id="date"
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="w-40"
+          />
+          <Button onClick={fetchSales} disabled={loading}>
+            {loading ? "Loading..." : "Refresh"}
+          </Button>
         </div>
       </div>
-
-      {/* Quick Actions */}
-      <div className="mb-6">
-        <div className="flex gap-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Add Product
-          </button>
-          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Update Stock
-          </button>
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            Export Inventory
-          </button>
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            Filter Products
-          </button>
-        </div>
-      </div>
-
-      {/* Products Table */}
+      {error && <div className="mb-4 text-red-600">{error}</div>}
       <div className="bg-white rounded-lg shadow border">
         <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-semibold">Product Inventory</h2>
+          <h2 className="text-lg font-semibold">Sales for {date}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Product
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  SKU
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Value
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {products.map((product) => {
-                const stockStatus = getStockStatus(product.stock);
-                return (
-                  <tr key={product._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {product.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {product.brand} {product.model}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.sku}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{product.price.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.stock} units
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stockStatus.color}`}
-                      >
-                        {stockStatus.text}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{(product.price * product.stock).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex gap-2">
-                        <button className="text-blue-600 hover:text-blue-900">
-                          Edit
-                        </button>
-                        <button className="text-green-600 hover:text-green-900">
-                          Stock
-                        </button>
-                        <button className="text-purple-600 hover:text-purple-900">
-                          View
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {sales.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-500">No sales found for this date.</td>
+                </tr>
+              )}
+              {sales.map((sale) => (
+                <tr key={sale._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {sale.customer?.name || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {sale.items && sale.items[0]?.product?.name || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ₹{sale.totalAmount?.toLocaleString?.() || sale.totalAmount || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {sale.createdAt ? new Date(sale.createdAt).toLocaleTimeString() : "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${sale.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>
+                      {sale.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h3 className="font-semibold text-blue-900">
-          ✅ Sales Inventory Working!
-        </h3>
-        <p className="text-blue-800">
-          This page shows your product inventory with stock management.
-        </p>
-        <p className="text-sm text-blue-700 mt-1">
-          Stock levels, pricing, and product information are all displayed
-          correctly.
-        </p>
       </div>
     </div>
   );

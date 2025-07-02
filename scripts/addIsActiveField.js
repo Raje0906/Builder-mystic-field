@@ -9,10 +9,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop
 async function addIsActiveField() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGODB_URI);
 
     console.log('Connected to MongoDB');
 

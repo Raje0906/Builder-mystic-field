@@ -1,9 +1,11 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import User from "../models/User.js";
 import Store from "../models/StoreMongoose.js";
 import { authenticateToken } from "../middleware/auth.js";
+import bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -45,14 +47,20 @@ router.post(
       .notEmpty()
       .withMessage("Email or phone number is required"),
     body("password").notEmpty().withMessage("Password is required"),
-    body("store_id").optional().notEmpty().withMessage("Store selection is required for non-admin users"),
+    body("store_id")
+      .optional()
+      .notEmpty()
+      .withMessage("Store selection is required for non-admin users"),
   ],
   handleValidationErrors,
   async (req, res) => {
     try {
       const { identifier, password, store_id } = req.body;
 
-      console.log('Login attempt:', { identifier, store_id });
+      console.log('Login attempt:', { 
+        identifier: identifier,
+        store_id: store_id || 'not provided' 
+      });
 
       // Find user by email or phone
       const user = await User.findByEmailOrPhone(identifier);
@@ -69,90 +77,109 @@ router.post(
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: "User not found. Please register first.",
+          message: "Invalid email/phone or password",
         });
       }
 
-      // Check if user is active
+      // Check if user account is active
       if (!user.isActive) {
-        console.log('User account is deactivated:', user.email);
-        return res.status(401).json({
+        console.log('Login attempt for deactivated account:', user.email);
+        return res.status(403).json({
           success: false,
-          message: "Account is deactivated. Please contact administrator.",
+          message: "Account is deactivated. Please contact your administrator.",
         });
       }
 
       // Verify password
       console.log('Attempting password verification...');
       const isPasswordValid = await user.comparePassword(password);
-      console.log('Password valid:', isPasswordValid);
       
       if (!isPasswordValid) {
+        console.log('Invalid password for user:', user.email);
         return res.status(401).json({
           success: false,
-          message: "Invalid credentials",
+          message: "Invalid email/phone or password",
         });
       }
 
-      // Check store access
-      console.log('Login debug:', {
-        userRole: user.role,
-        userStoreId: user.store_id,
-        userStoreIdType: typeof user.store_id,
-        requestedStoreId: store_id,
-        requestedStoreIdType: typeof store_id,
-        isAdmin: user.role === "admin",
-        storeMatch: user.store_id && (user.store_id._id ? user.store_id._id.toString() === store_id : user.store_id.toString() === store_id),
-        userDetails: {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          store_id: user.store_id
-        }
-      });
-      
-      // Admin can access any store, non-admin users can only access their assigned store
-      if (user.role !== "admin") {
-        // For non-admin users, store_id is required and must match their assigned store
+      // For non-admin users, validate store access
+      if (user.role !== 'admin') {
         if (!store_id) {
           return res.status(400).json({
             success: false,
-            message: "Store selection is required for non-admin users.",
+            message: "Store selection is required for your role",
           });
         }
-        
-        // Handle both populated store objects and string store IDs
-        const userStoreId = user.store_id && (user.store_id._id ? user.store_id._id.toString() : user.store_id.toString());
-        
-        if (!userStoreId || userStoreId !== store_id) {
+
+        // Check if user is assigned to the requested store
+        const userStoreId = user.store_id?._id?.toString() || user.store_id?.toString();
+        if (userStoreId !== store_id) {
+          console.log(`User ${user._id} attempted to login to unauthorized store ${store_id}. User's store: ${userStoreId}`);
           return res.status(403).json({
             success: false,
-            message: "You don't have access to this store. You can only access your assigned store.",
+            message: "You do not have access to the selected store",
+          });
+        }
+
+        // Verify store exists and is active
+        const store = await Store.findById(store_id);
+        if (!store || store.status !== 'active') {
+          console.log('Store status check failed:', { 
+            storeExists: !!store, 
+            storeStatus: store?.status,
+            storeId: store_id 
+          });
+          return res.status(400).json({
+            success: false,
+            message: "The selected store is not available",
           });
         }
       }
 
-      // Update last login
+      // Update last login timestamp
       user.lastLogin = new Date();
       await user.save();
 
-      // Generate token
+      // Generate JWT token
       const token = generateToken(user);
 
-      res.json({
+      // Prepare user data for response
+      const userData = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        isActive: user.isActive,
+        lastLogin: user.lastLogin,
+        store_id: user.store_id,
+      };
+
+      // If store_id exists, populate store details
+      if (user.store_id) {
+        const store = await Store.findById(user.store_id).select('name address isActive').lean();
+        if (store) {
+          userData.store = {
+            id: store._id,
+            name: store.name,
+            address: store.address,
+            isActive: store.isActive
+          };
+        }
+      }
+
+      console.log('Login successful:', { 
+        userId: user._id, 
+        role: user.role,
+        store: user.store_id || 'N/A'
+      });
+
+      res.status(200).json({
         success: true,
         message: "Login successful",
         data: {
-          token,
-          user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            role: user.role,
-            store_id: user.store_id,
-            store: user.store_id,
-          },
+          user: userData,
+          token: token,
         },
       });
     } catch (error) {
@@ -198,26 +225,41 @@ router.post(
   async (req, res) => {
     try {
       const { name, email, phone, password, store_id, role } = req.body;
+      const token = req.headers.authorization?.split(' ')[1];
+      let createdByAdmin = false;
 
-      // Check if user already exists
-      const existingUser = await User.findByEmailOrPhone(email);
-      if (existingUser) {
-        return res.status(400).json({
+      // Check if the request is from an admin
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-secret");
+          const adminUser = await User.findById(decoded.id);
+          if (adminUser && adminUser.role === 'admin') {
+            createdByAdmin = true;
+          }
+        } catch (err) {
+          // Invalid or expired token - treat as regular registration
+          console.log('Invalid or expired token, proceeding as regular registration');
+        }
+      }
+
+      // Only admins can create other admins
+      if (role === 'admin' && !createdByAdmin) {
+        return res.status(403).json({
           success: false,
-          message: "User with this email already exists",
+          message: "Only administrators can create admin accounts",
         });
       }
 
-      const existingPhone = await User.findByEmailOrPhone(phone);
-      if (existingPhone) {
+      // Validate store_id for non-admin roles
+      if (role !== 'admin' && !store_id) {
         return res.status(400).json({
           success: false,
-          message: "User with this phone number already exists",
+          message: "Store selection is required for non-admin users",
         });
       }
 
-      // Verify store exists (only for non-admin users)
-      if (role !== "admin") {
+      // Check if store exists for non-admin users
+      if (role !== 'admin') {
         const store = await Store.findById(store_id);
         if (!store) {
           return res.status(400).json({
@@ -227,40 +269,53 @@ router.post(
         }
       }
 
+      // Check for existing user with same email or phone
+      const existingUser = await User.findOne({
+        $or: [{ email }, { phone }],
+      });
+
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "User with this email or phone already exists",
+        });
+      }
+
       // Create new user
-      const userData = {
+      const newUser = new User({
         name,
         email,
         phone,
         password,
         role,
-      };
+        store_id: role === 'admin' ? undefined : store_id,
+        isActive: true, // Users created by admin are active by default
+      });
 
-      // Only add store_id for non-admin users
-      if (role !== "admin") {
-        userData.store_id = store_id;
+      // The pre-save hook will hash the password
+      await newUser.save();
+
+      // Generate token if this is a self-registration
+      let tokenResponse = null;
+      if (!createdByAdmin) {
+        tokenResponse = generateToken(newUser);
       }
-
-      const user = new User(userData);
-
-      await user.save();
-
-      // Generate token
-      const token = generateToken(user);
 
       res.status(201).json({
         success: true,
-        message: "User registered successfully",
+        message: createdByAdmin 
+          ? "User created successfully" 
+          : "User registered successfully",
         data: {
-          token,
+          token: tokenResponse,
           user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            role: user.role,
-            store_id: user.store_id,
-            store: user.store_id,
+            id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            role: newUser.role,
+            store_id: newUser.store_id,
+            isActive: newUser.isActive,
           },
         },
       });

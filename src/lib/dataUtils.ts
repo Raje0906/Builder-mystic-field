@@ -6,7 +6,6 @@ import {
   SearchFilters,
   Report,
 } from "@/types";
-import { customers, products, sales, repairs, stores } from "./mockData";
 
 // Local storage keys
 const STORAGE_KEYS = {
@@ -169,46 +168,19 @@ export const deleteCustomer = async (id: string): Promise<boolean> => {
 // Product operations
 export const getProducts = async (): Promise<Product[]> => {
   const apiUrl = import.meta.env.VITE_API_URL || '/api';
-  const fallbackProducts: Product[] = [
-    {
-      id: 'fallback-1',
-      name: 'Sample Laptop',
-      brand: 'Sample Brand',
-      model: 'Sample Model 2023',
-      serialNumber: 'SN123456',
-      barcode: '123456789012',
-      category: 'laptops',
-      price: 999.99,
-      cost: 700.00,
-      stock: 10,
-      minStock: 2,
-      storeId: 'store-1',
-      specifications: {
-        processor: 'Intel Core i5',
-        ram: '8GB',
-        storage: '256GB SSD',
-        display: '15.6" FHD',
-        os: 'Windows 11'
-      },
-      images: [],
-      status: 'available',
-      dateAdded: new Date().toISOString()
-    }
-  ];
-
   try {
     const response = await fetch(`${apiUrl}/products`);
     if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+      throw new Error('Failed to fetch products');
     }
     const data = await response.json();
-    const products = data.data || [];
-    
-    // Ensure we always return at least the fallback products if the API returns an empty array
-    return products.length > 0 ? products : fallbackProducts;
+    if (Array.isArray(data.data)) {
+      return data.data;
+    }
+    return [];
   } catch (error) {
-    console.error('Error fetching products, using fallback data:', error);
-    return fallbackProducts;
+    console.error('Error fetching products:', error);
+    return [];
   }
 };
 
@@ -228,9 +200,19 @@ export const updateProductStock = async (
 };
 
 // Sales operations
-export const getSales = (): Sale[] => {
-  const data = localStorage.getItem(STORAGE_KEYS.SALES);
-  return data ? JSON.parse(data) : sales;
+export const getSales = async (): Promise<Sale[]> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  try {
+    const response = await fetch(`${apiUrl}/sales`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch sales');
+    }
+    const data = await response.json();
+    return Array.isArray(data.data) ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    return [];
+  }
 };
 
 export const addSale = (sale: Omit<Sale, "id" | "date">): Sale => {
@@ -776,5 +758,35 @@ export const sendEmailNotification = async (
   } catch (error) {
     console.error("Email notification error:", error);
     return false;
+  }
+};
+
+export const getInventory = async (): Promise<any[]> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  try {
+    const response = await fetch(`${apiUrl}/inventory`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch inventory');
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+    return [];
+  }
+};
+
+export const getStores = async (): Promise<any[]> => {
+  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  try {
+    const response = await fetch(`${apiUrl}/stores`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch stores');
+    }
+    const data = await response.json();
+    return Array.isArray(data.data) ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching stores:', error);
+    return [];
   }
 };

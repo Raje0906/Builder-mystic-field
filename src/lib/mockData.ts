@@ -10,7 +10,7 @@ import {
 
 export const stores: Store[] = [
   {
-    id: "store-1",
+    id: "64b111111111111111111111",
     name: "Laptop Store - Central",
     address: "123 Tech Street, Central District",
     phone: "+91 98765 43210",
@@ -18,7 +18,7 @@ export const stores: Store[] = [
     color: "#3b82f6",
   },
   {
-    id: "store-2",
+    id: "64b222222222222222222222",
     name: "Laptop Store - North",
     address: "456 Innovation Ave, North Zone",
     phone: "+91 98765 43211",
@@ -26,7 +26,7 @@ export const stores: Store[] = [
     color: "#10b981",
   },
   {
-    id: "store-3",
+    id: "64b333333333333333333333",
     name: "Laptop Store - South",
     address: "789 Digital Plaza, South City",
     phone: "+91 98765 43212",
@@ -37,7 +37,7 @@ export const stores: Store[] = [
 
 export const customers: Customer[] = [
   {
-    id: "cust-1",
+    id: "64c111111111111111111111",
     name: "Amit Singh",
     email: "amit.singh@email.com",
     phone: "+91 9876543210",
@@ -56,7 +56,7 @@ export const customers: Customer[] = [
     status: "active",
   },
   {
-    id: "cust-2",
+    id: "64c222222222222222222222",
     name: "Sneha Reddy",
     email: "sneha.reddy@gmail.com",
     phone: "+91 9876543211",
@@ -75,7 +75,7 @@ export const customers: Customer[] = [
     status: "active",
   },
   {
-    id: "cust-3",
+    id: "64c333333333333333333333",
     name: "Rahul Verma",
     email: "rahul.verma@company.com",
     phone: "+91 9876543212",
@@ -94,7 +94,7 @@ export const customers: Customer[] = [
     status: "active",
   },
   {
-    id: "cust-4",
+    id: "64c444444444444444444444",
     name: "Kavya Nair",
     email: "kavya.nair@email.com",
     phone: "+91 9876543213",
@@ -113,7 +113,7 @@ export const customers: Customer[] = [
     status: "active",
   },
   {
-    id: "cust-5",
+    id: "64c555555555555555555555",
     name: "Vikram Joshi",
     email: "vikram.joshi@startup.com",
     phone: "+91 9876543214",
@@ -134,7 +134,7 @@ export const customers: Customer[] = [
 
 export const products: Product[] = [
   {
-    id: "prod-1",
+    id: "64d111111111111111111111",
     name: 'MacBook Pro 14"',
     brand: "Apple",
     model: "MBP14-M3-512",
@@ -145,7 +145,7 @@ export const products: Product[] = [
     cost: 175000,
     stock: 8,
     minStock: 3,
-    storeId: "store-1",
+    storeId: "64b111111111111111111111",
     specifications: {
       Processor: "Apple M3 Pro",
       RAM: "18GB",
@@ -158,7 +158,7 @@ export const products: Product[] = [
     dateAdded: "2024-01-10",
   },
   {
-    id: "prod-2",
+    id: "64d222222222222222222222",
     name: "Dell XPS 13",
     brand: "Dell",
     model: "XPS13-9340",
@@ -169,7 +169,7 @@ export const products: Product[] = [
     cost: 98000,
     stock: 12,
     minStock: 5,
-    storeId: "store-1",
+    storeId: "64b111111111111111111111",
     specifications: {
       Processor: "Intel Core i7-1360P",
       RAM: "16GB",
@@ -182,7 +182,7 @@ export const products: Product[] = [
     dateAdded: "2024-01-15",
   },
   {
-    id: "prod-3",
+    id: "64d333333333333333333333",
     name: "HP Spectre x360",
     brand: "HP",
     model: "SPX360-14",
@@ -193,7 +193,7 @@ export const products: Product[] = [
     cost: 115000,
     stock: 6,
     minStock: 2,
-    storeId: "store-2",
+    storeId: "64b222222222222222222222",
     specifications: {
       Processor: "Intel Core i7-1355U",
       RAM: "16GB",
@@ -206,7 +206,7 @@ export const products: Product[] = [
     dateAdded: "2024-02-01",
   },
   {
-    id: "prod-4",
+    id: "64d444444444444444444444",
     name: "Lenovo ThinkPad X1",
     brand: "Lenovo",
     model: "TPX1-Gen11",
@@ -217,7 +217,7 @@ export const products: Product[] = [
     cost: 135000,
     stock: 4,
     minStock: 2,
-    storeId: "store-2",
+    storeId: "64b222222222222222222222",
     specifications: {
       Processor: "Intel Core i7-1365U",
       RAM: "32GB",
@@ -230,7 +230,7 @@ export const products: Product[] = [
     dateAdded: "2024-02-10",
   },
   {
-    id: "prod-5",
+    id: "64d555555555555555555555",
     name: "ASUS ROG Zephyrus",
     brand: "ASUS",
     model: "ROG-G14-2024",
@@ -241,7 +241,7 @@ export const products: Product[] = [
     cost: 155000,
     stock: 3,
     minStock: 2,
-    storeId: "store-3",
+    storeId: "64b333333333333333333333",
     specifications: {
       Processor: "AMD Ryzen 9 8945HS",
       RAM: "32GB",
@@ -524,7 +524,7 @@ export const notificationTemplates: NotificationTemplate[] = [
       <ul>
         <li>Issue: {issue}</li>
         <li>Solution: {solution}</li>
-        <li>Total Cost: ���{totalCost}</li>
+        <li>Total Cost: ₹{totalCost}</li>
       </ul>
       <p><strong>Pickup Details:</strong></p>
       <p>{storeName}<br>{storeAddress}<br>Phone: {storePhone}</p>

@@ -16,6 +16,11 @@ const inventorySchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true
+  },
   stock: {
     type: Number,
     required: true,

@@ -89,6 +89,6 @@ storeSchema.statics.findActive = async function() {
   return this.find({ status: 'active' }).sort({ name: 1 });
 };
 
-const Store = mongoose.model('Store', storeSchema);
+const Store = mongoose.models.Store || mongoose.model('Store', storeSchema);
 
 export default Store; 

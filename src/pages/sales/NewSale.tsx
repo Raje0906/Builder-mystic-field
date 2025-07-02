@@ -30,8 +30,7 @@ import {
   Plus,
 } from "lucide-react";
 import { Customer, Product, Sale } from "@/types";
-import { getProducts, addSale } from "@/lib/dataUtils";
-import { stores, employees } from "@/lib/mockData";
+import { getInventory, getStores } from "@/lib/dataUtils";
 
 interface SaleItem {
   product: Product;
@@ -39,6 +38,8 @@ interface SaleItem {
   unitPrice: number;
   discount: number;
 }
+
+const isMongoId = (id: string) => /^[a-f\d]{24}$/i.test(id);
 
 export function NewSale() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
@@ -55,30 +56,57 @@ export function NewSale() {
   const [taxRate] = useState<number>(18); // GST 18%
   const [showCustomerSearch, setShowCustomerSearch] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [stores, setStores] = useState<any[]>([]);
+  const [selectedStoreId, setSelectedStoreId] = useState<string>("");
   const { toast } = useToast();
 
   // Load products on component mount
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const loadedProducts = await getProducts();
-        setProducts(loadedProducts.filter((p) => p.stock > 0));
+        const loadedInventory = await getInventory();
+        setProducts(loadedInventory.filter((item) => item.stock > 0));
       } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading inventory:', error);
         toast({
           title: 'Error',
-          description: 'Failed to load products',
+          description: 'Failed to load inventory',
+          variant: 'destructive',
+        });
+      }
+    };
+
+    const loadStores = async () => {
+      try {
+        const loadedStores = await getStores();
+        setStores(loadedStores);
+        if (loadedStores.length > 0) setSelectedStoreId(loadedStores[0]._id);
+      } catch (error) {
+        console.error('Error loading stores:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load stores',
           variant: 'destructive',
         });
       }
     };
 
     loadProducts();
+    loadStores();
   }, []);
 
   const addItemToSale = () => {
-    const product = products.find((p) => p.id === selectedProductId);
+    if (quantity < 1) {
+      toast({
+        title: "Invalid Quantity",
+        description: "Quantity must be at least 1",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const product = products.find((p) => (p._id || p.id) === selectedProductId);
     if (!product) {
       toast({
         title: "Error",
@@ -87,7 +115,7 @@ export function NewSale() {
       });
       return;
     }
-
+    
     if (quantity > product.stock) {
       toast({
         title: "Insufficient Stock",
@@ -96,7 +124,6 @@ export function NewSale() {
       });
       return;
     }
-
     const unitPrice = customPrice ? parseFloat(customPrice) : product.price;
     const newItem: SaleItem = {
       product,
@@ -104,7 +131,6 @@ export function NewSale() {
       unitPrice,
       discount: 0,
     };
-
     setSaleItems([...saleItems, newItem]);
     setSelectedProductId("");
     setQuantity(1);
@@ -163,51 +189,94 @@ export function NewSale() {
       return;
     }
 
+    // Check for items with quantity 0
+    const hasInvalidQuantity = saleItems.some(item => item.quantity < 1);
+    if (hasInvalidQuantity) {
+      toast({
+        title: "Invalid Quantity",
+        description: "All items must have a quantity of at least 1",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const customerId = selectedCustomer._id || selectedCustomer.id;
+    if (!isMongoId(customerId)) {
+      toast({
+        title: "Invalid Customer",
+        description: "Customer ID is not valid.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!isMongoId(selectedStoreId)) {
+      toast({
+        title: "Invalid Store",
+        description: "Store ID is not valid.",
+        variant: "destructive",
+      });
+      return;
+    }
+    for (const item of saleItems) {
+      const productId = item.product.product || item.product._id || item.product.id;
+      if (!isMongoId(productId)) {
+        toast({
+          title: "Invalid Product",
+          description: `Product ID ${productId} is not valid.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setIsProcessing(true);
     try {
       const totals = calculateTotals();
-
-      // For this demo, we'll create a sale with the first item
-      // In a real app, you'd handle multiple items properly
-      const firstItem = saleItems[0];
-
-      const newSale = addSale({
-        customerId: selectedCustomer.id,
-        productId: firstItem.product.id,
-        quantity: firstItem.quantity,
-        unitPrice: firstItem.unitPrice,
-        totalAmount: totals.subtotal,
-        discount: totals.totalDiscount,
-        tax: totals.tax,
-        finalAmount: totals.finalAmount,
-        paymentMethod,
-        storeId: "store-1", // Default to first store
-        salesPersonId: employees.find((e) => e.role === "sales")?.id || "emp-1",
-        status: "completed",
-        warranty: {
-          duration: 12,
-          startDate: new Date().toISOString().split("T")[0],
-          endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split("T")[0],
-        },
+      // Prepare items for backend
+      const items = saleItems.map(item => ({
+        inventory: item.product._id || item.product.id,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        discount: item.discount,
+      }));
+      // Send to backend
+      const response = await fetch("/api/sales", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: customerId,
+          store: selectedStoreId,
+          items,
+          totalAmount: totals.subtotal,
+          discount: totals.totalDiscount,
+          tax: totals.tax,
+          paymentMethod,
+          // Add more fields as needed (e.g., paymentDetails, notes)
+        }),
       });
-
-      toast({
-        title: "Sale Completed Successfully",
-        description: `Sale ID: ${newSale.id} | Amount: ₹${newSale.finalAmount.toLocaleString()}`,
-      });
-
-      // Reset form
-      setSelectedCustomer(null);
-      setSaleItems([]);
-      setShowCustomerSearch(true);
-      setDiscount(0);
-      setPaymentMethod("cash");
+      const result = await response.json();
+      if (result.success) {
+        toast({
+          title: "Sale Completed Successfully",
+          description: `Sale ID: ${result.data.saleNumber || result.data._id}`,
+        });
+        setSaleItems([]);
+        setSelectedProductId("");
+        setQuantity(1);
+        setCustomPrice("");
+        setDiscount(0);
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to create sale",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create sale";
       toast({
-        title: "Error Processing Sale",
-        description: "Please try again or contact support",
+        title: "Error",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -290,21 +359,17 @@ export function NewSale() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="md:col-span-2">
-                  <Label>Product</Label>
-                  <Select
-                    value={selectedProductId}
-                    onValueChange={setSelectedProductId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select product" />
+              <div className="flex gap-2 items-end mb-4">
+                <div className="flex-1">
+                  <Label htmlFor="product">Product</Label>
+                  <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                    <SelectTrigger id="product" className="w-full">
+                      <SelectValue placeholder="Select a product from inventory" />
                     </SelectTrigger>
                     <SelectContent>
                       {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id}>
-                          {product.name} - ₹{product.price.toLocaleString()} (
-                          {product.stock} in stock)
+                        <SelectItem key={product._id || product.id} value={product._id || product.id}>
+                          {product.name} ({product.brand} {product.model}) - Stock: {product.stock}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -332,10 +397,13 @@ export function NewSale() {
                 </div>
               </div>
 
-              <Button onClick={addItemToSale} className="w-full">
+              <Button onClick={addItemToSale} className="w-full" disabled={!selectedProductId}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add to Sale
               </Button>
+              {!selectedProductId && (
+                <div className="text-sm text-red-500 mt-1">Please select a product</div>
+              )}
             </CardContent>
           </Card>
 
@@ -395,6 +463,23 @@ export function NewSale() {
               )}
             </CardContent>
           </Card>
+
+          {/* Store selection dropdown */}
+          <div className="mb-4">
+            <Label htmlFor="store">Store</Label>
+            <Select value={selectedStoreId} onValueChange={setSelectedStoreId}>
+              <SelectTrigger id="store" className="w-full">
+                <SelectValue placeholder="Select a store" />
+              </SelectTrigger>
+              <SelectContent>
+                {stores.map((store) => (
+                  <SelectItem key={store._id} value={store._id}>
+                    {store.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Right Column - Sale Summary */}

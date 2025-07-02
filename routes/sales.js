@@ -3,6 +3,7 @@ import { body, param, query, validationResult } from "express-validator";
 import Sale from "../models/Sale.js";
 import Product from "../models/Product.js";
 import Customer from "../models/Customer.js";
+import Inventory from '../models/Inventory.js';
 
 const router = express.Router();
 
@@ -218,9 +219,9 @@ router.post(
     body("customer").isMongoId().withMessage("Valid customer ID is required"),
     body("store").isMongoId().withMessage("Valid store ID is required"),
     body("items").isArray({ min: 1 }).withMessage("At least one item required"),
-    body("items.*.product")
+    body("items.*.inventory")
       .isMongoId()
-      .withMessage("Valid product ID is required"),
+      .withMessage("Valid inventory ID is required"),
     body("items.*.quantity")
       .isInt({ min: 1 })
       .withMessage("Quantity must be positive"),
@@ -250,24 +251,31 @@ router.post(
       let totalAmount = 0;
       const populatedItems = [];
 
-      // Verify products and calculate total
+      // Verify inventory items and calculate total
       for (const item of items) {
-        const product = await Product.findById(item.product);
-        if (!product) {
+        const inventoryItem = await Inventory.findById(item.inventory);
+        if (!inventoryItem) {
           return res.status(404).json({
             success: false,
-            message: `Product with ID ${item.product} not found`,
+            message: `Inventory item with ID ${item.inventory} not found`,
           });
         }
-        if (product.stock < item.quantity) {
+        if (inventoryItem.stock < item.quantity) {
           return res.status(400).json({
             success: false,
-            message: `Not enough stock for ${product.name}`,
+            message: `Not enough stock for ${inventoryItem.name}`,
           });
         }
         const totalPrice = item.quantity * item.unitPrice;
         totalAmount += totalPrice;
-        populatedItems.push({ ...item, totalPrice });
+        // Use the product field from the inventory item
+        populatedItems.push({
+          product: inventoryItem.product, // Store the correct product reference
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice,
+          discount: item.discount || 0,
+        });
       }
 
       // Create new sale
@@ -283,16 +291,15 @@ router.post(
 
       await newSale.save();
 
-      // Update product stock
-      for (const item of populatedItems) {
-        await Product.findByIdAndUpdate(item.product, {
+      // Update inventory stock
+      for (const item of items) {
+        await Inventory.findByIdAndUpdate(item.inventory, {
           $inc: { stock: -item.quantity },
         });
       }
 
       const populatedSale = await Sale.findById(newSale._id)
-        .populate("customer", "name email")
-        .populate("items.product", "name brand");
+        .populate("customer", "name email");
 
       res.status(201).json({
         success: true,

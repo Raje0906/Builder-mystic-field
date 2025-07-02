@@ -174,17 +174,15 @@ export function NewRepair() {
       return;
     }
 
-    // Validate required form fields
-    const requiredFields = {
-      deviceBrand: "Device Brand",
-      deviceModel: "Device Model", 
-      issue: "Issue Description"
-    };
-
-    const missingFields = Object.entries(requiredFields)
-      .filter(([field]) => !formData[field])
-      .map(([_, label]) => label);
-
+    // Validate required form fields (must not be empty or whitespace)
+    const requiredFields = [
+      { field: formData.deviceBrand, label: "Device Brand" },
+      { field: formData.deviceModel, label: "Device Model" },
+      { field: formData.issue, label: "Issue Description" }
+    ];
+    const missingFields = requiredFields
+      .filter(({ field }) => !field || !field.trim())
+      .map(({ label }) => label);
     if (missingFields.length > 0) {
       toast({
         title: "Required Fields Missing",

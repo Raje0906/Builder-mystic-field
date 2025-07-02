@@ -7,8 +7,6 @@ async function testConnection() {
   
   try {
     await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
     });
     

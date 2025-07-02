@@ -11,6 +11,7 @@ import {
   Settings,
   Laptop,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -67,6 +68,7 @@ const navigation = [
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
+  const { user } = useAuth();
 
   return (
     <div className="flex flex-col bg-white border-r border-gray-200 h-full">
@@ -128,6 +130,22 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             </div>
           );
         })}
+        {/* Admin-only: User Management */}
+        {user?.role === "admin" && (
+          <Link
+            to="/users"
+            onClick={onNavigate}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors mt-2",
+              location.pathname === "/users"
+                ? "bg-primary/10 text-primary border border-primary/20"
+                : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            )}
+          >
+            <Settings className="w-5 h-5" />
+            User Management
+          </Link>
+        )}
       </nav>
 
       {/* User Section */}

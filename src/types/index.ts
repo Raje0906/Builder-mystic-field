@@ -9,6 +9,7 @@ export interface Address {
 }
 
 export interface Customer {
+  _id?: string;
   id: string;
   name: string;
   email: string;
@@ -22,6 +23,7 @@ export interface Customer {
 }
 
 export interface Product {
+  _id?: string;
   id: string;
   name: string;
   brand: string;
