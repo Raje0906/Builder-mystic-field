@@ -46,6 +46,7 @@ import storeRoutes from "./routes/stores.js";
 import inventoryRoutes from "./routes/inventory.js";
 import authRoutes from "./routes/auth.js";
 import reportsRoutes from "./routes/reports.js";
+import usersRoutes from "./routes/users.js";
 
 // Import middleware
 import errorHandler from "./middleware/errorHandler.js";
@@ -169,7 +170,8 @@ const apiRoutes = [
   { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
   { path: '/api/stores', router: storeRoutes },
   { path: '/api/inventory', router: inventoryRoutes },
-  { path: '/api/reports', router: reportsRoutes }
+  { path: '/api/reports', router: reportsRoutes },
+  { path: '/api/users', router: usersRoutes },
 ];
 
 apiRoutes.forEach(route => {

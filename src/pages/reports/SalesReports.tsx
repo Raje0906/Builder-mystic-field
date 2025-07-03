@@ -55,7 +55,6 @@ import {
   getCustomers,
   getProducts,
 } from "@/lib/dataUtils";
-import { stores, products } from "@/lib/mockData";
 import { Report } from "@/types";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -76,6 +75,8 @@ export function SalesReports() {
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stores, setStores] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
     const generateReport = async () => {
@@ -110,12 +111,34 @@ export function SalesReports() {
     generateReport();
   }, [reportType, selectedYear, selectedMonth, selectedQuarter]);
 
+  useEffect(() => {
+    fetch("/api/stores")
+      .then((res) => res.json())
+      .then((data) => setStores(data.data || []))
+      .catch((err) => console.error("Failed to fetch stores", err));
+    fetch("/api/products?limit=1000")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data && data.data.products) {
+          setProducts(data.data.products);
+        } else {
+          setProducts([]);
+          console.warn("Products API did not return expected data", data);
+        }
+      })
+      .catch((err) => {
+        setProducts([]);
+        console.error("Failed to fetch products", err);
+      });
+  }, []);
+
   const getStoreName = (storeId: string) => {
-    return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
+    return stores.find((s) => s._id === storeId)?.name || "Unknown Store";
   };
 
   const getProductName = (productId: string) => {
-    return products.find((p) => p.id === productId)?.name || "Unknown Product";
+    if (!products || products.length === 0) return "Unknown Product";
+    return products.find((p) => p._id === productId)?.name || "Unknown Product";
   };
 
   const formatPeriod = () => {

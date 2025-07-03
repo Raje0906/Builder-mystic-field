@@ -49,11 +49,11 @@ function calculateRepairMetrics(repairs) {
   const totalRevenue = repairs.reduce((sum, repair) => sum + (repair.actualCost || 0), 0);
 
   // Average repair time for completed repairs
-  const completedRepairsWithTime = repairs.filter(r => r.status === 'completed' && r.actualCompletion && r.dateReceived);
+  const completedRepairsWithTime = repairs.filter(r => r.status === 'completed' && r.actualCompletion && r.receivedDate);
   let averageRepairTime = 0;
   if (completedRepairsWithTime.length > 0) {
     const totalDays = completedRepairsWithTime.reduce((sum, repair) => {
-      const start = new Date(repair.dateReceived);
+      const start = new Date(repair.receivedDate);
       const end = new Date(repair.actualCompletion);
       const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
       return sum + days;
@@ -157,7 +157,7 @@ router.get('/monthly', authenticateToken, async (req, res) => {
     
     // Base query with date range
     let query = { 
-      dateReceived: { 
+      receivedDate: { 
         $gte: startDate, 
         $lte: endDate 
       } 
@@ -292,7 +292,7 @@ router.get('/quarterly', authenticateToken, async (req, res) => {
     
     // Repairs query
     const repairsQuery = { 
-      dateReceived: { $gte: startDate, $lte: endDate },
+      receivedDate: { $gte: startDate, $lte: endDate },
       ...commonOptions
     };
 
@@ -339,16 +339,20 @@ router.get('/annual', authenticateToken, async (req, res) => {
     const startDate = new Date(parseInt(year), 0, 1);
     const endDate = new Date(parseInt(year), 11, 31, 23, 59, 59);
     
-    // Base query with date range
-    const query = {
-      dateReceived: { $gte: startDate, $lte: endDate },
+    // Build queries for sales and repairs
+    const salesQuery = {
+      createdAt: { $gte: startDate, $lte: endDate },
+      ...(user.role !== 'admin' && user.store_id && { storeId: user.store_id })
+    };
+    const repairsQuery = {
+      receivedDate: { $gte: startDate, $lte: endDate },
       ...(user.role !== 'admin' && user.store_id && { storeId: user.store_id })
     };
     
     // Get both sales and repairs for the year
     const [sales, repairs] = await Promise.all([
-      Sale.find({ ...query, dateReceived: { $exists: false }, createdAt: { $gte: startDate, $lte: endDate } }).populate('items.product'),
-      Repair.find(query)
+      Sale.find(salesQuery).populate('items.product'),
+      Repair.find(repairsQuery)
     ]);
     
     const salesMetrics = calculateSalesMetrics(sales);

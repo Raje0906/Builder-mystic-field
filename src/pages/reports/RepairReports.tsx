@@ -53,7 +53,6 @@ import {
   generateQuarterlyReport,
   generateAnnualReport,
 } from "@/lib/dataUtils";
-import { stores } from "@/lib/mockData";
 import { Report } from "@/types";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -73,6 +72,7 @@ export function RepairReports() {
   );
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [stores, setStores] = useState<any[]>([]);
 
   const generateReport = useCallback(async () => {
     setIsLoading(true);
@@ -110,8 +110,15 @@ export function RepairReports() {
     generateReport();
   }, [generateReport]);
 
+  useEffect(() => {
+    fetch("/api/stores")
+      .then((res) => res.json())
+      .then((data) => setStores(data.data || []))
+      .catch((err) => console.error("Failed to fetch stores", err));
+  }, []);
+
   const getStoreName = (storeId: string) => {
-    return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
+    return stores.find((s) => s._id === storeId)?.name || "Unknown Store";
   };
 
   const formatPeriod = () => {

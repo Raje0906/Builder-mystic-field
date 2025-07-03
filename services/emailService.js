@@ -1,17 +1,8 @@
-// EmailJS Backend Service
-import emailjs from '@emailjs/nodejs';
+// EmailJS cannot be used from the backend due to API restrictions.
+// See: https://www.emailjs.com/docs/examples/reactjs/
 
-const SERVICE_ID = 'service_hpz532o';
-const TEMPLATE_ID = 'template_n0s86ti';
-const PUBLIC_KEY = 'IAgtIkM8K9OyLAgdP';
-
-async function sendEmailNotification(to, subject, message) {
-  const templateParams = {
-    to_email: to,
-    subject,
-    message,
-  };
-  return emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+function sendEmailNotification() {
+  throw new Error('EmailJS API calls are disabled for non-browser applications. Use EmailJS from the frontend.');
 }
 
 export { sendEmailNotification }; 

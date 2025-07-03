@@ -57,7 +57,6 @@ import {
   generateQuarterlyReport,
   generateAnnualReport,
 } from "@/lib/dataUtils";
-import { stores, employees } from "@/lib/mockData";
 import { Report } from "@/types";
 
 export function StoreReports() {
@@ -76,6 +75,8 @@ export function StoreReports() {
   const [selectedStore, setSelectedStore] = useState<string>("all");
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [stores, setStores] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
 
   const generateReport = useCallback(async () => {
     setIsLoading(true);
@@ -110,12 +111,23 @@ export function StoreReports() {
     generateReport();
   }, [generateReport]);
 
+  useEffect(() => {
+    fetch("/api/stores")
+      .then((res) => res.json())
+      .then((data) => setStores(data.data || []))
+      .catch((err) => console.error("Failed to fetch stores", err));
+    fetch("/api/users?role=employee")
+      .then((res) => res.json())
+      .then((data) => setEmployees(data.data || []))
+      .catch((err) => console.error("Failed to fetch employees", err));
+  }, []);
+
   const getStoreName = (storeId: string) => {
-    return stores.find((s) => s.id === storeId)?.name || "Unknown Store";
+    return stores.find((s) => s._id === storeId)?.name || "Unknown Store";
   };
 
   const getStoreDetails = (storeId: string) => {
-    return stores.find((s) => s.id === storeId);
+    return stores.find((s) => s._id === storeId);
   };
 
   const getStoreEmployees = (storeId: string) => {
@@ -143,14 +155,14 @@ export function StoreReports() {
 
     return stores.map((store) => {
       const salesData = salesByStore.find(
-        (s) => s.storeId === store.id,
+        (s) => s.storeId === store._id,
       ) || { revenue: 0, transactions: 0 };
 
       const repairData = repairsByStore.find(
-        (r) => r.storeId === store.id,
+        (r) => r.storeId === store._id,
       ) || { repairs: 0, revenue: 0 };
 
-      const storeEmployees = getStoreEmployees(store.id);
+      const storeEmployees = getStoreEmployees(store._id);
       const totalRevenue = salesData.revenue + repairData.revenue;
       const avgRevenuePerEmployee =
         storeEmployees.length > 0 ? totalRevenue / storeEmployees.length : 0;
@@ -170,6 +182,7 @@ export function StoreReports() {
 
   const getBestPerformingStore = () => {
     const metrics = calculateStoreMetrics();
+    if (!metrics || metrics.length === 0) return null;
     return metrics.reduce((best, current) =>
       current.totalRevenue > best.totalRevenue ? current : best,
     );
@@ -370,7 +383,7 @@ export function StoreReports() {
                 <SelectContent>
                   <SelectItem value="all">All Stores</SelectItem>
                   {stores.map((store) => (
-                    <SelectItem key={store.id} value={store.id}>
+                    <SelectItem key={store._id} value={store._id}>
                       {store.name}
                     </SelectItem>
                   ))}
@@ -580,7 +593,7 @@ export function StoreReports() {
                     .map((store, index) => {
                       const performanceScore = calculatePerformanceScore(store);
                       return (
-                        <TableRow key={store.id}>
+                        <TableRow key={store._id}>
                           <TableCell>
                             <div className="flex items-center gap-3">
                               {index === 0 && (
@@ -672,15 +685,15 @@ export function StoreReports() {
               <div className="grid gap-4 md:grid-cols-3">
                 {stores.map((store) => {
                   const storeMetric = storeMetrics.find(
-                    (s) => s.id === store.id,
+                    (s) => s._id === store._id,
                   );
-                  const storeEmployees = getStoreEmployees(store.id);
+                  const storeEmployees = getStoreEmployees(store._id);
                   const manager = storeEmployees.find(
                     (e) => e.role === "manager",
                   );
 
                   return (
-                    <Card key={store.id} className="relative">
+                    <Card key={store._id} className="relative">
                       <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center gap-2">
                           <div

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -18,8 +18,78 @@ import {
   Users,
   Package,
 } from "lucide-react";
+import { generateMonthlySalesReport, generateMonthlyRepairReport, generateMonthlyStoreReport, generateQuarterlyReport, generateAnnualReport } from "@/lib/dataUtils";
 
 export function ReportsOverview() {
+  const [summary, setSummary] = useState({
+    totalSales: 0,
+    totalRevenue: 0,
+    activeRepairs: 0,
+    totalCustomers: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [periodType, setPeriodType] = useState<'monthly' | 'quarterly' | 'annual'>('monthly');
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
+  const [selectedQuarter, setSelectedQuarter] = useState<number>(1);
+  const [trendData, setTrendData] = useState<any[]>([]);
+  const [repairData, setRepairData] = useState<any[]>([]);
+  const [storeData, setStoreData] = useState<any[]>([]);
+  const [trendLoading, setTrendLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/reports/summary", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setSummary({
+            totalSales: data.data.totalSales,
+            totalRevenue: data.data.totalRevenue,
+            activeRepairs: data.data.activeRepairs,
+            totalCustomers: data.data.totalCustomers,
+          });
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      setTrendLoading(true);
+      try {
+        if (periodType === 'monthly') {
+          const sales = await generateMonthlySalesReport(selectedYear, selectedMonth);
+          const repairs = await generateMonthlyRepairReport(selectedYear, selectedMonth);
+          const stores = await generateMonthlyStoreReport(selectedYear, selectedMonth);
+          setTrendData(sales.trend || []);
+          setRepairData(repairs.completion || []);
+          setStoreData(stores.performance || []);
+        } else if (periodType === 'quarterly') {
+          const report = await generateQuarterlyReport(selectedYear, selectedQuarter);
+          setTrendData(report.sales.trend || []);
+          setRepairData(report.repairs.completion || []);
+          setStoreData(report.sales.storePerformance || []);
+        } else if (periodType === 'annual') {
+          const report = await generateAnnualReport(selectedYear);
+          setTrendData(report.sales.trend || []);
+          setRepairData(report.repairs.completion || []);
+          setStoreData(report.sales.storePerformance || []);
+        }
+      } catch (err) {
+        setTrendData([]);
+        setRepairData([]);
+        setStoreData([]);
+      } finally {
+        setTrendLoading(false);
+      }
+    }
+    fetchData();
+  }, [periodType, selectedYear, selectedMonth, selectedQuarter]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -34,49 +104,45 @@ export function ReportsOverview() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Available Reports
-            </CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Report categories</p>
+            <div className="text-2xl font-bold">{loading ? "..." : summary.totalSales}</div>
+            <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Time Periods</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Monthly</div>
-            <p className="text-xs text-muted-foreground">Quarterly & Annual</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Data Sources</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Store locations</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Export Options
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">JSON</div>
-            <p className="text-xs text-muted-foreground">Data export</p>
+            <div className="text-2xl font-bold">{loading ? "..." : `₹${(summary.totalRevenue/100000).toFixed(2)}L`}</div>
+            <p className="text-xs text-muted-foreground">+8% from last month</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Repairs</CardTitle>
+            <Wrench className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? "..." : summary.activeRepairs}</div>
+            <p className="text-xs text-muted-foreground">5% completion rate</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Customers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loading ? "..." : summary.totalCustomers}</div>
+            <p className="text-xs text-muted-foreground">15 new this month</p>
           </CardContent>
         </Card>
       </div>

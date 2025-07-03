@@ -119,15 +119,13 @@ router.post(
   }
 );
 
-
-
 // GET /api/products - Get all products with filtering
 // Get all products with filtering
 router.get(
   "/",
   [
     query("page").optional().isInt({ min: 1 }),
-    query("limit").optional().isInt({ min: 1, max: 100 }),
+    query("limit").optional().isInt({ min: 1, max: 1000 }),
     query("search").optional().isString().trim(),
     query("category").optional().isString(),
     query("status").optional().isIn(["active", "inactive"]),
@@ -138,7 +136,13 @@ router.get(
   async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 20;
+      let limit = 20;
+      if (req.query.limit) {
+        const parsedLimit = parseInt(req.query.limit, 10);
+        if (!isNaN(parsedLimit) && parsedLimit > 0 && parsedLimit <= 1000) {
+          limit = parsedLimit;
+        }
+      }
       const skip = (page - 1) * limit;
       const { search, category, status, lowStock, barcode } = req.query;
 

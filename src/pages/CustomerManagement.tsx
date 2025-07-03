@@ -53,6 +53,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { getCustomers, addCustomer, updateCustomer, deleteCustomer, getCustomer } from "@/lib/dataUtils";
 import { Address, Customer, Sale, Repair } from "@/types";
+import * as XLSX from "xlsx";
 
 // Mock data - replace with actual API calls
 const getSales = (customerId: string): Sale[] => {
@@ -284,26 +285,27 @@ export default function CustomerManagement() {
   };
 
   const exportCustomers = () => {
-    const data = {
-      exported: new Date().toISOString(),
-      totalCustomers: filteredCustomers.length,
-      customers: filteredCustomers.map((customer) => ({
-        ...customer,
-        stats: getCustomerStats(customer.id),
-      })),
-    };
+    // Prepare data for Excel
+    const exportData = filteredCustomers.map((customer) => ({
+      Name: customer.name,
+      Email: customer.email,
+      Phone: customer.phone,
+      "Address Line 1": customer.address?.line1 || '',
+      City: customer.address?.city || '',
+      State: customer.address?.state || '',
+      Pincode: customer.address?.pincode || '',
+      Status: customer.status,
+      "Date Added": customer.dateAdded ? new Date(customer.dateAdded).toLocaleDateString() : '',
+      "Total Purchases": customer.totalPurchases ?? 0,
+    }));
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `customers-${new Date().toISOString().split("T")[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Create worksheet and workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, `customers-${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
   const activeCustomers = customers.filter((c) => c.status === "active").length;

@@ -17,11 +17,11 @@ import {
 import {
   addRepair,
   sendWhatsAppNotification,
-  sendEmailNotification,
 } from "@/lib/dataUtils";
-import { stores, employees } from "@/lib/mockData";
+import { stores } from "@/lib/mockData";
 import { CustomerSearch } from "@/components/customers/CustomerSearch";
 import { useAuth } from "@/contexts/AuthContext";
+import { emailService } from '@/services/emailService';
 
 // Define the Repair interface
 export interface Repair {
@@ -85,6 +85,7 @@ export function NewRepair() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const [engineers, setEngineers] = useState<any[]>([]);
 
   // Get user's store information
   const getUserStore = () => {
@@ -120,7 +121,7 @@ export function NewRepair() {
     estimatedCost: 0,
     priority: "medium",
     storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-    technicianId: employees.find((e) => e.role === "technician")?.id || "",
+    technicianId: "",
     estimatedDays: 3,
     whatsappNumber: "",
     notificationEmail: "",
@@ -136,6 +137,20 @@ export function NewRepair() {
       }));
     }
   }, [user, userStore, isAdmin]);
+
+  useEffect(() => {
+    // Fetch engineer users from backend
+    fetch('http://localhost:3002/api/users?role=engineer')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.data)) {
+          setEngineers(data.data);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch engineers:', err);
+      });
+  }, []);
 
   // Handle form input changes
   const handleInputChange = (field: keyof RepairFormData, value: string | number | boolean) => {
@@ -159,9 +174,10 @@ export function NewRepair() {
       !!selectedCustomer &&
       !!formData.deviceBrand.trim() &&
       !!formData.deviceModel.trim() &&
-      !!formData.issue.trim()
+      !!formData.issue.trim() &&
+      !!formData.technicianId
     );
-  }, [selectedCustomer, formData.deviceBrand, formData.deviceModel, formData.issue]);
+  }, [selectedCustomer, formData.deviceBrand, formData.deviceModel, formData.issue, formData.technicianId]);
 
   const submitRepair = async () => {
     // Validate customer selection
@@ -178,10 +194,11 @@ export function NewRepair() {
     const requiredFields = [
       { field: formData.deviceBrand, label: "Device Brand" },
       { field: formData.deviceModel, label: "Device Model" },
-      { field: formData.issue, label: "Issue Description" }
+      { field: formData.issue, label: "Issue Description" },
+      { field: formData.technicianId, label: "Assigned Technician" },
     ];
     const missingFields = requiredFields
-      .filter(({ field }) => !field || !field.trim())
+      .filter(({ field }) => !field || !field.toString().trim())
       .map(({ label }) => label);
     if (missingFields.length > 0) {
       toast({
@@ -201,45 +218,24 @@ export function NewRepair() {
       const selectedStore = stores.find(store => store.id === formData.storeId) || userStore;
       const store = selectedStore || stores[0]; // Fallback to first store if needed
       
-      const technician = employees.find((e) => e.id === formData.technicianId)?.name || '';
+      const technician = engineers.find((e) => e._id === formData.technicianId)?.name || '';
       
-      // Create repair data object with all required properties
+      // Create repair data object with only required properties for backend
       const repairData = {
-        customer: selectedCustomer._id || selectedCustomer.id, // Required
-        customerId: selectedCustomer._id || selectedCustomer.id, // For backward compatibility
-        deviceType: 'Laptop', // Required
-        // Device information in nested object as expected by the API
-        deviceInfo: {
-          brand: formData.deviceBrand.trim(), // Required
-          model: formData.deviceModel.trim(), // Required
-          serialNumber: formData.serialNumber.trim() || 'N/A',
-          imei: formData.imei.trim() || 'N/A'
-        },
-        // Also include at root level for backward compatibility
+        customer: selectedCustomer._id || selectedCustomer.id || '',
+        deviceType: 'Laptop',
         brand: formData.deviceBrand.trim(),
         model: formData.deviceModel.trim(),
         serialNumber: formData.serialNumber.trim() || 'N/A',
         imei: formData.imei.trim() || 'N/A',
-        issue: formData.issue.trim(), // Required
-        issueDescription: formData.issue.trim(), // For backward compatibility
+        issueDescription: formData.issue.trim(),
         diagnosis: (formData.diagnosis || 'Pending diagnosis').trim(),
-        estimatedCost: parseFloat(String(formData.estimatedCost)) || 0,
         repairCost: parseFloat(String(formData.estimatedCost)) || 0,
-        partsCost: 0, // Will be updated later
-        laborCost: 0, // Will be calculated later
-        actualCost: parseFloat(String(formData.estimatedCost)) || 0,
-        status: 'received',
+        partsCost: 0,
+        laborCost: 0,
         priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
-        estimatedCompletion: estimatedCompletion,
-        storeId: formData.storeId,
-        technicianId: formData.technicianId,
-        technician: employees.find(e => e.id === formData.technicianId)?.name || '',
-        contactInfo: {
-          whatsappNumber: formData.whatsappNumber.trim() || '',
-          notificationEmail: formData.notificationEmail.trim() || '',
-          consentGiven: Boolean(formData.notificationConsent),
-          consentDate: new Date().toISOString()
-        },
+        estimatedCompletion: calculateEstimatedCompletion().toISOString(),
+        technician: engineers.find((e) => e._id === formData.technicianId)?.name || '',
         notes: [
           `Issue reported: ${formData.issue}`,
           `Estimated cost: ₹${formData.estimatedCost}`,
@@ -247,10 +243,8 @@ export function NewRepair() {
           `Email contact: ${formData.notificationEmail || 'Not provided'}`,
           `Store: ${store?.name || 'Not specified'}`
         ].join('\n'),
-        warrantyPeriod: 30, // Default 30 days warranty
-        estimatedDays: formData.estimatedDays,
-        dateReceived: new Date().toISOString()
       };
+      console.log('[DEBUG] Submitting repairData:', repairData);
       
       // Submit repair to the API
       const newRepair = await addRepair(repairData);
@@ -266,7 +260,7 @@ export function NewRepair() {
         estimatedCost: 0,
         priority: "medium",
         storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: employees.find((e) => e.role === "technician")?.id || "",
+        technicianId: "",
         estimatedDays: 3,
         whatsappNumber: "",
         notificationEmail: "",
@@ -317,7 +311,7 @@ export function NewRepair() {
   ) => {
     try {
       // If we don't have a valid repair ID, we can't send notifications
-      const repairId = newRepair?._id || newRepair?.id;
+      const repairId = newRepair?._id || newRepair?.id || 'N/A';
       if (!repairId) {
         console.warn('Cannot send notifications: Missing repair ID');
         return;
@@ -369,7 +363,16 @@ Thank you for choosing our repair service. Here are your repair details:
             `- Estimated Completion: ${completionDate.toLocaleDateString()}\n\n` +
             `We'll notify you once your repair is complete.\n\nBest regards,\n${store?.name || 'Repair Team'}`;
 
-          await sendEmailNotification(formData.notificationEmail, emailSubject, emailBody);
+          const templateParams = {
+            user_name: customer.name,
+            device_name: formData.deviceBrand + ' ' + formData.deviceModel,
+            issue_description: formData.issue,
+            repair_id: repairId,
+            estimated_date: completionDate.toLocaleDateString(),
+            to_email: customer.email,
+          };
+
+          await emailService.sendEmail(templateParams);
         }
       } catch (emailError) {
         console.error('Failed to send email notification:', emailError);
@@ -401,14 +404,14 @@ Thank you for choosing our repair service. Here are your repair details:
     setIsSubmitting(true);
     try {
       const estimatedCompletion = calculateEstimatedCompletion();
-      const technician = employees.find(e => e.id === formData.technicianId)?.name || '';
+      const technician = engineers.find(e => e._id === formData.technicianId)?.name || '';
       const estimatedCost = formData.estimatedCost || 0;
 
       // Format data for the API
       const repairData: Omit<Repair, '_id' | 'createdAt' | 'updatedAt'> = {
         id: '', // Will be set by the server
-        customer: selectedCustomer.id,
-        customerId: selectedCustomer.id,
+        customer: selectedCustomer.id || '',
+        customerId: selectedCustomer.id || '',
         deviceType: 'Laptop',
         deviceInfo: {
           brand: formData.deviceBrand,
@@ -425,7 +428,7 @@ Thank you for choosing our repair service. Here are your repair details:
         partsCost: 0,
         laborCost: 0,
         priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
-        estimatedCompletion,
+        estimatedCompletion: calculateEstimatedCompletion().toISOString(),
         storeId: formData.storeId,
         technicianId: formData.technicianId,
         technician,
@@ -487,7 +490,7 @@ We'll keep you updated on the progress.
         estimatedCost: 0,
         priority: "medium",
         storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: employees.find((e) => e.role === "technician")?.id || "",
+        technicianId: "",
         estimatedDays: 3,
         whatsappNumber: "",
         notificationEmail: "",
@@ -507,7 +510,7 @@ We'll keep you updated on the progress.
           }
           
           if (formData.notificationEmail) {
-            await sendEmailNotification(
+            await emailService.sendEmail(
               formData.notificationEmail,
               `Repair Confirmation - ${formData.deviceBrand} ${formData.deviceModel}`,
               `Dear ${selectedCustomer?.name || 'Valued Customer'}, we've received your device for repair. Repair ID: ${newRepair.id || newRepair._id || 'N/A'}. We'll keep you updated!`
@@ -558,7 +561,7 @@ We'll keep you updated on the progress.
         estimatedCost: 0,
         priority: "medium",
         storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: employees.find((e) => e.role === "technician")?.id || "",
+        technicianId: "",
         estimatedDays: 3,
         whatsappNumber: "",
         notificationEmail: "",
@@ -593,8 +596,6 @@ We'll keep you updated on the progress.
       </div>
     );
   }
-
-  const technicians = employees.filter((e) => e.role === "technician");
 
   return (
     <div className="space-y-6">
@@ -888,20 +889,20 @@ We'll keep you updated on the progress.
                 </div>
 
                 <div>
-                  <Label>Assigned Technician</Label>
+                  <Label htmlFor="technician">Assigned Technician</Label>
                   <Select
+                    id="technician"
                     value={formData.technicianId}
-                    onValueChange={(value) =>
-                      handleInputChange("technicianId", value)
-                    }
+                    onValueChange={(value) => handleInputChange("technicianId", value)}
+                    required
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Select technician" />
                     </SelectTrigger>
                     <SelectContent>
-                      {technicians.map((tech) => (
-                        <SelectItem key={tech.id} value={tech.id}>
-                          {tech.name}
+                      {engineers.map((eng) => (
+                        <SelectItem key={eng._id || eng.id} value={eng._id || eng.id}>
+                          {eng.name} ({eng.email})
                         </SelectItem>
                       ))}
                     </SelectContent>

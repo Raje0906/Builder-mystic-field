@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check } from "lucide-react";
+import { emailService } from '@/services/emailService';
 
 interface Repair {
   ticketNumber: string;
@@ -69,6 +70,20 @@ export function TrackRepair() {
           description: "Repair marked as completed and customer has been notified.",
           variant: "default",
         });
+        
+        // Find the repair details from foundRepairs
+        const repair = foundRepairs.find(r => r.ticketNumber === ticketNumber);
+        if (repair && repair.customer?.email) {
+          const templateParams = {
+            user_name: repair.customer.name,
+            device_name: repair.device,
+            issue_description: repair.issue,
+            repair_id: repair.ticketNumber,
+            estimated_date: repair.estimatedCompletion,
+            to_email: repair.customer.email,
+          };
+          await emailService.sendCompletionEmail(templateParams);
+        }
         
         // Refresh the repairs list
         await searchRepairs();
@@ -368,7 +383,16 @@ export function TrackRepair() {
           <h2 className="text-xl font-semibold">
             {foundRepairs.length} {foundRepairs.length === 1 ? 'Repair Found' : 'Repairs Found'}
           </h2>
-          {foundRepairs.map((repair: Repair) => (
+          {/* Sort repairs: incomplete first */}
+          {foundRepairs
+            .slice()
+            .sort((a, b) => {
+              const isAIncomplete = !['completed', 'delivered', 'cancelled'].includes(a.status);
+              const isBIncomplete = !['completed', 'delivered', 'cancelled'].includes(b.status);
+              if (isAIncomplete === isBIncomplete) return 0;
+              return isAIncomplete ? -1 : 1;
+            })
+            .map((repair: Repair) => (
             <Card key={repair.ticketNumber} className="overflow-hidden">
               <CardHeader className="bg-gray-50 p-4 border-b">
                 <div className="flex justify-between items-start">

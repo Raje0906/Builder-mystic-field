@@ -52,10 +52,10 @@ import {
   getRepairs,
   updateRepair,
   sendWhatsAppNotification,
-  sendEmailNotification,
 } from "@/lib/dataUtils";
 import { customers, stores } from "@/lib/mockData";
 import { Repair } from "@/types";
+import { emailService } from '@/services/emailService';
 
 export function RepairsOverview() {
   const [repairs, setRepairs] = useState<Repair[]>([]);
@@ -216,50 +216,16 @@ ${store?.address || "Store Address"}
 
 Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
 
-            const emailSubject = `✅ Device Ready for Pickup - ${updatedRepair.deviceInfo.brand} ${updatedRepair.deviceInfo.model}`;
-            const emailMessage = `
-              <h2 style="color: #10b981;">🎉 Your Device is Ready!</h2>
-              <p>Dear ${customer.name},</p>
-              
-              <p>Excellent news! Your <strong>${updatedRepair.deviceInfo.brand} ${updatedRepair.deviceInfo.model}</strong> has been successfully repaired and is ready for pickup.</p>
-              
-              <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #0369a1; margin-top: 0;">📋 Repair Summary</h3>
-                <ul style="list-style: none; padding: 0;">
-                  <li><strong>Issue:</strong> ${updatedRepair.issue}</li>
-                  <li><strong>Solution:</strong> ${updatedRepair.diagnosis}</li>
-                  <li><strong>Total Cost:</strong> ₹${updatedRepair.actualCost.toLocaleString()}</li>
-                  <li><strong>Completion Date:</strong> ${new Date().toLocaleDateString()}</li>
-                  <li><strong>Repair ID:</strong> ${updatedRepair.id}</li>
-                </ul>
-              </div>
-              
-              <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #d97706; margin-top: 0;">📍 Pickup Information</h3>
-                <p><strong>${store?.name || "Our Store"}</strong><br>
-                ${store?.address || "Store Address"}<br>
-                📞 ${store?.phone || "Store Phone"}</p>
-                
-                <p><strong>Store Hours:</strong><br>
-                Monday - Saturday: 10:00 AM - 8:00 PM<br>
-                Sunday: 11:00 AM - 6:00 PM</p>
-                
-                <p><strong>Please bring:</strong> Valid photo ID for device pickup</p>
-              </div>
-              
-              <p>Thank you for choosing Laptop Store for your repair needs. We appreciate your business!</p>
-              
-              <p>Best regards,<br>
-              The Laptop Store Team</p>
-            `;
-
-            // Send notifications to verified contact details
+            const templateParams = {
+              user_name: customer.name,
+              device_name: updatedRepair.deviceInfo.brand + ' ' + updatedRepair.deviceInfo.model,
+              issue_description: updatedRepair.issue,
+              repair_id: updatedRepair.id,
+              estimated_date: updatedRepair.estimatedCompletion,
+              to_email: customer.email,
+            };
             await sendWhatsAppNotification(whatsappNumber, whatsappMessage);
-            await sendEmailNotification(
-              notificationEmail,
-              emailSubject,
-              emailMessage,
-            );
+            await emailService.sendEmail(templateParams);
 
             // Show success message with details
             toast({

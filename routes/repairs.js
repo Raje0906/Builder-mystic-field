@@ -570,31 +570,7 @@ router.post('/:id/complete', async (req, res) => {
 
       // Email notification
       if (customer?.email) {
-        try {
-          const emailSubject = `✅ Device Ready for Pickup - ${deviceInfo}`;
-          const emailBody = `Dear ${customer.name || 'Valued Customer'},\n\n` +
-            `Great news! Your device repair is complete and ready for pickup.\n\n` +
-            `📋 *Repair Details*\n` +
-            `• Device: ${deviceInfo}\n` +
-            `• Issue: ${repair.issueDescription || 'Not specified'}\n` +
-            `• Total Cost: ₹${totalCost.toLocaleString()}\n` +
-            `• Completion Date: ${new Date().toLocaleDateString()}\n\n` +
-            `📍 *Pickup Location*\n` +
-            `Laptop Store\n` +
-            `📞 +91 98765 43210\n` +
-            `⏰ Mon-Sat 10AM-8PM, Sun 11AM-6PM\n\n` +
-            `Please bring a valid ID when collecting your device.\n\n` +
-            `Thank you for choosing our repair service!\n\n` +
-            `Best regards,\nLaptop Store Team`;
-
-          console.log('Sending email to:', customer.email);
-          const { sendEmailNotification } = await import('../services/emailService.js');
-          const emailResult = await sendEmailNotification(customer.email, emailSubject, emailBody);
-          console.log('Email notification result:', emailResult);
-        } catch (emailError) {
-          console.error('Email notification failed:', emailError);
-          throw emailError;
-        }
+        console.log('Email notification not attempted from backend');
       } else {
         console.log('No email address available for email notification');
       }
