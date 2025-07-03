@@ -861,9 +861,7 @@ We'll keep you updated on the progress.
                   {isAdmin ? (
                     <Select
                       value={formData.storeId}
-                      onValueChange={(value) =>
-                        handleInputChange("storeId", value)
-                      }
+                      onValueChange={(value) => handleInputChange("storeId", value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
