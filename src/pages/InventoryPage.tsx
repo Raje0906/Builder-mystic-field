@@ -3,6 +3,7 @@ import { FiPlus, FiFilter, FiSearch, FiRefreshCw } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import InventoryActions from '../components/InventoryActions';
 import inventoryService, { InventoryItem } from '../services/inventoryService';
+import { saveInventoryToIDB, getInventoryFromIDB } from '@/lib/dataUtils';
 
 const InventoryPage: React.FC = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -30,19 +31,38 @@ const InventoryPage: React.FC = () => {
         ...filters,
         lowStock: filters.lowStock ? 'true' : undefined,
       });
-      setInventory(data);
+      return data;
     } catch (err) {
       console.error('Failed to fetch inventory:', err);
       setError('Failed to load inventory. Please try again.');
       toast.error('Failed to load inventory');
+      throw err; // Re-throw to be caught by loadInventory
     } finally {
       setLoading(false);
     }
   };
 
   // Initial data fetch
+  const loadInventory = async () => {
+    setLoading(true);
+    try {
+      let data = [];
+      if (navigator.onLine) {
+        data = await fetchInventory();
+        await saveInventoryToIDB(data);
+      } else {
+        data = await getInventoryFromIDB();
+      }
+      setInventory(data);
+    } catch (error) {
+      setError('Failed to load inventory');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchInventory();
+    loadInventory();
   }, [filters]);
 
   // These handlers are now handled by the InventoryActions component directly
@@ -71,7 +91,7 @@ const InventoryPage: React.FC = () => {
     });
     // Trigger a refetch after a short delay to ensure state is updated
     setTimeout(() => {
-      fetchInventory();
+      loadInventory();
     }, 100);
   };
 
@@ -118,7 +138,7 @@ const InventoryPage: React.FC = () => {
             <span>Filters</span>
           </button>
           <button
-            onClick={fetchInventory}
+            onClick={loadInventory}
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             title="Refresh"
           >
@@ -258,7 +278,7 @@ const InventoryPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <InventoryActions
                         item={item}
-                        onUpdate={fetchInventory}
+                        onUpdate={loadInventory}
                       />
                     </td>
                   </tr>

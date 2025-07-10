@@ -6,6 +6,7 @@ import {
   SearchFilters,
   Report,
 } from "@/types";
+import { openDB } from 'idb';
 
 // Local storage keys
 const STORAGE_KEYS = {
@@ -14,6 +15,164 @@ const STORAGE_KEYS = {
   SALES: "laptop-store-sales",
   REPAIRS: "laptop-store-repairs",
 };
+
+const DB_NAME = 'laptop-store-crm';
+const DB_VERSION = 2;
+const STORE_CUSTOMERS = 'customers';
+const STORE_SALES = 'sales';
+const STORE_REPORTS = 'reports';
+const STORE_REPAIRS = 'repairs';
+const STORE_INVENTORY = 'inventory';
+const STORE_STORES = 'stores';
+const STORE_USERS = 'users';
+const STORE_NOTIFICATIONS = 'notifications';
+
+// Upgrade DB to support all stores
+export async function getDB() {
+  return openDB(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains(STORE_CUSTOMERS)) {
+        db.createObjectStore(STORE_CUSTOMERS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_SALES)) {
+        db.createObjectStore(STORE_SALES, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_REPORTS)) {
+        db.createObjectStore(STORE_REPORTS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_REPAIRS)) {
+        db.createObjectStore(STORE_REPAIRS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_INVENTORY)) {
+        db.createObjectStore(STORE_INVENTORY, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_STORES)) {
+        db.createObjectStore(STORE_STORES, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_USERS)) {
+        db.createObjectStore(STORE_USERS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_NOTIFICATIONS)) {
+        db.createObjectStore(STORE_NOTIFICATIONS, { keyPath: 'id' });
+      }
+    },
+  });
+}
+
+// Customers
+export async function saveCustomersToIDB(customers: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_CUSTOMERS, 'readwrite');
+  for (const customer of customers) {
+    await tx.store.put(customer);
+  }
+  await tx.done;
+}
+
+export async function getCustomersFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_CUSTOMERS);
+}
+
+// Sales
+export async function saveSalesToIDB(sales: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_SALES, 'readwrite');
+  for (const sale of sales) {
+    await tx.store.put(sale);
+  }
+  await tx.done;
+}
+
+export async function getSalesFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_SALES);
+}
+
+// Reports
+export async function saveReportsToIDB(reports: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_REPORTS, 'readwrite');
+  for (const report of reports) {
+    await tx.store.put(report);
+  }
+  await tx.done;
+}
+
+export async function getReportsFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_REPORTS);
+}
+
+// Repairs
+export async function saveRepairsToIDB(repairs: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_REPAIRS, 'readwrite');
+  for (const repair of repairs) {
+    await tx.store.put(repair);
+  }
+  await tx.done;
+}
+export async function getRepairsFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_REPAIRS);
+}
+
+// Inventory
+export async function saveInventoryToIDB(items: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_INVENTORY, 'readwrite');
+  for (const item of items) {
+    await tx.store.put(item);
+  }
+  await tx.done;
+}
+export async function getInventoryFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_INVENTORY);
+}
+
+// Stores
+export async function saveStoresToIDB(stores: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_STORES, 'readwrite');
+  for (const store of stores) {
+    await tx.store.put(store);
+  }
+  await tx.done;
+}
+export async function getStoresFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_STORES);
+}
+
+// Users
+export async function saveUsersToIDB(users: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_USERS, 'readwrite');
+  for (const user of users) {
+    await tx.store.put(user);
+  }
+  await tx.done;
+}
+export async function getUsersFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_USERS);
+}
+
+// Notifications
+export async function saveNotificationsToIDB(notifications: any[]) {
+  const db = await getDB();
+  const tx = db.transaction(STORE_NOTIFICATIONS, 'readwrite');
+  for (const notification of notifications) {
+    await tx.store.put(notification);
+  }
+  await tx.done;
+}
+export async function getNotificationsFromIDB() {
+  const db = await getDB();
+  return db.getAll(STORE_NOTIFICATIONS);
+}
 
 // Initialize data in localStorage if not present
 export const initializeData = () => {
@@ -797,3 +956,5 @@ export const getStores = async (): Promise<any[]> => {
     return [];
   }
 };
+
+export { getStores as fetchStores };

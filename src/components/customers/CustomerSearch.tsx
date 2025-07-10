@@ -65,6 +65,7 @@ export function CustomerSearch({
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
@@ -90,6 +91,12 @@ export function CustomerSearch({
           variant: "destructive",
         });
       }
+      // Auto-scroll to results
+      setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
     } catch (error) {
       setNoRealCustomers(true);
       setSearchResults([]);
@@ -317,83 +324,85 @@ export function CustomerSearch({
       </Card>
 
       {/* Search Results */}
-      {searchResults.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Search Results ({searchResults.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {searchResults.map((customer, index) => {
-                // Ensure we have a unique key for each item
-                // Use customer.id if available, otherwise fall back to index
-                const uniqueKey = customer?.id ? `customer-${customer.id}` : `customer-${index}`;
-                
-                return (
-                  <div
-                    key={uniqueKey}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                    onClick={() => onCustomerSelect?.(customer)}
-                  >
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-semibold text-lg">{customer?.name || 'Unnamed Customer'}</h3>
-                        <Badge
-                          variant={
-                            customer?.status === "active" ? "default" : "secondary"
-                          }
-                          className="whitespace-nowrap"
-                        >
-                          {customer?.status || 'unknown'}
-                        </Badge>
-                      </div>
+      <div ref={resultsRef}>
+        {searchResults.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Search Results ({searchResults.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {searchResults.map((customer, index) => {
+                  // Ensure we have a unique key for each item
+                  // Use customer.id if available, otherwise fall back to index
+                  const uniqueKey = customer?.id ? `customer-${customer.id}` : `customer-${index}`;
+                  
+                  return (
+                    <div
+                      key={uniqueKey}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => onCustomerSelect?.(customer)}
+                    >
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-semibold text-lg">{customer?.name || 'Unnamed Customer'}</h3>
+                          <Badge
+                            variant={
+                              customer?.status === "active" ? "default" : "secondary"
+                            }
+                            className="whitespace-nowrap"
+                          >
+                            {customer?.status || 'unknown'}
+                          </Badge>
+                        </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <Mail className="w-4 h-4" />
-                          {customer.email}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <Mail className="w-4 h-4" />
+                            {customer.email}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Phone className="w-4 h-4" />
+                            {customer.phone}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {customer.address?.city || customer.city || 'N/A'}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Phone className="w-4 h-4" />
-                          {customer.phone}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {customer.address?.city || customer.city || 'N/A'}
-                        </div>
-                      </div>
 
-                      <div className="text-sm">
-                        <span className="font-medium">Total Purchases: </span>
-                        <span className="text-green-600">
-                          ₹{(customer.totalPurchases || 0).toLocaleString()}
-                        </span>
-                        {customer.lastPurchase && (
-                          <span className="ml-4 text-gray-500">
-                            Last:{" "}
-                            {new Date(customer.lastPurchase).toLocaleDateString()}
+                        <div className="text-sm">
+                          <span className="font-medium">Total Purchases: </span>
+                          <span className="text-green-600">
+                            ₹{(customer.totalPurchases || 0).toLocaleString()}
                           </span>
+                          {customer.lastPurchase && (
+                            <span className="ml-4 text-gray-500">
+                              Last:{" "}
+                              {new Date(customer.lastPurchase).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                        {onCustomerSelect && (
+                          <Button 
+                            className="ml-4"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onCustomerSelect(customer);
+                            }}
+                          >
+                            Select
+                          </Button>
                         )}
                       </div>
-                      {onCustomerSelect && (
-                        <Button 
-                          className="ml-4"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onCustomerSelect(customer);
-                          }}
-                        >
-                          Select
-                        </Button>
-                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* No Results */}
       {searchQuery && searchResults.length === 0 && !isScanning && (

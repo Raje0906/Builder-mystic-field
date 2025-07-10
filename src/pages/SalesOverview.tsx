@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSalesOverview } from "../hooks/useSalesOverview";
 import { timeAgo } from "../lib/utils"; // Assuming you have a utility for time formatting
@@ -180,46 +180,7 @@ export default function SalesOverview() {
         </div>
       </div>
 
-      {/* Performance Summary */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
-          <h3 className="font-semibold text-blue-900 mb-2">
-            Sales Performance
-          </h3>
-          <p className="text-blue-800 text-sm mb-3">
-            Today's performance compared to yesterday
-          </p>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-blue-700">Transactions:</span>
-              <span className="text-blue-900 font-semibold">+15%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-blue-700">Revenue:</span>
-              <span className="text-blue-900 font-semibold">+22%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-blue-700">Avg. Order:</span>
-              <span className="text-blue-900 font-semibold">+8%</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
-          <h3 className="font-semibold text-green-900 mb-2">
-            Top Performing Products
-          </h3>
-          <p className="text-green-800 text-sm mb-3">
-            Best selling items this month
-          </p>
-          {/* You would fetch and map top products here */}
-          <ul className="space-y-1 text-sm text-green-700">
-            <li>1. Dell XPS 13</li>
-            <li>2. HP Spectre x360</li>
-            <li>3. Lenovo ThinkPad X1</li>
-          </ul>
-        </div>
-      </div>
+      {/* Performance Summary cards removed */}
     </div>
   );
 }

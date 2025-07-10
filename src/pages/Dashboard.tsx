@@ -125,7 +125,6 @@ interface User {
 }
 
 import { useApiHealth } from '@/hooks/useApi';
-import SystemStatus from '@/components/SystemStatus';
 
 // Mock data initialization
 const initializeData = () => ({
@@ -353,8 +352,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 p-4">
-      {/* System Status Bar */}
-      <SystemStatus isHealthy={isHealthy} lastChecked={lastChecked} />
+      {/* SystemStatus removed */}
+      {/* Quick Actions removed */}
       
       {/* Metrics Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">

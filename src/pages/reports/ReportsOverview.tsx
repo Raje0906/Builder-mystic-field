@@ -18,7 +18,7 @@ import {
   Users,
   Package,
 } from "lucide-react";
-import { generateMonthlySalesReport, generateMonthlyRepairReport, generateMonthlyStoreReport, generateQuarterlyReport, generateAnnualReport } from "@/lib/dataUtils";
+import { generateMonthlySalesReport, generateMonthlyRepairReport, generateMonthlyStoreReport, generateQuarterlyReport, generateAnnualReport, saveReportsToIDB, getReportsFromIDB } from "@/lib/dataUtils";
 
 export function ReportsOverview() {
   const [summary, setSummary] = useState({

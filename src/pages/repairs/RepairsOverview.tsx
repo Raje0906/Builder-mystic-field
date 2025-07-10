@@ -52,6 +52,8 @@ import {
   getRepairs,
   updateRepair,
   sendWhatsAppNotification,
+  saveRepairsToIDB,
+  getRepairsFromIDB,
 } from "@/lib/dataUtils";
 import { customers, stores } from "@/lib/mockData";
 import { Repair } from "@/types";

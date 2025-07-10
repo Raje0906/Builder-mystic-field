@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { saveUsersToIDB, getUsersFromIDB } from '@/lib/dataUtils';
 
 interface User {
   _id: string;
@@ -49,7 +50,7 @@ const UserManagement: React.FC = () => {
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
 
   useEffect(() => {
-    fetchUsers();
+    loadUsers();
     fetchStores();
   }, []);
 
@@ -61,9 +62,47 @@ const UserManagement: React.FC = () => {
       const res = await axios.get(`${apiBase}/api/auth/admin/users`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      setUsers(res.data.data.users);
+      return res.data.data.users;
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch users");
+      // Log the full error for debugging
+      console.error('Error fetching users:', err);
+      // Try to show the most informative error message
+      let message = 'Failed to fetch users';
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      } else if (err.message) {
+        message = err.message;
+      }
+      setError(message);
+      throw err; // Re-throw to be caught by loadUsers
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      let data = [];
+      if (navigator.onLine) {
+        data = await fetchUsers();
+        // Log the data for debugging
+        console.log('Fetched users:', data);
+        // Filter out users without a valid _id and map to include id
+        const validUsers = Array.isArray(data)
+          ? data.filter(u => u && u._id).map(u => ({ ...u, id: u._id }))
+          : [];
+        await saveUsersToIDB(validUsers);
+        setUsers(validUsers);
+      } else {
+        data = await getUsersFromIDB();
+        setUsers(data);
+      }
+    } catch (error: any) {
+      // Log the error for debugging
+      console.error('Error in loadUsers:', error);
+      // Show the error message if available
+      setError(error?.response?.data?.message || error?.message || 'Failed to load users');
     } finally {
       setLoading(false);
     }
@@ -113,7 +152,7 @@ const UserManagement: React.FC = () => {
       
       setShowForm(false);
       setForm({ name: "", email: "", phone: "", password: "", role: "sales", store_id: "" });
-      fetchUsers();
+      await loadUsers();
     } catch (err: any) {
       console.error('Error adding user:', err);
       setFormError(err.response?.data?.message || "Failed to add user");
@@ -204,9 +243,22 @@ const UserManagement: React.FC = () => {
       await axios.delete(`${apiBase}/api/auth/admin/users/${userId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      fetchUsers();
+      // Optimistically remove from UI
+      setUsers(prev => prev.filter(u => u.id !== userId && u._id !== userId));
+      // Remove from IndexedDB as well
+      const usersFromIDB = await getUsersFromIDB();
+      const filtered = usersFromIDB.filter(u => u.id !== userId && u._id !== userId);
+      await saveUsersToIDB(filtered);
+      await loadUsers(); // Refresh for consistency
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to delete user');
+      const message = err.response?.data?.message || err.message || 'Failed to delete user';
+      if (err.response && err.response.status === 404) {
+        setUsers(prev => prev.filter(u => u.id !== userId && u._id !== userId));
+        alert('User already deleted (404). Removed from UI.');
+      } else {
+        alert(message);
+      }
+      await loadUsers();
     }
   };
 

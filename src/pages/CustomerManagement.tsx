@@ -51,7 +51,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getCustomers, addCustomer, updateCustomer, deleteCustomer, getCustomer } from "@/lib/dataUtils";
+import { getCustomers, addCustomer, updateCustomer, deleteCustomer, getCustomer, saveCustomersToIDB, getCustomersFromIDB } from "@/lib/dataUtils";
 import { Address, Customer, Sale, Repair } from "@/types";
 import * as XLSX from "xlsx";
 
@@ -108,9 +108,16 @@ export default function CustomerManagement() {
   }, [customers, searchQuery]);
 
   const loadCustomers = async (status: 'all' | 'active' | 'inactive' = 'active') => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const filteredCustomers = await getCustomers(status);
+      let filteredCustomers: any[] = [];
+      let online = navigator.onLine;
+      if (online) {
+        filteredCustomers = await getCustomers(status);
+        await saveCustomersToIDB(filteredCustomers);
+      } else {
+        filteredCustomers = await getCustomersFromIDB();
+      }
       setCustomers(filteredCustomers);
     } catch (error) {
       console.error('Error loading customers:', error);

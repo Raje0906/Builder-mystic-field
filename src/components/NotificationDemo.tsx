@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, Mail, Clock } from "lucide-react";
+import { saveNotificationsToIDB, getNotificationsFromIDB } from '@/lib/dataUtils';
 
 interface NotificationLog {
   id: string;

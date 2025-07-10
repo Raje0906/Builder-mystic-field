@@ -53,8 +53,10 @@ const InventoryForm = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraLoading, setCameraLoading] = useState(false);
   const skuInputRef = useState(null);
   const videoRef = useState(null);
+  const [cameraTimeoutId, setCameraTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   // ZXing barcode scanner hook
   const { ref: zxingRef } = useZxing({
@@ -63,10 +65,12 @@ const InventoryForm = () => {
       setShowScanner(false);
       setScanError(null);
       setCameraError(null);
+      setCameraLoading(false);
       toast.success(`Scanned: ${result.getText()}`);
     },
     onError(error) {
       setScanError('Scan error. Please try again.');
+      setCameraLoading(false);
       if (error && error.name === 'NotAllowedError') {
         setCameraError('Camera access was denied. Please allow camera access in your browser settings and refresh the page.');
       } else if (error && error.name === 'NotFoundError') {
@@ -383,15 +387,48 @@ const InventoryForm = () => {
                       <FormLabel>Serial Number</FormLabel>
                       {/* Scanner Controls */}
                       <div className="flex gap-2 mb-2">
-                        <Button type="button" className="bg-green-600 text-white hover:bg-green-700" onClick={() => setShowScanner(true)}>
+                        <Button type="button" className="bg-green-600 text-white hover:bg-green-700" onClick={() => {
+                          setShowScanner(true);
+                          setCameraLoading(true);
+                          setScanError(null);
+                          setCameraError(null);
+                          // Add camera startup timeout
+                          const timeoutId = setTimeout(() => {
+                            setCameraLoading(false);
+                            setCameraError('Camera did not start. Please check permissions or try another device/browser.');
+                          }, 5000);
+                          setCameraTimeoutId(timeoutId);
+                        }}>
                           Scan with Camera
                         </Button>
                         <span className="text-xs text-muted-foreground">Or enter manually below</span>
                       </div>
                       {showScanner && (
                         <div className="mb-4">
-                          <video ref={zxingRef} style={{ width: 300, height: 200, borderRadius: 8, background: '#000' }} />
-                          <Button type="button" variant="outline" onClick={() => setShowScanner(false)}>
+                          {cameraLoading && !cameraError && (
+                            <div className="flex items-center justify-center mb-2">
+                              <svg className="animate-spin h-6 w-6 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              <span>Starting camera...</span>
+                            </div>
+                          )}
+                          <video ref={zxingRef} style={{ width: 300, height: 200, borderRadius: 8, background: '#000' }} onLoadedData={() => {
+                            setCameraLoading(false);
+                            if (cameraTimeoutId) {
+                              clearTimeout(cameraTimeoutId);
+                              setCameraTimeoutId(null);
+                            }
+                          }} />
+                          <Button type="button" variant="outline" onClick={() => {
+                            setShowScanner(false);
+                            setCameraLoading(false);
+                            if (cameraTimeoutId) {
+                              clearTimeout(cameraTimeoutId);
+                              setCameraTimeoutId(null);
+                            }
+                          }}>
                             Close Scanner
                           </Button>
                           {scanError && <div className="text-red-500 text-xs mt-1">{scanError}</div>}

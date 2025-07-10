@@ -56,6 +56,9 @@ import {
   generateMonthlyStoreReport,
   generateQuarterlyReport,
   generateAnnualReport,
+  fetchStores,
+  saveStoresToIDB,
+  getStoresFromIDB,
 } from "@/lib/dataUtils";
 import { Report } from "@/types";
 
@@ -112,10 +115,24 @@ export function StoreReports() {
   }, [generateReport]);
 
   useEffect(() => {
-    fetch("/api/stores")
-      .then((res) => res.json())
-      .then((data) => setStores(data.data || []))
-      .catch((err) => console.error("Failed to fetch stores", err));
+    const loadStores = async () => {
+      setIsLoading(true);
+      try {
+        let data = [];
+        if (navigator.onLine) {
+          data = await fetchStores();
+          await saveStoresToIDB(data);
+        } else {
+          data = await getStoresFromIDB();
+        }
+        setStores(data);
+      } catch (error) {
+        console.error("Failed to load stores", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadStores();
     fetch("/api/users?role=employee")
       .then((res) => res.json())
       .then((data) => setEmployees(data.data || []))

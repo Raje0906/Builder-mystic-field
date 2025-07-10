@@ -82,15 +82,6 @@ export default function SimpleDashboard() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-yellow-900">🚀 System Status</h3>
-          <p className="text-yellow-800">Frontend is running successfully!</p>
-          <p className="text-sm text-yellow-700 mt-1">
-            If you can see this page, your React application is working
-            properly.
-          </p>
-        </div>
-
         <QuietSystemStatus />
       </div>
     </div>
