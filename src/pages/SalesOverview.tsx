@@ -4,7 +4,7 @@ import { useSalesOverview } from "../hooks/useSalesOverview";
 import { timeAgo } from "../lib/utils"; // Assuming you have a utility for time formatting
 
 export default function SalesOverview() {
-  const { stats, recentSales, loading, error } = useSalesOverview();
+  const { stats, recentSales, todayStats, pendingOrders, lowStock, loading, error } = useSalesOverview();
 
   const quickActions = [
     {
@@ -66,26 +66,26 @@ export default function SalesOverview() {
         {/* These were mock stats, you might need to create backend logic for them */}
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Today's Sales</h3>
-          <p className="text-2xl font-bold text-blue-600">N/A</p>
-          <p className="text-sm text-green-600">coming soon</p>
+          <p className="text-2xl font-bold text-blue-600">{todayStats ? todayStats.totalSales : 'N/A'}</p>
+          <p className="text-sm text-green-600">today</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Today's Revenue</h3>
-          <p className="text-2xl font-bold text-green-600">N/A</p>
-          <p className="text-sm text-green-600">coming soon</p>
+          <p className="text-2xl font-bold text-green-600">₹{todayStats ? todayStats.totalRevenue.toLocaleString() : 'N/A'}</p>
+          <p className="text-sm text-green-600">today</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Pending Orders</h3>
-          <p className="text-2xl font-bold text-orange-600">N/A</p>
-          <p className="text-sm text-gray-500">coming soon</p>
+          <p className="text-2xl font-bold text-orange-600">{pendingOrders}</p>
+          <p className="text-sm text-gray-500">pending</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-sm font-medium text-gray-500">Low Stock</h3>
-          <p className="text-2xl font-bold text-red-600">N/A</p>
-          <p className="text-sm text-gray-500">coming soon</p>
+          <p className="text-2xl font-bold text-red-600">{lowStock}</p>
+          <p className="text-sm text-gray-500">items</p>
         </div>
       </div>
 

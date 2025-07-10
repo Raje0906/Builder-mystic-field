@@ -22,9 +22,17 @@ interface Sale {
   status: string;
 }
 
+interface TodayStats {
+  totalSales: number;
+  totalRevenue: number;
+}
+
 export function useSalesOverview() {
   const [stats, setStats] = useState<SalesStats | null>(null);
   const [recentSales, setRecentSales] = useState<Sale[]>([]);
+  const [todayStats, setTodayStats] = useState<TodayStats | null>(null);
+  const [pendingOrders, setPendingOrders] = useState<number>(0);
+  const [lowStock, setLowStock] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,9 +40,19 @@ export function useSalesOverview() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [statsResponse, salesResponse] = await Promise.all([
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const startOfDay = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+        const endOfDay = `${yyyy}-${mm}-${dd}T23:59:59.999Z`;
+
+        const [statsResponse, salesResponse, todayStatsResponse, pendingOrdersResponse, lowStockResponse] = await Promise.all([
           safeApiClient.safeRequest<{ data: SalesStats }>('/sales/stats'),
           safeApiClient.safeRequest<{ data: { sales: Sale[] } }>('/sales?limit=5'),
+          safeApiClient.safeRequest<{ data: SalesStats }>(`/sales/stats?startDate=${startOfDay}&endDate=${endOfDay}`),
+          safeApiClient.safeRequest<{ data: { sales: Sale[], pagination: { total: number } } }>(`/sales?status=pending&limit=1`),
+          safeApiClient.safeRequest<{ data: { inventory: any[], pagination: { total: number } } }>(`/inventory?lowStock=true&limit=1`),
         ]);
 
         if (statsResponse.success && statsResponse.data) {
@@ -48,6 +66,36 @@ export function useSalesOverview() {
         } else {
           throw new Error(salesResponse.error || 'Failed to fetch recent sales');
         }
+
+        if (todayStatsResponse.success && todayStatsResponse.data) {
+          setTodayStats({
+            totalSales: todayStatsResponse.data.data.totalSales,
+            totalRevenue: todayStatsResponse.data.data.totalRevenue,
+          });
+        } else {
+          setTodayStats({ totalSales: 0, totalRevenue: 0 });
+        }
+
+        if (pendingOrdersResponse.success && pendingOrdersResponse.data) {
+          setPendingOrders(pendingOrdersResponse.data.data.pagination.total);
+        } else {
+          setPendingOrders(0);
+        }
+
+        if (lowStockResponse.success && lowStockResponse.data) {
+          // If the response is an array, use its length
+          if (Array.isArray(lowStockResponse.data)) {
+            setLowStock(lowStockResponse.data.length);
+          } else if (lowStockResponse.data.data && Array.isArray(lowStockResponse.data.data.inventory)) {
+            setLowStock(lowStockResponse.data.data.inventory.length);
+          } else if (lowStockResponse.data.data && lowStockResponse.data.data.pagination) {
+            setLowStock(lowStockResponse.data.data.pagination.total);
+          } else {
+            setLowStock(0);
+          }
+        } else {
+          setLowStock(0);
+        }
       } catch (e: any) {
         setError(e.message);
       } finally {
@@ -58,5 +106,5 @@ export function useSalesOverview() {
     fetchData();
   }, []);
 
-  return { stats, recentSales, loading, error };
+  return { stats, recentSales, todayStats, pendingOrders, lowStock, loading, error };
 } 

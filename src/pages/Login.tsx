@@ -91,19 +91,31 @@ export function Login() {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      let result: any = null;
+      let isJson = false;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        result = await response.json();
+        isJson = true;
+      } else {
+        result = await response.text();
+      }
 
-      if (result.success) {
+      if (isJson && result.success) {
         // Use the auth context to login
         login(result.data.token, result.data.user);
         
         // Redirect to dashboard (root path)
         navigate("/");
       } else {
-        if (response.status === 401 || response.status === 403) {
+        if (response.status === 429) {
+          toast({ title: "Too Many Requests", description: "You have made too many login attempts. Please wait and try again later." });
+        } else if (isJson && (response.status === 401 || response.status === 403)) {
           toast({ title: "Error", description: result.message || "Unauthorized: Invalid credentials or access denied." });
-        } else {
+        } else if (isJson) {
           toast({ title: "Error", description: result.message || "Login failed" });
+        } else {
+          toast({ title: "Error", description: result || "Login failed" });
         }
       }
     } catch (error) {
@@ -201,7 +213,9 @@ export function Login() {
                   <SelectContent>
                     {stores.map((store) => (
                       <SelectItem key={store._id} value={store._id}>
-                        {store.name} - {store.address}
+                        {store.name} - {typeof store.address === 'object' && store.address !== null
+                          ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
+                          : store.address}
                       </SelectItem>
                     ))}
                   </SelectContent>

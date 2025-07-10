@@ -454,7 +454,7 @@ export function SalesReports() {
                       />
                       <Tooltip
                         formatter={(value: any) => [
-                          `₹${value.toLocaleString()}`,
+                          `₹${(value ?? 0).toLocaleString()}`,
                           "Revenue",
                         ]}
                         labelFormatter={(label) => getStoreName(label)}
@@ -499,14 +499,14 @@ export function SalesReports() {
                       >
                         {report.sales.topProducts.map((entry, index) => (
                           <Cell
-                            key={`cell-${index}`}
+                            key={entry.productId || `cell-${index}`}
                             fill={COLORS[index % COLORS.length]}
                           />
                         ))}
                       </Pie>
                       <Tooltip
                         formatter={(value: any) => [
-                          `₹${value.toLocaleString()}`,
+                          `₹${(value ?? 0).toLocaleString()}`,
                           "Revenue",
                         ]}
                       />
@@ -537,7 +537,7 @@ export function SalesReports() {
                   </TableHeader>
                   <TableBody>
                     {report.sales.topProducts.map((product, index) => (
-                      <TableRow key={product.productId}>
+                      <TableRow key={product.productId || index}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Badge variant="outline">#{index + 1}</Badge>
@@ -546,7 +546,7 @@ export function SalesReports() {
                         </TableCell>
                         <TableCell>{product.quantity}</TableCell>
                         <TableCell>
-                          ₹{product.revenue.toLocaleString()}
+                          ₹{(product.revenue ?? 0).toLocaleString()}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -577,7 +577,7 @@ export function SalesReports() {
                       {report.sales.storePerformance
                         .sort((a, b) => b.revenue - a.revenue)
                         .map((store, index) => (
-                          <TableRow key={store.storeId}>
+                          <TableRow key={store.storeId || index}>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline">#{index + 1}</Badge>
@@ -586,7 +586,7 @@ export function SalesReports() {
                             </TableCell>
                             <TableCell>{store.transactions}</TableCell>
                             <TableCell>
-                              ₹{store.revenue.toLocaleString()}
+                              ₹{(store.revenue ?? 0).toLocaleString()}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -613,7 +613,7 @@ export function SalesReports() {
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       Total revenue: ₹
-                      {report.sales.totalRevenue.toLocaleString()}
+                      {(report.sales.totalRevenue ?? 0).toLocaleString()}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -623,7 +623,7 @@ export function SalesReports() {
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                       Average order value: ₹
                       {Math.round(
-                        report.sales.averageOrderValue,
+                        report.sales.averageOrderValue ?? 0,
                       ).toLocaleString()}
                     </li>
                     <li className="flex items-center gap-2">

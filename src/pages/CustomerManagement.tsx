@@ -55,6 +55,14 @@ import { getCustomers, addCustomer, updateCustomer, deleteCustomer, getCustomer 
 import { Address, Customer, Sale, Repair } from "@/types";
 import * as XLSX from "xlsx";
 
+// Fetch real customer stats from the backend
+async function fetchCustomerStats() {
+  const res = await fetch("/api/customers/stats");
+  const data = await res.json();
+  if (data.success) return data.data;
+  throw new Error(data.message || "Failed to fetch customer stats");
+}
+
 // Mock data - replace with actual API calls
 const getSales = (customerId: string): Sale[] => {
   // This should be replaced with actual API call to fetch sales for a customer
@@ -80,6 +88,16 @@ export default function CustomerManagement() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [stats, setStats] = useState<{ totalCustomers: number; activeCustomers: number; totalRevenue: number; averageSpend: number } | null>(null);
+
+  useEffect(() => {
+    fetchCustomerStats()
+      .then(setStats)
+      .catch((err) => {
+        setStats(null);
+        toast({ title: "Error", description: err.message || "Failed to fetch customer stats", variant: "destructive" });
+      });
+  }, []);
 
   useEffect(() => {
     loadCustomers(statusFilter);
@@ -308,10 +326,10 @@ export default function CustomerManagement() {
     XLSX.writeFile(workbook, `customers-${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
-  const activeCustomers = customers.filter((c) => c.status === "active").length;
-  const totalRevenue = customers.reduce((sum, c) => sum + c.totalPurchases, 0);
-  const averageSpend =
-    customers.length > 0 ? totalRevenue / customers.length : 0;
+  const activeCustomers = stats?.activeCustomers ?? 0;
+  const totalRevenue = stats?.totalRevenue ?? 0;
+  const averageSpend = stats?.averageSpend ?? 0;
+  const totalCustomers = stats?.totalCustomers ?? customers.length;
 
   return (
     <div className="space-y-6">
@@ -399,63 +417,33 @@ export default function CustomerManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Customers
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{customers.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {activeCustomers} active
-            </p>
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Total Customers</h3>
+            <div className="text-3xl font-bold text-gray-900">{totalCustomers}</div>
+            <div className="text-xs text-gray-500">{activeCustomers} active</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ₹{(totalRevenue / 100000).toFixed(1)}L
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Customer lifetime value
-            </p>
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Total Revenue</h3>
+            <div className="text-3xl font-bold text-gray-900">₹{Number.isFinite(totalRevenue) ? totalRevenue.toLocaleString() : 0}L</div>
+            <div className="text-xs text-gray-500">Customer lifetime value</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Spend</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ₹{Math.round(averageSpend).toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">Per customer</p>
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Average Spend</h3>
+            <div className="text-3xl font-bold text-gray-900">₹{Number.isFinite(averageSpend) ? averageSpend.toLocaleString() : 0}</div>
+            <div className="text-xs text-gray-500">Per customer</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Rate</CardTitle>
-            <Users className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {customers.length > 0
-                ? ((activeCustomers / customers.length) * 100).toFixed(1)
-                : 0}
-              %
-            </div>
-            <p className="text-xs text-muted-foreground">Customer engagement</p>
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <h3 className="text-sm font-medium text-gray-500 mb-1">Active Rate</h3>
+            <div className="text-3xl font-bold text-green-600">{totalCustomers > 0 ? ((activeCustomers / totalCustomers) * 100).toFixed(1) : 0}%</div>
+            <div className="text-xs text-gray-500">Customer engagement</div>
           </CardContent>
         </Card>
       </div>

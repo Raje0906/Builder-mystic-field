@@ -603,7 +603,7 @@ export function StoreReports() {
                                 <p className="font-medium">{store.name}</p>
                                 <div className="flex items-center gap-1 text-xs text-gray-500">
                                   <MapPin className="w-3 h-3" />
-                                  {store.address.split(",")[0]}
+                                  {typeof store.address === 'string' ? store.address.split(",")[0] : ''}
                                 </div>
                               </div>
                             </div>
@@ -713,7 +713,13 @@ export function StoreReports() {
                         <div className="space-y-2 text-sm">
                           <div className="flex items-start gap-2">
                             <MapPin className="w-4 h-4 text-gray-500 mt-0.5" />
-                            <span>{store.address}</span>
+                            <span>{
+                              typeof store.address === 'string'
+                                ? store.address
+                                : store.address && typeof store.address === 'object'
+                                  ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
+                                  : ''
+                            }</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Phone className="w-4 h-4 text-gray-500" />

@@ -93,10 +93,10 @@ const customersData = [
     email: "amit.singh@email.com",
     phone: "+91 98765 00001",
     address: {
-      street: "101 Park Avenue",
+      line1: "101 Park Avenue",
       city: "Mumbai",
       state: "Maharashtra",
-      zipCode: "400001",
+      pincode: "400001",
     },
     customerType: "individual",
     loyaltyPoints: 150,
@@ -106,10 +106,10 @@ const customersData = [
     email: "neha.patel@email.com",
     phone: "+91 98765 00002",
     address: {
-      street: "202 Garden Street",
+      line1: "202 Garden Street",
       city: "Delhi",
       state: "Delhi",
-      zipCode: "110001",
+      pincode: "110001",
     },
     customerType: "individual",
     loyaltyPoints: 75,
@@ -119,10 +119,10 @@ const customersData = [
     email: "contact@techcorp.com",
     phone: "+91 98765 00003",
     address: {
-      street: "303 Business Center",
+      line1: "303 Business Center",
       city: "Bangalore",
       state: "Karnataka",
-      zipCode: "560001",
+      pincode: "560001",
     },
     customerType: "business",
     loyaltyPoints: 500,
@@ -153,6 +153,8 @@ const productsData = [
       mrp: 45000,
       discount: 6.67,
     },
+    cost: 35000,
+    price: 42000,
     description: "Reliable everyday laptop for work and study",
     tags: ["bestseller", "student", "office"],
   },
@@ -179,6 +181,8 @@ const productsData = [
       mrp: 70000,
       discount: 7.14,
     },
+    cost: 55000,
+    price: 65000,
     description: "Gaming laptop with excellent performance",
     tags: ["gaming", "performance", "popular"],
   },
@@ -205,6 +209,8 @@ const productsData = [
       mrp: 119900,
       discount: 4.09,
     },
+    cost: 95000,
+    price: 115000,
     description: "Ultra-portable laptop with M2 chip",
     tags: ["premium", "ultrabook", "apple"],
   },
@@ -240,23 +246,34 @@ async function seedDatabase() {
     const customers = await Customer.insertMany(customersWithStores);
     console.log(`✅ Created ${customers.length} customers`);
 
-    // Create products with inventory for each store
+    // Create products
     console.log("📦 Creating products...");
-    const productsWithInventory = productsData.map((product) => ({
-      ...product,
-      inventory: stores.map((store, index) => ({
-        store: store._id,
-        quantity: Math.floor(Math.random() * 50) + 10, // Random quantity 10-59
-        lowStockThreshold: 5,
-        location: {
-          aisle: `A${index + 1}`,
-          shelf: `S${Math.floor(Math.random() * 5) + 1}`,
-          bin: `B${Math.floor(Math.random() * 10) + 1}`,
-        },
-      })),
-    }));
-    const products = await Product.insertMany(productsWithInventory);
+    const products = await Product.insertMany(productsData);
     console.log(`✅ Created ${products.length} products`);
+
+    // Create inventory for each product and store
+    console.log("🏷️ Creating inventory...");
+    const Inventory = (await import('../models/Inventory.js')).default;
+    let inventoryItems = [];
+    for (const product of products) {
+      for (const store of stores) {
+        inventoryItems.push({
+          name: product.name,
+          brand: product.brand,
+          category: product.category,
+          product: product._id,
+          stock: Math.floor(Math.random() * 50) + 10,
+          price: product.pricing ? product.pricing.sellingPrice : 0,
+          lowStockThreshold: 5,
+          store: store.name,
+          description: product.description || '',
+          sku: product.sku,
+          isActive: true,
+        });
+      }
+    }
+    await Inventory.insertMany(inventoryItems);
+    console.log(`✅ Created ${inventoryItems.length} inventory items`);
 
     // Create sample sales
     console.log("💰 Creating sample sales...");

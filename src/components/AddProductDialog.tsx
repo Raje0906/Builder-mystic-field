@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Plus } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
+import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 
 interface FormData {
   name: string;
@@ -51,10 +52,35 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   });
   const { toast } = useToast();
   const [isMounted, setIsMounted] = React.useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const skuInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Focus SKU/model input for hardware scanner
+  React.useEffect(() => {
+    if (open && skuInputRef.current) {
+      skuInputRef.current.focus();
+    }
+  }, [open]);
+
+  // Handle barcode scan result
+  const handleScan = (err: any, result: any) => {
+    if (err) {
+      setScanError('Scan error. Please try again.');
+      return;
+    }
+    if (result) {
+      setFormData(prev => ({ ...prev, model: result.text }));
+      setShowScanner(false);
+      setScanError(null);
+      toast({ title: 'Scan Success', description: `Scanned: ${result.text}` });
+      // Focus the next field or submit as needed
+    }
+  };
 
   if (!isMounted) {
     return null;
@@ -144,6 +170,26 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Scanner Controls */}
+          <div className="flex gap-2 mb-2">
+            <Button type="button" variant="outline" onClick={() => setShowScanner(true)}>
+              Scan with Camera
+            </Button>
+            <span className="text-xs text-muted-foreground">Or use a hardware scanner in the SKU/Model field below</span>
+          </div>
+          {showScanner && (
+            <div className="mb-4">
+              <BarcodeScannerComponent
+                width={300}
+                height={200}
+                onUpdate={handleScan}
+              />
+              <Button type="button" variant="outline" onClick={() => setShowScanner(false)}>
+                Close Scanner
+              </Button>
+              {scanError && <div className="text-red-500 text-xs mt-1">{scanError}</div>}
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Product Name *</Label>
@@ -170,13 +216,19 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="model">Model</Label>
+              <Label htmlFor="model">Model / SKU</Label>
               <Input
                 id="model"
                 name="model"
                 value={formData.model}
                 onChange={handleChange}
-                placeholder="e.g., A2442"
+                placeholder="e.g., A2442 or scan barcode"
+                ref={skuInputRef}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    // Optionally handle auto-submit or move to next field
+                  }
+                }}
               />
             </div>
             

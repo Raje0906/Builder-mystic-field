@@ -30,7 +30,6 @@ const navigation = [
     icon: ShoppingCart,
     children: [
       { name: "Inventory", href: "/sales/inventory" },
-      { name: "Customer Search", href: "/sales/customers" },
       { name: "New Sale", href: "/sales/new" },
     ],
   },
@@ -71,20 +70,20 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   const { user } = useAuth();
 
   return (
-    <div className="flex flex-col bg-white border-r border-gray-200 h-full">
+    <div className="flex flex-col bg-white border-r border-gray-200 h-full shadow-md">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-lg">
-          <Laptop className="w-6 h-6 text-white" />
+      <div className="flex items-center gap-4 px-8 py-5 border-b border-gray-200">
+        <div className="flex items-center justify-center w-12 h-12 bg-primary rounded-xl shadow-sm">
+          <Laptop className="w-7 h-5 text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Laptop Store</h1>
-          <p className="text-sm text-gray-500">CRM System</p>
+          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Laptop Store</h1>
+          <p className="text-base text-gray-500 font-medium">CRM System</p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      <nav className="flex-1 px-6 py-6 space-y-3">
         {navigation.map((item) => {
           const isActive =
             location.pathname === item.href ||
@@ -97,13 +96,13 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                 to={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                  "flex items-center gap-3 px-4 py-3 text-base font-semibold rounded-xl transition-all duration-150 border",
                   isActive
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                    ? "bg-primary/20 text-primary border-primary/40 shadow-sm"
+                    : "text-gray-700 border-transparent hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm",
                 )}
               >
-                <item.icon className="w-5 h-5" />
+                <item.icon className="w-6 h-4" />
                 {item.name}
               </Link>
 

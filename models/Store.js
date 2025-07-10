@@ -1,5 +1,19 @@
 import mongoose from 'mongoose';
 
+const addressSchema = new mongoose.Schema({
+  street: String,
+  city: String,
+  state: String,
+  zipCode: String,
+  country: String,
+}, { _id: false });
+
+const managerSchema = new mongoose.Schema({
+  name: String,
+  phone: String,
+  email: String,
+}, { _id: false });
+
 const storeSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -7,23 +21,21 @@ const storeSchema = new mongoose.Schema({
     trim: true
   },
   address: {
-    type: String,
-    required: [true, 'Store address is required'],
-    trim: true
+    type: addressSchema,
+    required: true
   },
-  phone: {
-    type: String,
-    trim: true
-  },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
+  contact: {
+    phone: String,
+    email: String,
+    whatsapp: String,
   },
   manager: {
-    type: String,
-    trim: true
+    type: managerSchema,
+    required: true
+  },
+  branding: {
+    primaryColor: String,
+    theme: String,
   },
   status: {
     type: String,
@@ -54,10 +66,17 @@ storeSchema.statics.search = async function(searchTerm, page = 1, limit = 20) {
     const query = {
       $or: [
         { name: { $regex: searchTerm, $options: 'i' } },
-        { address: { $regex: searchTerm, $options: 'i' } },
-        { email: { $regex: searchTerm, $options: 'i' } },
-        { phone: { $regex: searchTerm, $options: 'i' } },
-        { manager: { $regex: searchTerm, $options: 'i' } }
+        { 'address.street': { $regex: searchTerm, $options: 'i' } },
+        { 'address.city': { $regex: searchTerm, $options: 'i' } },
+        { 'address.state': { $regex: searchTerm, $options: 'i' } },
+        { 'address.zipCode': { $regex: searchTerm, $options: 'i' } },
+        { 'address.country': { $regex: searchTerm, $options: 'i' } },
+        { 'contact.email': { $regex: searchTerm, $options: 'i' } },
+        { 'contact.phone': { $regex: searchTerm, $options: 'i' } },
+        { 'contact.whatsapp': { $regex: searchTerm, $options: 'i' } },
+        { 'manager.name': { $regex: searchTerm, $options: 'i' } },
+        { 'manager.email': { $regex: searchTerm, $options: 'i' } },
+        { 'manager.phone': { $regex: searchTerm, $options: 'i' } },
       ]
     };
 

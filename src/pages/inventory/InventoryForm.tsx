@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import inventoryService, { InventoryItem } from '@/services/inventoryService';
+import { useZxing } from 'react-zxing';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -49,6 +50,36 @@ const InventoryForm = () => {
   });
 
   const [products, setProducts] = useState<any[]>([]);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const skuInputRef = useState(null);
+  const videoRef = useState(null);
+
+  // ZXing barcode scanner hook
+  const { ref: zxingRef } = useZxing({
+    onResult(result) {
+      form.setValue('serialNumber', result.getText());
+      setShowScanner(false);
+      setScanError(null);
+      setCameraError(null);
+      toast.success(`Scanned: ${result.getText()}`);
+    },
+    onError(error) {
+      setScanError('Scan error. Please try again.');
+      if (error && error.name === 'NotAllowedError') {
+        setCameraError('Camera access was denied. Please allow camera access in your browser settings and refresh the page.');
+      } else if (error && error.name === 'NotFoundError') {
+        setCameraError('No camera device found. Please connect a camera and try again.');
+      } else if (error && error.name === 'NotReadableError') {
+        setCameraError('Camera is already in use by another application. Please close other apps and try again.');
+      } else if (error && error.name === 'NotSupportedError') {
+        setCameraError('Camera access is not supported in this browser. Please use Chrome or Firefox.');
+      } else {
+        setCameraError(null);
+      }
+    },
+  });
 
   // Load item data if in edit mode
   useEffect(() => {
@@ -132,6 +163,27 @@ const InventoryForm = () => {
   const stores = [
     'Central', 'North', 'South', 'East', 'West'
   ];
+
+  // Focus SKU input for hardware scanner
+  useEffect(() => {
+    if (skuInputRef.current) {
+      skuInputRef.current.focus();
+    }
+  }, []);
+
+  // Handle barcode scan result
+  const handleScan = (err: any, result: any) => {
+    if (err) {
+      setScanError('Scan error. Please try again.');
+      return;
+    }
+    if (result) {
+      form.setValue('sku', result.text);
+      setShowScanner(false);
+      setScanError(null);
+      toast.success(`Scanned: ${result.text}`);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
@@ -313,10 +365,52 @@ const InventoryForm = () => {
                     <FormItem>
                       <FormLabel>SKU (Stock Keeping Unit)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., MBPM2-256-SILVER" {...field} />
+                        <Input placeholder="e.g., MBPM2-256-SILVER" {...field} ref={skuInputRef} />
                       </FormControl>
                       <FormDescription>
                         Leave blank to auto-generate
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Manual Serial Number Input with Camera Scanner */}
+                <FormField
+                  control={form.control}
+                  name="serialNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Serial Number</FormLabel>
+                      {/* Scanner Controls */}
+                      <div className="flex gap-2 mb-2">
+                        <Button type="button" className="bg-green-600 text-white hover:bg-green-700" onClick={() => setShowScanner(true)}>
+                          Scan with Camera
+                        </Button>
+                        <span className="text-xs text-muted-foreground">Or enter manually below</span>
+                      </div>
+                      {showScanner && (
+                        <div className="mb-4">
+                          <video ref={zxingRef} style={{ width: 300, height: 200, borderRadius: 8, background: '#000' }} />
+                          <Button type="button" variant="outline" onClick={() => setShowScanner(false)}>
+                            Close Scanner
+                          </Button>
+                          {scanError && <div className="text-red-500 text-xs mt-1">{scanError}</div>}
+                          {cameraError && (
+                            <div className="text-red-600 text-sm mt-2">
+                              {cameraError}
+                              <div className="text-xs text-gray-500 mt-1">
+                                Make sure your browser has permission to access the camera. Look for a camera icon in the address bar or check your browser settings.<br/>
+                                If you are not on localhost, use HTTPS for camera access.
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <FormControl>
+                        <Input placeholder="Enter serial number manually (optional)" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter the product's serial number or scan with camera
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

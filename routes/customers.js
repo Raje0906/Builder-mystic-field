@@ -200,6 +200,46 @@ router.post(
   }
 );
 
+// GET /api/customers/stats - Get customer statistics
+router.get(
+  "/stats",
+  async (req, res) => {
+    try {
+      const Customer = (await import("../models/Customer.js")).default;
+      const Sale = (await import("../models/Sale.js")).default;
+
+      const [totalCustomers, activeCustomers] = await Promise.all([
+        Customer.countDocuments({}),
+        Customer.countDocuments({ status: "active" })
+      ]);
+
+      // Aggregate total revenue from sales
+      const salesAgg = await Sale.aggregate([
+        { $match: { isActive: true } },
+        { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } }
+      ]);
+      const totalRevenue = salesAgg[0]?.totalRevenue || 0;
+      const averageSpend = totalCustomers > 0 ? totalRevenue / totalCustomers : 0;
+
+      res.json({
+        success: true,
+        data: {
+          totalCustomers,
+          activeCustomers,
+          totalRevenue,
+          averageSpend
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching customer stats:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching customer stats"
+      });
+    }
+  }
+);
+
 // GET /api/customers/:id - Get a single customer by ID
 router.get(
   "/:id",

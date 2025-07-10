@@ -50,7 +50,6 @@ const inventorySchema = new mongoose.Schema({
   },
   sku: {
     type: String,
-    unique: true,
     trim: true
   },
   isActive: {
@@ -66,6 +65,8 @@ const inventorySchema = new mongoose.Schema({
 
 // Index for better query performance
 inventorySchema.index({ name: 'text', brand: 'text', category: 'text' });
+// Compound unique index for SKU and store
+inventorySchema.index({ sku: 1, store: 1 }, { unique: true });
 
 // Virtual for checking if stock is low
 inventorySchema.virtual('isLowStock').get(function() {

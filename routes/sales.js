@@ -245,6 +245,7 @@ router.post(
   handleValidationErrors,
   async (req, res) => {
     try {
+      console.log('[SALE CREATE] Incoming body:', JSON.stringify(req.body, null, 2));
       const { customer, store, items, paymentMethod, paymentDetails, notes } =
         req.body;
 
@@ -258,6 +259,12 @@ router.post(
           return res.status(404).json({
             success: false,
             message: `Inventory item with ID ${item.inventory} not found`,
+          });
+        }
+        if (!inventoryItem.product) {
+          return res.status(400).json({
+            success: false,
+            message: `Inventory item with ID ${item.inventory} is missing a product reference.`,
           });
         }
         if (inventoryItem.stock < item.quantity) {
@@ -307,10 +314,12 @@ router.post(
         data: populatedSale,
       });
     } catch (error) {
+      console.error('[SALE CREATE ERROR]', error);
       res.status(500).json({
         success: false,
         message: "Error creating sale",
         error: error.message,
+        stack: error.stack,
       });
     }
   },

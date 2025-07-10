@@ -122,13 +122,19 @@ app.use(cors(corsOptions));
 
 app.use(compression());
 
-// Rate limiting
+// Rate limiting (relaxed for /api/auth)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again later.",
 });
-app.use("/api/", limiter);
+// Only apply limiter to non-auth routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/auth')) {
+    return next(); // No rate limit for /api/auth
+  }
+  limiter(req, res, next);
+});
 
 // Stricter rate limiting for notifications
 const notificationLimiter = rateLimit({

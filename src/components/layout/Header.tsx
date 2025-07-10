@@ -69,22 +69,22 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3 lg:px-8">
+    <header className="bg-gray-50 border-b border-gray-200 px-8 py-5 lg:px-16">
       <div className="flex items-center justify-between">
         {/* Left side - Page title and breadcrumb */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <div className="lg:hidden w-12" />{" "}
           {/* Spacer for mobile menu button */}
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-1">
               {pageTitle}
             </h1>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-3 text-base text-gray-500">
               <span>Laptop Store CRM</span>
               {location.pathname !== "/" && (
                 <>
                   <span>/</span>
-                  <span className="text-gray-900 font-medium">{pageTitle}</span>
+                  <span className="text-gray-900 font-semibold">{pageTitle}</span>
                 </>
               )}
             </div>

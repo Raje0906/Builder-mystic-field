@@ -279,7 +279,7 @@ export function CustomerSearch({
             Customer Search
           </CardTitle>
           <CardDescription>
-            Find customers by name, email, phone, or scan product barcode
+            Find customers by name, email, or phone
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -298,7 +298,6 @@ export function CustomerSearch({
                 <SelectItem value="email">Email</SelectItem>
                 <SelectItem value="phone">Phone</SelectItem>
                 <SelectItem value="serialNumber">Serial Number</SelectItem>
-                <SelectItem value="barcode">Barcode</SelectItem>
               </SelectContent>
             </Select>
 
@@ -314,102 +313,6 @@ export function CustomerSearch({
               <Search className="w-4 h-4" />
             </Button>
           </div>
-
-          <div className="grid gap-2 md:grid-cols-3">
-            <Button
-              variant="outline"
-              onClick={handleBarcodeScanner}
-              disabled={isScanning}
-            >
-              <QrCode className="w-4 h-4 mr-2" />
-              {isScanning ? "Scanning..." : "Camera Scan"}
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Simulate hardware scanner input
-                const mockBarcode = mockCustomers[0].barcode;
-                handleBarcodeResult({ text: mockBarcode, format: "CODE_128" });
-                toast({
-                  title: "Hardware Scanner",
-                  description: "Simulated hardware scanner input",
-                });
-              }}
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              Hardware Scanner
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={() => {
-                const barcodeInput = prompt("Enter barcode manually:");
-                if (barcodeInput && barcodeInput.trim()) {
-                  handleBarcodeResult({
-                    text: barcodeInput.trim(),
-                    format: "MANUAL",
-                  });
-                }
-              }}
-            >
-              <Package className="w-4 h-4 mr-2" />
-              Manual Input
-            </Button>
-          </div>
-
-          {/* Camera Permission Help */}
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">
-              📱 Barcode Scanning Options
-            </h4>
-            <div className="text-sm text-blue-700 space-y-1">
-              <div>
-                <strong>Camera Scan:</strong> Uses your device camera (requires
-                permission)
-              </div>
-              <div>
-                <strong>Hardware Scanner:</strong> For dedicated barcode
-                scanners
-              </div>
-              <div>
-                <strong>Manual Input:</strong> Type barcode numbers directly
-              </div>
-            </div>
-            <p className="text-xs text-blue-600 mt-2">
-              💡 If camera access is denied, try manual input or check browser
-              permissions
-            </p>
-          </div>
-
-          {/* Camera Preview for Web Scanning */}
-          {isScanning && (
-            <div className="relative">
-              <video
-                ref={videoRef}
-                className="w-full max-w-sm mx-auto rounded-lg border"
-                autoPlay
-                playsInline
-                muted
-              />
-              <canvas ref={canvasRef} className="hidden" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-48 h-48 border-2 border-primary border-dashed rounded-lg flex items-center justify-center">
-                  <p className="text-sm text-primary text-center">
-                    Align barcode within this frame
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => setIsScanning(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
 
