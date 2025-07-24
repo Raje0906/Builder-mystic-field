@@ -60,6 +60,7 @@ export interface Repair {
   estimatedDays: number;
   createdAt?: string;
   updatedAt?: string;
+  ticketNumber?: string; // Added for display purposes
 }
 
 interface RepairFormData {
@@ -280,7 +281,7 @@ export function NewRepair() {
       
       toast({
         title: "✅ Repair Created Successfully!",
-        description: `Repair #${newRepair._id || newRepair.id || 'N/A'} has been created.`,
+        description: `Repair Ticket #${newRepair.ticketNumber || 'N/A'} has been created.`,
         duration: 5000,
       });
       
@@ -311,7 +312,7 @@ export function NewRepair() {
   ) => {
     try {
       // If we don't have a valid repair ID, we can't send notifications
-      const repairId = newRepair?._id || newRepair?.id || 'N/A';
+      const repairId = newRepair?.ticketNumber || 'N/A';
       if (!repairId) {
         console.warn('Cannot send notifications: Missing repair ID');
         return;
@@ -327,7 +328,7 @@ export function NewRepair() {
       
       const message = `📱 Your ${formData.deviceBrand || ''} ${formData.deviceModel || ''} repair is confirmed!
 
-🆔 Repair ID: ${repairId}
+🆔 Repair Ticket: ${repairId}
 🔧 Issue: ${formData.issue || 'Not specified'}
 💰 Estimated Cost: ₹${formattedCost}
 📅 Expected Completion: ${completionDateStr}
@@ -469,7 +470,7 @@ Thank you for choosing our repair service. Here are your repair details:
 
 📱 Your ${formData.deviceBrand} ${formData.deviceModel} has been received for repair!
 
-🆔 Repair ID: ${newRepair.id || newRepair._id || 'N/A'}
+🆔 Repair Ticket: ${newRepair.ticketNumber || newRepair._id || 'N/A'}
 🔧 Issue: ${formData.issue}
 💰 Estimated Cost: ₹${formattedCost}
 📅 Expected Completion: ${completionDate}
@@ -513,13 +514,13 @@ We'll keep you updated on the progress.
             await emailService.sendEmail(
               formData.notificationEmail,
               `Repair Confirmation - ${formData.deviceBrand} ${formData.deviceModel}`,
-              `Dear ${selectedCustomer?.name || 'Valued Customer'}, we've received your device for repair. Repair ID: ${newRepair.id || newRepair._id || 'N/A'}. We'll keep you updated!`
+              `Dear ${selectedCustomer?.name || 'Valued Customer'}, we've received your device for repair. Repair ID: ${newRepair.ticketNumber || newRepair._id || 'N/A'}. We'll keep you updated!`
             );
           }
           
           toast({
             title: '✅ Repair Created & Customer Notified!',
-            description: `Repair ID: ${newRepair.id || newRepair._id || 'N/A'} | Customer notified via ${formData.whatsappNumber ? 'WhatsApp' : ''}${formData.whatsappNumber && formData.notificationEmail ? ' & ' : ''}${formData.notificationEmail ? 'Email' : ''}`,
+            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} | Customer notified via ${formData.whatsappNumber ? 'WhatsApp' : ''}${formData.whatsappNumber && formData.notificationEmail ? ' & ' : ''}${formData.notificationEmail ? 'Email' : ''}`,
             duration: 5000,
           });
         } catch (error) {
@@ -527,14 +528,14 @@ We'll keep you updated on the progress.
           // Still show success even if notifications fail
           toast({
             title: '✅ Repair Created!',
-            description: `Repair ID: ${newRepair.id || newRepair._id || 'N/A'} created successfully, but there was an issue sending notifications.`,
+            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} created successfully, but there was an issue sending notifications.`,
             duration: 5000,
           });
         }
       } else {
         toast({
           title: '✅ Repair Created!',
-          description: `Repair ID: ${newRepair.id || newRepair._id || 'N/A'} has been created successfully!`,
+          description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} has been created successfully!`,
           duration: 5000,
         });
       }

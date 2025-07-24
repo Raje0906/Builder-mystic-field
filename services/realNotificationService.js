@@ -306,11 +306,21 @@ export async function sendRepairNotifications(
     // Send email notification
     if (hasEmail) {
       console.log('Sending email notification...');
-      results.email = await sendEmailNotification(
-        repair.contactInfo.notificationEmail,
-        emailContent.subject,
-        emailContent.html,
-      );
+      // Get the recipient email from the repair's contact info or fall back to customer email
+      const recipientEmail = repair.contactInfo?.notificationEmail || 
+                           (customer?.email ? customer.email : null);
+      
+      if (recipientEmail) {
+        console.log(`Sending email to: ${recipientEmail}`);
+        results.email = await sendEmailNotification(
+          recipientEmail,
+          emailContent.subject,
+          emailContent.html,
+        );
+      } else {
+        console.log('Skipping email - no valid email address found');
+        results.email = { success: false, error: 'No valid email address found' };
+      }
     } else {
       console.log('Skipping email - no address provided');
     }

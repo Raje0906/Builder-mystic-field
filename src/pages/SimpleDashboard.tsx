@@ -55,15 +55,7 @@ export default function SimpleDashboard() {
             <p className="text-sm text-blue-700">Manage customers</p>
           </a>
 
-          <a
-            href="/sales/inventory"
-            className="p-4 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors"
-          >
-            <h3 className="font-semibold text-green-900">Sales Inventory</h3>
-            <p className="text-sm text-green-700">Manage inventory</p>
-          </a>
-
-          <a
+<a
             href="/repairs"
             className="p-4 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition-colors"
           >

@@ -19,7 +19,6 @@ const getPageTitle = (pathname: string): string => {
   const pathMap: Record<string, string> = {
     "/": "Dashboard",
     "/sales": "Sales",
-    "/sales/inventory": "Inventory Management",
     "/sales/customers": "Customer Search",
     "/sales/new": "New Sale",
     "/repairs": "Repair Management",
@@ -30,7 +29,6 @@ const getPageTitle = (pathname: string): string => {
     "/reports/repairs": "Repair Reports",
     "/reports/stores": "Store Performance",
     "/customers": "Customer Management",
-    "/inventory": "Inventory Overview",
   };
 
   return pathMap[pathname] || "Laptop Store CRM";

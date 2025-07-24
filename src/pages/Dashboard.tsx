@@ -200,7 +200,6 @@ const Dashboard: React.FC = () => {
     totalSales: 0,
     totalRevenue: 0,
     activeCustomers: 0,
-    lowStockItems: 0,
     salesTrend: 0,
     revenueTrend: 0,
   });

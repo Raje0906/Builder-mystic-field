@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import axios from "axios";
+import * as XLSX from "xlsx";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { repairService } from "@/services/api";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check } from "lucide-react";
+import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check, Send, Download } from "lucide-react";
 import { emailService } from '@/services/emailService';
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 interface Repair {
+  _id: string; // Add this line
   ticketNumber: string;
   status: string;
   device: string;
@@ -38,9 +43,139 @@ export function TrackRepair() {
   const [foundRepairs, setFoundRepairs] = useState<Repair[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isCompleting, setIsCompleting] = useState<Record<string, boolean>>({});
+  const [isSendingUpdate, setIsSendingUpdate] = useState<Record<string, boolean>>({});
+  const [selectedRepair, setSelectedRepair] = useState<Repair | null>(null);
+  const [updateMessage, setUpdateMessage] = useState("");
+  const [remainingRepairs, setRemainingRepairs] = useState<Repair[]>([]);
+  const [receivedRepairs, setReceivedRepairs] = useState<Repair[]>([]);
+  const [isLoadingRemaining, setIsLoadingRemaining] = useState(false);
+  const [isLoadingReceived, setIsLoadingReceived] = useState(false);
   const { toast } = useToast();
   
-  // Button is now available to all users
+  // Export repairs to Excel
+  const exportToExcel = useCallback((repairs: Repair[], fileName: string) => {
+    try {
+      // Prepare data for export
+      const exportData = repairs.map(repair => ({
+        'Ticket #': repair.ticketNumber,
+        'Status': repair.status,
+        'Device': repair.device,
+        'Issue': repair.issue,
+        'Customer': repair.customer?.name || 'N/A',
+        'Phone': repair.customer?.phone || 'N/A',
+        'Email': repair.customer?.email || 'N/A',
+        'Received Date': new Date(repair.receivedDate).toLocaleDateString(),
+        'Estimated Completion': new Date(repair.estimatedCompletion).toLocaleDateString(),
+        'Total Cost': `₹${repair.totalCost?.toFixed(2) || '0.00'}`,
+        'Address': repair.customer?.address 
+          ? `${repair.customer.address.line1}${repair.customer.address.line2 ? ', ' + repair.customer.address.line2 : ''}, ${repair.customer.address.city}, ${repair.customer.address.state} - ${repair.customer.address.pincode}`
+          : 'N/A'
+      }));
+
+      // Create worksheet and workbook
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Repairs');
+
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, `${fileName}-${new Date().toISOString().split('T')[0]}.xlsx`);
+      
+      toast({
+        title: 'Export Successful',
+        description: `${repairs.length} repairs exported to Excel`,
+      });
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export repairs to Excel',
+        variant: 'destructive',
+      });
+    }
+  }, [toast]);
+  
+  // Fetch remaining repairs
+  const fetchRemainingRepairs = async () => {
+    try {
+      setIsLoadingRemaining(true);
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const response = await axios.get(`${baseUrl}/api/repairs?status=in_progress&limit=5`);
+      if (response.data.success) {
+        setRemainingRepairs(response.data.data || []);
+      }
+    } catch (error: any) {
+      console.error('Error fetching remaining repairs:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load remaining repairs.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingRemaining(false);
+    }
+  };
+  
+  // Fetch repairs when component mounts
+  React.useEffect(() => {
+    fetchRemainingRepairs();
+    fetchReceivedRepairs();
+  }, []);
+
+  // Function to fetch repairs with 'received' status and filter out 'completed' status
+  const fetchReceivedRepairs = async () => {
+    try {
+      setIsLoadingReceived(true);
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const response = await axios.get(`${baseUrl}/api/repairs?status=received`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        withCredentials: true
+      });
+      
+      console.log('Received repairs response:', response.data); // Debug log
+      
+      if (response.data.success) {
+        // Ensure we have an array and filter for 'received' status as a fallback
+        let repairs = Array.isArray(response.data.data) 
+          ? response.data.data 
+          : [response.data.data].filter(Boolean);
+        
+        // Filter out any repairs with 'completed' status (case-insensitive)
+        repairs = repairs.filter(repair => 
+          repair.status && 
+          typeof repair.status === 'string' && 
+          !repair.status.toLowerCase().includes('completed')
+        );
+          
+        console.log('Setting received repairs (filtered):', repairs); // Debug log
+        setReceivedRepairs(repairs);
+      } else {
+        console.error('Failed to fetch received repairs:', response.data.message);
+        toast({
+          title: "Error",
+          description: response.data.message || "Failed to load received repairs.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching received repairs:', error);
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to load received repairs.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingReceived(false);
+    }
+  };
+  
+  // Function to navigate to repair details
+  const navigateToRepairDetails = (ticketNumber: string) => {
+    window.location.href = `/repairs/details/${ticketNumber}`;
+  };
 
   const handleCompleteRepair = async (ticketNumber: string) => {
     if (!window.confirm('Are you sure you want to mark this repair as complete? This will notify the customer.')) {
@@ -49,10 +184,54 @@ export function TrackRepair() {
 
     try {
       setIsCompleting(prev => ({ ...prev, [ticketNumber]: true }));
+      console.log('Starting repair completion process for ticket:', ticketNumber);
       
+      // Fetch the full repair object by ticketNumber to get the _id
       const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      console.log('Fetching repair details for ticket:', ticketNumber);
+      
+      const repairResp = await axios.get(`${baseUrl}/api/repairs/track/status?ticket=${ticketNumber}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          'Accept': 'application/json'
+        }
+      });
+      
+      console.log('Full repair API response:', {
+        status: repairResp.status,
+        statusText: repairResp.statusText,
+        data: repairResp.data
+      });
+
+      // Handle different response structures
+      let repairId;
+      let repairData;
+      
+      if (Array.isArray(repairResp.data?.data)) {
+        // Handle array response
+        repairId = repairResp.data.data[0]?._id;
+        repairData = repairResp.data.data[0];
+        console.log('Found repair in array response:', repairData);
+      } else if (repairResp.data?.data?._id) {
+        // Handle single object response
+        repairId = repairResp.data.data._id;
+        repairData = repairResp.data.data;
+        console.log('Found repair in object response:', repairData);
+      } else if (repairResp.data?._id) {
+        // Handle direct data response
+        repairId = repairResp.data._id;
+        repairData = repairResp.data;
+        console.log('Found repair in direct response:', repairData);
+      }
+      
+      if (!repairId || !repairData) {
+        console.error('Could not find repair ID in response. Full response:', repairResp.data);
+        throw new Error('Could not find repair ID for this ticket. Please check the ticket number and try again.');
+      }
+
+      console.log('Marking repair as completed in the system...');
       const response = await axios.post(
-        `${baseUrl}/api/repairs/${ticketNumber}/complete`,
+        `${baseUrl}/api/repairs/${repairId}/complete`,
         {},
         {
           headers: {
@@ -64,35 +243,64 @@ export function TrackRepair() {
         }
       );
 
-      if (response.data.success) {
-        toast({
-          title: "Success",
-          description: "Repair marked as completed and customer has been notified.",
-          variant: "default",
-        });
+      console.log('Repair completion API response:', response.data);
+
+      if (response.data.success && repairData) {
+        const customerName = repairData.customer?.name || 'Valued Customer';
+        const customerEmail = repairData.customer?.email?.trim();
         
-        // Find the repair details from foundRepairs
-        const repair = foundRepairs.find(r => r.ticketNumber === ticketNumber);
-        if (repair && repair.customer?.email) {
-          const templateParams = {
-            user_name: repair.customer.name,
-            device_name: repair.device,
-            issue_description: repair.issue,
-            repair_id: repair.ticketNumber,
-            estimated_date: repair.estimatedCompletion,
-            to_email: repair.customer.email,
-          };
-          await emailService.sendCompletionEmail(templateParams);
+        console.log('Preparing to send email to:', customerEmail);
+        
+        if (customerEmail && emailService.isValidEmail(customerEmail)) {
+          console.log('Sending completion email to:', customerEmail);
+          try {
+            const templateParams = {
+              user_name: customerName,
+              device_name: repairData.device || 'your device',
+              issue_description: repairData.issue || 'Not specified',
+              repair_id: repairData.ticketNumber || 'N/A',
+              estimated_date: repairData.estimatedCompletion || new Date().toISOString().split('T')[0],
+              to_email: customerEmail,
+              completion_date: new Date().toISOString().split('T')[0],
+              total_cost: repairData.totalCost ? `₹${repairData.totalCost.toFixed(2)}` : 'To be determined'
+            };
+            
+            console.log('Sending email with params:', templateParams);
+            const emailResult = await emailService.sendCompletionEmail(templateParams);
+            console.log('Email sent successfully:', emailResult);
+            
+            toast({
+              title: "Success",
+              description: `Repair marked as completed and notification sent to ${customerEmail}`,
+              variant: "default",
+            });
+            
+          } catch (error: any) {
+            console.error('Failed to send completion email:', error);
+            toast({
+              title: "Repair Completed",
+              description: `Repair was marked as completed, but there was an issue sending the email notification: ${error.message}`,
+              variant: "default",
+            });
+          }
+        } else {
+          console.log('No valid customer email available for sending completion notification');
+          toast({
+            title: "Repair Completed",
+            description: "Repair was marked as completed, but no valid email was found to send a notification.",
+            variant: "default",
+          });
         }
-        
-        // Refresh the repairs list
-        await searchRepairs();
       }
-    } catch (error) {
-      console.error('Error completing repair:', error);
+      
+      // Refresh the repairs list
+      await searchRepairs();
+      
+    } catch (error: any) {
+      console.error('Error in handleCompleteRepair:', error);
       toast({
         title: "Error",
-        description: error.response?.data?.message || 'Failed to mark repair as completed',
+        description: error.response?.data?.message || error.message || 'An error occurred while processing your request',
         variant: "destructive",
       });
     } finally {
@@ -173,7 +381,7 @@ export function TrackRepair() {
           // Transform the response to match the Repair interface
           const formattedRepairs = repairs.map(repair => ({
             ...repair,
-            // Ensure all required fields have proper defaults
+            _id: repair._id || repair.id, // ensure _id is present
             customer: {
               name: repair.customer?.name || 'N/A',
               phone: repair.customer?.phone || 'N/A',
@@ -192,7 +400,7 @@ export function TrackRepair() {
         } else {
           throw new Error(response.data?.message || 'Failed to search for repairs');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('API Error:', error);
         
         // Handle different types of errors
@@ -224,7 +432,7 @@ export function TrackRepair() {
           throw new Error(error.message || 'An error occurred while processing your request');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error searching repairs:", error);
       
       // Default error message
@@ -242,7 +450,7 @@ export function TrackRepair() {
       // Show the error to the user
       toast({
         title: "Search Failed",
-        description: errorMessage,
+        description: (error as Error).message,
         variant: "destructive",
         duration: 5000, // Show for 5 seconds
       });
@@ -312,8 +520,94 @@ export function TrackRepair() {
     return progressMap[status] || 0;
   };
 
+  const handleSendUpdate = async (repair: Repair) => {
+    if (!updateMessage.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter an update message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSendingUpdate(prev => ({ ...prev, [repair._id]: true }));
+      
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const response = await fetch(`${baseUrl}/api/repairs/${repair._id}/send-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({
+          message: updateMessage.trim()
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send update');
+      }
+
+      toast({
+        title: "Update sent!",
+        description: `The repair update has been sent to the customer.`,
+      });
+
+      // Reset form
+      setUpdateMessage("");
+      setSelectedRepair(null);
+    } catch (error: any) {
+      console.error("Error sending repair update:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send update",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingUpdate(prev => ({ ...prev, [repair._id]: false }));
+    }
+  };
+
+  // Add state for update price dialog
+  const [priceUpdateRepair, setPriceUpdateRepair] = useState<Repair | null>(null);
+  const [newPrice, setNewPrice] = useState<string>("");
+  const [isUpdatingPrice, setIsUpdatingPrice] = useState(false);
+
+  const handleUpdatePrice = async () => {
+    if (!priceUpdateRepair || !newPrice) return;
+    setIsUpdatingPrice(true);
+    try {
+      // In a real app, you'd call an API service here.
+      // await repairService.updatePrice(priceUpdateRepair._id, Number(newPrice));
+
+      // For now, we'll just update the state locally.
+      setFoundRepairs(currentRepairs =>
+        currentRepairs.map(r =>
+          r._id === priceUpdateRepair._id ? { ...r, totalCost: Number(newPrice) } : r
+        )
+      );
+      toast({
+        title: "Success",
+        description: "Repair price has been updated.",
+      });
+      setPriceUpdateRepair(null);
+    } catch (error: any) {
+      toast({
+        title: "Error updating price",
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPrice(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-4xl">
+      {/* Search Card */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Track Your Repair</CardTitle>
@@ -522,24 +816,46 @@ export function TrackRepair() {
                             <div className="absolute left-0 top-1 h-2 w-2 rounded-full border-2 border-gray-300"></div>
                             <div className="text-sm text-muted-foreground">
                               <p>Awaiting completion</p>
-                              <Button 
-                                size="sm" 
-                                className="mt-2" 
-                                onClick={() => handleCompleteRepair(repair.ticketNumber)}
-                                disabled={isCompleting[repair.ticketNumber]}
-                              >
-                                {isCompleting[repair.ticketNumber] ? (
-                                  <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Completing...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Check className="mr-2 h-4 w-4" />
-                                    Mark as Complete
-                                  </>
+                              <div className="flex gap-2 mt-2">
+                                <Button 
+                                  variant="outline"
+                                  size="sm" 
+                                  onClick={() => setSelectedRepair(repair)}
+                                  disabled={isSendingUpdate[repair._id]}
+                                >
+                                  <Send className="h-4 w-4 mr-1" />
+                                  Send Update
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  onClick={() => handleCompleteRepair(repair.ticketNumber)}
+                                  disabled={isCompleting[repair.ticketNumber]}
+                                >
+                                  {isCompleting[repair.ticketNumber] ? (
+                                    <>
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      Completing...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Check className="mr-2 h-4 w-4" />
+                                      Complete
+                                    </>
+                                  )}
+                                </Button>
+                                {(repair.status === 'pending' || repair.status === 'received') && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setPriceUpdateRepair(repair);
+                                      setNewPrice(repair.totalCost?.toString() || '0');
+                                    }}
+                                  >
+                                    Update Price
+                                  </Button>
                                 )}
-                              </Button>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -550,6 +866,168 @@ export function TrackRepair() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Update Repair Dialog */}
+      <Dialog open={!!selectedRepair} onOpenChange={(open) => !open && setSelectedRepair(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Send Repair Update</DialogTitle>
+            <DialogDescription>
+              Send an update about the repair status to the customer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="update-message">Update Message</Label>
+              <Textarea
+                id="update-message"
+                placeholder="Enter update message for the customer..."
+                value={updateMessage}
+                onChange={(e) => setUpdateMessage(e.target.value)}
+                className="min-h-[100px]"
+              />
+              <p className="text-xs text-muted-foreground">
+                This message will be sent to the customer via WhatsApp and/or email.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setSelectedRepair(null)}
+                disabled={isSendingUpdate[selectedRepair?._id || '']}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => selectedRepair && handleSendUpdate(selectedRepair)}
+                disabled={!updateMessage.trim() || isSendingUpdate[selectedRepair?._id || '']}
+              >
+                {isSendingUpdate[selectedRepair?._id || ''] ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send Update
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Price Dialog */}
+      <Dialog open={!!priceUpdateRepair} onOpenChange={(open) => !open && setPriceUpdateRepair(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Update Repair Price</DialogTitle>
+            <DialogDescription>
+              Update the price for the repair of the {priceUpdateRepair?.device}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="price" className="text-right">
+                Price
+              </Label>
+              <Input
+                id="price"
+                type="number"
+                value={newPrice}
+                onChange={(e) => setNewPrice(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPriceUpdateRepair(null)}
+              disabled={isUpdatingPrice}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdatePrice}
+              disabled={isUpdatingPrice || !newPrice || parseFloat(newPrice) < 0}
+            >
+              {isUpdatingPrice ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Save changes"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Show repair lists when no search is performed */}
+      {foundRepairs.length === 0 && (
+        <div className="space-y-8">
+          {/* Received Repairs Section */}
+          {receivedRepairs.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
+                Received Repairs Awaiting Processing
+              </h3>
+              {isLoadingReceived ? (
+                <div className="grid gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse bg-muted/50 p-4 rounded-lg">
+                      <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
+                      <div className="h-3 bg-muted rounded w-1/2"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {receivedRepairs.map((repair) => (
+                    <Card key={repair._id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-medium">{repair.customer?.name || 'No Name'}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {repair.device} - {repair.issue}
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Received: {new Date(repair.receivedDate).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200">
+                              {repair.status}
+                            </Badge>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => {
+                                setSearchQuery(repair.ticketNumber);
+                                setSearchBy('ticket');
+                                const searchBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+                                if (searchBtn) searchBtn.click();
+                              }}
+                            >
+                              View
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

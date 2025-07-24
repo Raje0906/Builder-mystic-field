@@ -13,6 +13,7 @@
     "reset": "node scripts/resetDatabase.js"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@emailjs/nodejs": "^5.0.2",
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -63,6 +64,7 @@
     "express-rate-limit": "^7.1.5",
     "express-validator": "^7.2.1",
     "helmet": "^7.1.0",
+    "idb": "^7.1.1",
     "input-otp": "^1.2.4",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.294.0",
@@ -89,8 +91,7 @@
     "uuid": "^11.1.0",
     "vaul": "^0.7.9",
     "xlsx": "^0.18.5",
-    "zod": "^3.22.4",
-    "idb": "^7.1.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",

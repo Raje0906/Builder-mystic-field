@@ -56,6 +56,7 @@ import {
   getProducts,
 } from "@/lib/dataUtils";
 import { Report } from "@/types";
+import * as XLSX from "xlsx";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
@@ -157,24 +158,41 @@ export function SalesReports() {
   const exportReport = () => {
     if (!report) return;
 
-    const data = {
-      period: formatPeriod(),
-      reportType,
-      generated: new Date().toISOString(),
-      sales: report.sales,
-    };
+    // Store Performance Sheet
+    const storePerf = (report.sales?.storePerformance || []).map((store: any) => ({
+      'Store ID': store.storeId,
+      'Revenue': store.revenue,
+      'Transactions': store.transactions,
+    }));
+    // Top Products Sheet
+    const topProducts = (report.sales?.topProducts || []).map((prod: any) => ({
+      'Product ID': prod.productId,
+      'Name': prod.name,
+      'Quantity Sold': prod.quantity,
+      'Revenue': prod.revenue,
+    }));
+    // Summary Sheet
+    const summary = [{
+      'Period': formatPeriod(),
+      'Report Type': reportType,
+      'Generated': new Date().toISOString(),
+      'Total Revenue': report.sales?.totalRevenue,
+      'Total Transactions': report.sales?.totalTransactions,
+      'Average Order Value': report.sales?.averageOrderValue,
+    }];
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `sales-report-${reportType}-${selectedYear}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const wb = XLSX.utils.book_new();
+    if (storePerf.length > 0) {
+      const ws1 = XLSX.utils.json_to_sheet(storePerf);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Store Performance');
+    }
+    if (topProducts.length > 0) {
+      const ws2 = XLSX.utils.json_to_sheet(topProducts);
+      XLSX.utils.book_append_sheet(wb, ws2, 'Top Products');
+    }
+    const ws3 = XLSX.utils.json_to_sheet(summary);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Summary');
+    XLSX.writeFile(wb, `sales-report-${reportType}-${selectedYear}.xlsx`);
   };
 
   if (isLoading) {

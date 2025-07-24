@@ -52,8 +52,10 @@ import {
   generateMonthlyRepairReport,
   generateQuarterlyReport,
   generateAnnualReport,
+  getRepairs,
 } from "@/lib/dataUtils";
 import { Report } from "@/types";
+import * as XLSX from "xlsx";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
@@ -134,27 +136,75 @@ export function RepairReports() {
     }
   };
 
-  const exportReport = () => {
+  const exportReport = async () => {
     if (!report) return;
 
-    const data = {
-      period: formatPeriod(),
-      reportType,
-      generated: new Date().toISOString(),
-      repairs: report.repairs,
-    };
+    // Store Performance Sheet
+    const storePerf = (report.repairs?.storePerformance || []).map((store: any) => ({
+      'Store ID': store.storeId,
+      'Repairs': store.repairs,
+      'Revenue': store.revenue,
+    }));
+    // Top Issues Sheet
+    const topIssues = (report.repairs?.topIssues || []).map((issue: any) => ({
+      'Issue': issue.issue,
+      'Count': issue.count,
+    }));
+    // Summary Sheet
+    const summary = [{
+      'Period': formatPeriod(),
+      'Report Type': reportType,
+      'Generated': new Date().toISOString(),
+      'Total Repairs': report.repairs?.totalRepairs,
+      'Completed Repairs': report.repairs?.completedRepairs,
+      'Average Repair Time (days)': report.repairs?.averageRepairTime,
+      'Total Revenue': report.repairs?.totalRevenue,
+    }];
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `repair-report-${reportType}-${selectedYear}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Detailed Repairs Sheet
+    let detailedRepairs: any[] = [];
+    try {
+      const allRepairs = await getRepairs();
+      // Filter by selected period
+      detailedRepairs = allRepairs.filter((repair: any) => {
+        const received = new Date(repair.dateReceived);
+        if (reportType === 'monthly') {
+          return received.getFullYear() === selectedYear && (received.getMonth() + 1) === selectedMonth;
+        } else if (reportType === 'quarterly') {
+          const quarter = Math.floor(received.getMonth() / 3) + 1;
+          return received.getFullYear() === selectedYear && quarter === selectedQuarter;
+        } else if (reportType === 'annually') {
+          return received.getFullYear() === selectedYear;
+        }
+        return false;
+      }).map((repair: any) => ({
+        'Customer Name': repair.customer?.name || repair.customerName || '',
+        'Phone': repair.customer?.phone || '',
+        'Issue': repair.issue || repair.issueDescription || '',
+        'Cost': repair.actualCost || repair.estimatedCost || '',
+        'Date Received': repair.dateReceived ? new Date(repair.dateReceived).toLocaleDateString() : '',
+        'Date Completed': repair.actualCompletion ? new Date(repair.actualCompletion).toLocaleDateString() : '',
+      }));
+    } catch (e) {
+      // fallback: leave detailedRepairs empty
+    }
+
+    const wb = XLSX.utils.book_new();
+    if (storePerf.length > 0) {
+      const ws1 = XLSX.utils.json_to_sheet(storePerf);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Store Performance');
+    }
+    if (topIssues.length > 0) {
+      const ws2 = XLSX.utils.json_to_sheet(topIssues);
+      XLSX.utils.book_append_sheet(wb, ws2, 'Top Issues');
+    }
+    const ws3 = XLSX.utils.json_to_sheet(summary);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Summary');
+    if (detailedRepairs.length > 0) {
+      const ws4 = XLSX.utils.json_to_sheet(detailedRepairs);
+      XLSX.utils.book_append_sheet(wb, ws4, 'Detailed Repairs');
+    }
+    XLSX.writeFile(wb, `repair-report-${reportType}-${selectedYear}.xlsx`);
   };
 
   const calculateCompletionRate = () => {

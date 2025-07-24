@@ -196,16 +196,7 @@ class ApiClient {
     });
   }
 
-  async updateProductInventory(id: string, inventoryData: any) {
-    return this.request(`/products/${id}/inventory`, {
-      method: "PUT",
-      body: JSON.stringify(inventoryData),
-    });
-  }
 
-  async getLowStockProducts(storeId: string) {
-    return this.request(`/products/low-stock/${storeId}`);
-  }
 
   // Sales
   async getSales(params?: {
@@ -461,9 +452,6 @@ export const productService = {
   getById: (id: string) => apiClient.getProduct(id),
   create: (data: any) => apiClient.createProduct(data),
   update: (id: string, data: any) => apiClient.updateProduct(id, data),
-  updateInventory: (id: string, data: any) =>
-    apiClient.updateProductInventory(id, data),
-  getLowStock: (storeId: string) => apiClient.getLowStockProducts(storeId),
 };
 
 export const saleService = {

@@ -5,9 +5,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Login } from "@/pages/Login";
 import Dashboard from "@/pages/SimpleDashboard";
-import SalesInventory from "@/pages/SimpleSalesInventory";
 import { SalesCustomers } from "@/pages/sales/SalesCustomers";
 import { NewSale } from "@/pages/sales/NewSale";
+import { DailySales } from "@/pages/sales/DailySales";
 import SalesOverview from "@/pages/SalesOverview";
 import RepairsOverview from "@/pages/SimpleRepairs";
 import { NewRepair } from "@/pages/repairs/NewRepair";
@@ -17,8 +17,6 @@ import { SalesReports } from "@/pages/reports/SalesReports";
 import { RepairReports } from "@/pages/reports/RepairReports";
 import { StoreReports } from "@/pages/reports/StoreReports";
 import CustomerManagement from "@/pages/CustomerManagement";
-import InventoryPage from "@/pages/inventory/InventoryPage";
-import InventoryForm from "@/pages/inventory/InventoryForm";
 import TestPage from "@/pages/TestPage";
 import NotFound from "@/pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
@@ -45,8 +43,8 @@ function App() {
 
               {/* Sales Routes */}
               <Route path="sales" element={<SalesOverview />} />
-              <Route path="sales/inventory" element={<SalesInventory />} />
               <Route path="sales/customers" element={<SalesCustomers />} />
+              <Route path="sales/daily" element={<DailySales />} />
               <Route path="sales/new" element={<NewSale />} />
 
               {/* Repair Routes */}
@@ -62,12 +60,6 @@ function App() {
 
               {/* Other Routes */}
               <Route path="customers" element={<CustomerManagement />} />
-              <Route path="inventory">
-                <Route index element={<InventoryPage />} />
-                <Route path="new" element={<InventoryForm />} />
-                <Route path=":id" element={<InventoryForm />} />
-                <Route path=":id/edit" element={<InventoryForm />} />
-              </Route>
               <Route path="test" element={<TestPage />} />
 
               {/* Admin-only: User Management */}

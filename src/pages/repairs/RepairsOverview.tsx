@@ -46,6 +46,7 @@ import {
   Mail,
   Eye,
   Edit,
+  Send,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -58,6 +59,7 @@ import {
 import { customers, stores } from "@/lib/mockData";
 import { Repair } from "@/types";
 import { emailService } from '@/services/emailService';
+import jsPDF from 'jspdf';
 
 export function RepairsOverview() {
   const [repairs, setRepairs] = useState<Repair[]>([]);
@@ -68,6 +70,8 @@ export function RepairsOverview() {
   const [selectedRepair, setSelectedRepair] = useState<Repair | null>(null);
   const [updateNote, setUpdateNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isSendingUpdate, setIsSendingUpdate] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -301,6 +305,113 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
     );
   });
 
+  const generateRepairPDF = (repair) => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Repair Receipt', 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Ticket Number: ${repair.ticketNumber || '-'}`, 14, 35);
+    doc.text(`Date: ${repair.receivedDate ? new Date(repair.receivedDate).toLocaleDateString() : '-'}`, 14, 43);
+    doc.text(`Customer: ${getCustomerName(repair.customerId)}`, 14, 51);
+    doc.text(`Device: ${repair.deviceInfo.brand} ${repair.deviceInfo.model}`, 14, 59);
+    doc.text(`Serial Number: ${repair.deviceInfo.serialNumber || '-'}`, 14, 67);
+    doc.text(`Problem: ${repair.issue}`, 14, 75);
+    doc.text(`Status: ${repair.status}`, 14, 83);
+    doc.text(`Priority: ${repair.priority}`, 14, 91);
+    doc.text(`Cost: ₹${repair.actualCost || 0}`, 14, 99);
+    doc.text('Thank you for choosing our service!', 14, 120);
+    doc.save(`RepairReceipt_${repair.ticketNumber || repair.id || 'receipt'}.pdf`);
+  };
+
+  const handleStatusUpdate = async () => {
+    if (!selectedRepair || !updateNote) return;
+
+    setIsUpdating(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      const updatedRepair = {
+        ...selectedRepair,
+        status: updateNote,
+        lastUpdated: new Date().toISOString(),
+      };
+      
+      updateRepair(updatedRepair);
+      setRepairs(prev => 
+        prev.map(repair => 
+          repair.id === selectedRepair.id ? updatedRepair : repair
+        )
+      );
+      
+      // Refresh filtered repairs
+      setFilteredRepairs(prev => 
+        prev.map(repair => 
+          repair.id === selectedRepair.id ? updatedRepair : repair
+        )
+      );
+      
+      toast({
+        title: "Status updated",
+        description: `Repair status has been updated to ${updateNote}`,
+      });
+      
+      // Close the dialog
+      setSelectedRepair(null);
+      setUpdateNote("");
+    } catch (error) {
+      console.error("Error updating repair status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update repair status",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSendUpdate = async () => {
+    if (!selectedRepair || !updateMessage.trim()) return;
+
+    setIsSendingUpdate(true);
+    try {
+      const response = await fetch(`/api/repairs/${selectedRepair.id}/send-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: updateMessage.trim()
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send update');
+      }
+
+      toast({
+        title: "Update sent!",
+        description: `The repair update has been sent to the customer.`,
+      });
+
+      // Reset form
+      setUpdateMessage("");
+      setSelectedRepair(null);
+    } catch (error) {
+      console.error("Error sending repair update:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send update",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingUpdate(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Stats */}
@@ -437,6 +548,7 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Ticket</TableHead>
                 <TableHead>Device & Customer</TableHead>
                 <TableHead>Issue</TableHead>
                 <TableHead>Status</TableHead>
@@ -449,6 +561,7 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
             <TableBody>
               {filteredRepairs.map((repair) => (
                 <TableRow key={repair.id}>
+                  <TableCell><b>{repair.ticketNumber || '-'}</b></TableCell>
                   <TableCell>
                     <div>
                       <p className="font-medium">
@@ -496,34 +609,23 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => {
-                          const customer = customers.find(
-                            (c) => c.id === repair.customerId,
-                          );
-                          const whatsappNumber =
-                            repair.contactInfo?.whatsappNumber ||
-                            customer?.phone;
-                          if (customer && whatsappNumber) {
-                            const store = stores.find(
-                              (s) => s.id === repair.storeId,
-                            );
-                            const message = `Hi ${customer.name}, this is an update on your ${repair.deviceInfo.brand} ${repair.deviceInfo.model} repair. Current status: ${repair.status.toUpperCase()}. ${repair.estimatedCompletion ? `Expected completion: ${new Date(repair.estimatedCompletion).toLocaleDateString()}` : ""} - ${store?.name || "Laptop Store"}`;
-                            await sendWhatsAppNotification(
-                              whatsappNumber,
-                              message,
-                            );
-                            toast({
-                              title: "WhatsApp Sent",
-                              description:
-                                "Status update sent to customer's verified WhatsApp",
-                            });
-                          }
-                        }}
+                      <button
+                        className="text-blue-600 hover:text-blue-900 mr-2"
+                        onClick={() => generateRepairPDF(repair)}
+                        title="View Repair Details"
                       >
-                        <MessageSquare className="w-4 h-4" />
+                        <Eye className="w-4 h-4" />
+                      </button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedRepair(repair)}
+                        title="Send Update"
+                        className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                      >
+                        <Send className="w-4 h-4 mr-1" />
+                        Update
                       </Button>
 
                       {repair.status !== "completed" && (
@@ -538,6 +640,7 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
                           }
                           disabled={isUpdating}
                           className="bg-green-600 hover:bg-green-700"
+                          title="Mark as Complete"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Complete

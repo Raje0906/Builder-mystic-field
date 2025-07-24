@@ -1,4 +1,5 @@
 import { Customer, Repair, Store } from "@/types";
+import { emailService } from './emailService';
 
 interface NotificationConfig {
   whatsapp: {
@@ -179,26 +180,22 @@ class RealNotificationService {
     messageId?: string;
     error?: string;
   }> {
-    if (!this.isProduction || !this.config.email.enabled) {
-      return this.simulateEmail(to, subject, html);
-    }
-
+    // Use emailjs frontend service instead of backend providers
     try {
-      switch (this.config.email.provider) {
-        case "sendgrid":
-          return await this.sendViaSendGrid(to, subject, html);
-        case "mailgun":
-          return await this.sendViaMailgun(to, subject, html);
-        case "aws-ses":
-          return await this.sendViaAWSSES(to, subject, html);
-        default:
-          return { success: false, error: "No email provider configured" };
-      }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+      const templateParams = {
+        to_email: to,
+        subject,
+        html,
+        user_name: '', // You may want to pass more params as needed
+        device_name: '',
+        issue_description: '',
+        repair_id: '',
+        estimated_date: '',
       };
+      const result = await emailService.sendEmail(templateParams);
+      return { success: result.success, messageId: result.messageId };
+    } catch (error: any) {
+      return { success: false, error: error.message };
     }
   }
 
@@ -338,7 +335,16 @@ class RealNotificationService {
     // Send both notifications in parallel
     const [whatsappResult, emailResult] = await Promise.all([
       this.sendWhatsAppMessage(whatsappNumber, whatsappMessage),
-      this.sendEmail(emailAddress, emailSubject, emailHtml),
+      emailService.sendEmail({
+        user_name: customer.name,
+        device_name: repair.deviceInfo.brand + ' ' + repair.deviceInfo.model,
+        issue_description: repair.issue,
+        repair_id: repair.id,
+        estimated_date: repair.estimatedCompletion,
+        to_email: emailAddress,
+        html: emailHtml,
+        subject: emailSubject,
+      }),
     ]);
 
     return {

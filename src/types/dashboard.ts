@@ -4,7 +4,6 @@ export interface DashboardMetrics {
   activeRepairs: number;
   completedRepairs: number;
   totalCustomers: number;
-  lowStockItems: number;
   monthlyGrowth: number;
   repairAvgTime: number;
 }

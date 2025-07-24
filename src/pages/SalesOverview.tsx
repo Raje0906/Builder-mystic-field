@@ -16,14 +16,6 @@ export default function SalesOverview() {
       icon: "💰",
     },
     {
-      title: "Inventory Management",
-      description: "View and manage product inventory",
-      link: "/sales/inventory",
-      color: "bg-green-50 border-green-200 hover:bg-green-100",
-      textColor: "text-green-900",
-      icon: "📦",
-    },
-    {
       title: "Customer Search",
       description: "Find and manage customers",
       link: "/sales/customers",
@@ -41,7 +33,7 @@ export default function SalesOverview() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Sales Overview</h1>
         <p className="text-gray-600">
-          Manage sales transactions, inventory, and customer interactions
+          Manage sales transactions and customer interactions
         </p>
       </div>
 

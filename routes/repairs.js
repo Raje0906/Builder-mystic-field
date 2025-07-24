@@ -67,70 +67,59 @@ router.get('/track/status', async (req, res) => {
     
     // Build the query based on provided parameters
     const query = {};
-    
+
+    // If ticket is provided, search by ticketNumber
     if (ticket) {
-      // Check if ticket is a valid ObjectId
-      if (mongoose.Types.ObjectId.isValid(ticket)) {
-        query._id = new mongoose.Types.ObjectId(ticket);
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid ticket number format'
-        });
-      }
+      query.ticketNumber = ticket;
     }
 
     // If searching by phone or email, first find matching customers
     let customerIds = [];
     if (phone || email) {
       const customerQuery = {};
-      
       if (phone) {
-        // Remove any non-digit characters from phone number
         const cleanPhone = phone.replace(/\D/g, '');
         customerQuery.phone = { $regex: cleanPhone, $options: 'i' };
       }
-      
       if (email) {
         customerQuery.email = email.toLowerCase();
       }
-      
       const customers = await Customer.find(customerQuery).select('_id');
       customerIds = customers.map(c => c._id);
-      
       if (customerIds.length === 0 && !ticket) {
         return res.status(404).json({
           success: false,
           message: 'No customers found with the provided details'
         });
       }
-      
-      // If we have customer IDs but no ticket, search by customer IDs
       if (customerIds.length > 0) {
         query.customer = { $in: customerIds };
       }
     }
-    
+
+    // If both ticket and phone are provided, ensure both match
+    // (query already has both conditions above)
+
     // Find repairs with the built query
     const repairs = await Repair.find(query)
       .populate({
         path: 'customer',
         select: 'name phone email address',
-        // If customer is not found, still return the repair
         options: { allowNull: true }
       })
       .sort({ receivedDate: -1 });
-    
+
     if (!repairs || repairs.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'No repairs found with the provided details'
       });
     }
-    
+
     // Format the response
     const response = repairs.map(repair => ({
-      ticketNumber: repair._id,
+      _id: repair._id, // include MongoDB ObjectId
+      ticketNumber: repair.ticketNumber,
       status: repair.status,
       device: repair.deviceType ? `${repair.deviceType} ${repair.brand || ''} ${repair.model || ''}`.trim() : 'N/A',
       issue: repair.issueDescription || 'No description provided',
@@ -150,7 +139,7 @@ router.get('/track/status', async (req, res) => {
         }
       }
     }));
-    
+
     res.json({
       success: true,
       data: response
@@ -258,6 +247,40 @@ router.post(
         }
       }
 
+      // Generate a unique ticket number with retry logic
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const phone = customer.phone || '';
+      const last4 = phone.replace(/\D/g, '').slice(-4).padStart(4, '0');
+      
+      // Function to generate a potential ticket number
+      const generateTicketNumber = () => {
+        const random4 = Math.floor(1000 + Math.random() * 9000); // Random 4-digit number
+        return `${dd}${mm}${yyyy}${last4}${random4}`;
+      };
+      
+      // Check if the generated ticket number already exists
+      let ticketNumber;
+      let attempts = 0;
+      const maxAttempts = 5;
+      
+      while (attempts < maxAttempts) {
+        ticketNumber = generateTicketNumber();
+        const existingRepair = await Repair.findOne({ ticketNumber });
+        if (!existingRepair) {
+          break; // Found a unique ticket number
+        }
+        attempts++;
+        
+        // If we've tried several times and still get duplicates, add a timestamp to ensure uniqueness
+        if (attempts === maxAttempts - 1) {
+          ticketNumber = `${dd}${mm}${yyyy}${last4}${Date.now().toString().slice(-4)}`;
+          break;
+        }
+      }
+
       // Create new repair
       const newRepair = new Repair({
         customer: customer._id,
@@ -275,6 +298,7 @@ router.post(
         estimatedCompletion: req.body.estimatedCompletion || null,
         technician: req.body.technician || '',
         notes: req.body.notes || 'Repair created',
+        ticketNumber,
       });
 
       // Save to database
@@ -321,6 +345,123 @@ router.post(
     }
   }
 );
+
+// Send repair update to customer
+router.post('/:repairId/send-update', async (req, res) => {
+  try {
+    const { repairId } = req.params;
+    const { message } = req.body;
+
+    console.log(`Sending update for repair ${repairId}`);
+
+    // Validate repair ID
+    if (!mongoose.Types.ObjectId.isValid(repairId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid repair ID format'
+      });
+    }
+
+    // Validate message
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message is required and cannot be empty'
+      });
+    }
+
+    // Find the repair with customer details
+    const repair = await Repair.findById(repairId).populate('customer');
+    
+    if (!repair) {
+      return res.status(404).json({
+        success: false,
+        message: 'Repair not found'
+      });
+    }
+
+    if (!repair.customer) {
+      return res.status(400).json({
+        success: false,
+        message: 'No customer associated with this repair'
+      });
+    }
+
+    const customer = repair.customer;
+    const deviceInfo = `${repair.deviceType || ''} ${repair.brand || ''} ${repair.model || ''}`.trim();
+    
+    // Format the update message
+    const formattedMessage = `🔧 Repair Update for ${deviceInfo} (Ticket #${repair.ticketNumber})\n\n` +
+      `${message}\n\n` +
+      `Current Status: ${repair.status.charAt(0).toUpperCase() + repair.status.slice(1).replace('_', ' ')}\n` +
+      `Last Updated: ${new Date().toLocaleString()}\n\n` +
+      `Thank you for choosing our service!`;
+
+    // Send WhatsApp notification if phone exists
+    let whatsappSent = false;
+    if (customer.phone) {
+      try {
+        const { sendWhatsAppNotification } = await import('../services/whatsappService.js');
+        await sendWhatsAppNotification(customer.phone, formattedMessage);
+        whatsappSent = true;
+        console.log('WhatsApp update sent to:', customer.phone);
+      } catch (error) {
+        console.error('Error sending WhatsApp update:', error);
+      }
+    }
+
+    // Send email notification if email exists
+    let emailSent = false;
+    if (customer.email) {
+      try {
+        const emailSubject = `🔧 Update on Your Repair #${repair.ticketNumber}`;
+        const notificationService = (await import('../services/realNotificationService.js')).default;
+        await notificationService.sendEmailNotification(
+          customer.email, 
+          emailSubject, 
+          formattedMessage.replace(/\n/g, '<br/>')
+        );
+        emailSent = true;
+        console.log('Email update sent to:', customer.email);
+      } catch (error) {
+        console.error('Error sending email update:', error);
+      }
+    }
+
+    // Add update to repair history
+    repair.updates = repair.updates || [];
+    repair.updates.push({
+      message: message,
+      sentAt: new Date(),
+      via: {
+        whatsapp: whatsappSent,
+        email: emailSent
+      }
+    });
+    await repair.save();
+
+    res.json({
+      success: true,
+      message: 'Repair update sent successfully',
+      data: {
+        whatsappSent,
+        emailSent,
+        update: {
+          message,
+          sentAt: new Date()
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Error sending repair update:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error sending repair update',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
 
 // Update repair status
 router.put('/:repairId/status', async (req, res) => {

@@ -5,6 +5,8 @@ import Customer from "../models/Customer.js";
 import Product from "../models/Product.js";
 import Sale from "../models/Sale.js";
 import Repair from "../models/Repair.js";
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
@@ -230,6 +232,7 @@ async function seedDatabase() {
       Product.deleteMany({}),
       Sale.deleteMany({}),
       Repair.deleteMany({}),
+      User.deleteMany({}), // Clear existing users
     ]);
 
     // Create stores
@@ -384,6 +387,20 @@ async function seedDatabase() {
     const repairs = await Repair.insertMany(repairsData);
     console.log(`✅ Created ${repairs.length} repairs`);
 
+    // Create default admin user
+    console.log("👤 Creating default admin user...");
+    const hashedPassword = await bcrypt.hash("Admin@12345", 10);
+    const adminUser = new User({
+      name: "Admin",
+      email: "admin@laptopstore.com",
+      phone: "+91 99999 99999",
+      password: hashedPassword,
+      role: "admin",
+      isActive: true
+    });
+    await adminUser.save();
+    console.log("✅ Created default admin user: admin@laptopstore.com / Admin@12345");
+
     console.log("🎉 Database seeding completed successfully!");
     console.log("\n📊 Summary:");
     console.log(`• ${stores.length} stores`);
@@ -391,6 +408,7 @@ async function seedDatabase() {
     console.log(`• ${products.length} products`);
     console.log(`• ${sales.length} sales`);
     console.log(`• ${repairs.length} repairs`);
+    console.log(`• 1 default admin user`);
 
     process.exit(0);
   } catch (error) {

@@ -43,7 +43,6 @@ import saleRoutes from "./routes/sales.js";
 import repairRoutes from "./routes/repairs.js";
 import notificationRoutes from "./routes/notifications.js";
 import storeRoutes from "./routes/stores.js";
-import inventoryRoutes from "./routes/inventory.js";
 import authRoutes from "./routes/auth.js";
 import reportsRoutes from "./routes/reports.js";
 import usersRoutes from "./routes/users.js";
@@ -175,7 +174,6 @@ const apiRoutes = [
   { path: '/api/repairs', router: repairRoutes },
   { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
   { path: '/api/stores', router: storeRoutes },
-  { path: '/api/inventory', router: inventoryRoutes },
   { path: '/api/reports', router: reportsRoutes },
   { path: '/api/users', router: usersRoutes },
 ];

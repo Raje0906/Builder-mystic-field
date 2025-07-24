@@ -22,7 +22,6 @@ const STORE_CUSTOMERS = 'customers';
 const STORE_SALES = 'sales';
 const STORE_REPORTS = 'reports';
 const STORE_REPAIRS = 'repairs';
-const STORE_INVENTORY = 'inventory';
 const STORE_STORES = 'stores';
 const STORE_USERS = 'users';
 const STORE_NOTIFICATIONS = 'notifications';
@@ -42,9 +41,6 @@ export async function getDB() {
       }
       if (!db.objectStoreNames.contains(STORE_REPAIRS)) {
         db.createObjectStore(STORE_REPAIRS, { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains(STORE_INVENTORY)) {
-        db.createObjectStore(STORE_INVENTORY, { keyPath: 'id' });
       }
       if (!db.objectStoreNames.contains(STORE_STORES)) {
         db.createObjectStore(STORE_STORES, { keyPath: 'id' });
@@ -116,20 +112,6 @@ export async function saveRepairsToIDB(repairs: any[]) {
 export async function getRepairsFromIDB() {
   const db = await getDB();
   return db.getAll(STORE_REPAIRS);
-}
-
-// Inventory
-export async function saveInventoryToIDB(items: any[]) {
-  const db = await getDB();
-  const tx = db.transaction(STORE_INVENTORY, 'readwrite');
-  for (const item of items) {
-    await tx.store.put(item);
-  }
-  await tx.done;
-}
-export async function getInventoryFromIDB() {
-  const db = await getDB();
-  return db.getAll(STORE_INVENTORY);
 }
 
 // Stores
@@ -701,16 +683,57 @@ export const generateAnnualReport = async (year: number): Promise<Report> => {
 export const addRepair = async (repairData: any): Promise<Repair> => {
   try {
     const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    
+    // Ensure required fields are present
+    if (!repairData.customer) {
+      throw new Error('Customer information is required');
+    }
+    if (!repairData.brand) {
+      throw new Error('Device brand is required');
+    }
+    if (!repairData.model) {
+      throw new Error('Device model is required');
+    }
+    
+    // Prepare the repair data with default values
+    const sanitizedData = {
+      ...repairData,
+      deviceType: repairData.deviceType || 'Laptop',
+      brand: repairData.brand.trim(),
+      model: repairData.model.trim(),
+      serialNumber: repairData.serialNumber?.trim() || 'N/A',
+      imei: repairData.imei?.trim() || 'N/A',
+      issueDescription: repairData.issueDescription || 'Not specified',
+      diagnosis: repairData.diagnosis || 'Pending diagnosis',
+      repairCost: parseFloat(repairData.repairCost) || 0,
+      partsCost: parseFloat(repairData.partsCost) || 0,
+      laborCost: parseFloat(repairData.laborCost) || 0,
+      priority: repairData.priority || 'medium',
+      status: repairData.status || 'received',
+      // Format notes as a string with newlines
+      notes: Array.isArray(repairData.notes) 
+        ? repairData.notes.join('\n')
+        : [
+            `Issue: ${repairData.issueDescription || 'Not specified'}`,
+            `Diagnosis: ${repairData.diagnosis || 'Pending diagnosis'}`,
+            `Estimated cost: ₹${parseFloat(repairData.repairCost) || 0}`,
+            `Created at: ${new Date().toISOString()}`
+          ].join('\n'),
+      dateReceived: repairData.dateReceived || new Date().toISOString(),
+      estimatedCompletion: repairData.estimatedCompletion || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+    
     console.log('=== SENDING REPAIR DATA ===');
     console.log('URL:', `${baseUrl}/api/repairs`);
-    console.log('Data:', JSON.stringify(repairData, null, 2));
+    console.log('Data:', JSON.stringify(sanitizedData, null, 2));
     
     const response = await fetch(`${baseUrl}/api/repairs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
       },
-      body: JSON.stringify(repairData),
+      body: JSON.stringify(sanitizedData),
       credentials: 'include',
     });
 
@@ -924,21 +947,6 @@ export const sendEmailNotification = async (
   } catch (error) {
     console.error("Email notification error:", error);
     return false;
-  }
-};
-
-export const getInventory = async (): Promise<any[]> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
-  try {
-    const response = await fetch(`${apiUrl}/inventory`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch inventory');
-    }
-    const data = await response.json();
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error('Error fetching inventory:', error);
-    return [];
   }
 };
 

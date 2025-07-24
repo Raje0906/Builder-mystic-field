@@ -3,7 +3,6 @@ import { body, param, query, validationResult } from "express-validator";
 import Sale from "../models/Sale.js";
 import Product from "../models/Product.js";
 import Customer from "../models/Customer.js";
-import Inventory from '../models/Inventory.js';
 
 const router = express.Router();
 
@@ -219,9 +218,25 @@ router.post(
     body("customer").isMongoId().withMessage("Valid customer ID is required"),
     body("store").isMongoId().withMessage("Valid store ID is required"),
     body("items").isArray({ min: 1 }).withMessage("At least one item required"),
+    body("items.*").custom((item, { req }) => {
+      // For manual entries, require productName
+      if (!item.inventory && !item.productName) {
+        throw new Error('Either inventory ID or product name is required');
+      }
+      return true;
+    }),
     body("items.*.inventory")
+      .optional()
       .isMongoId()
       .withMessage("Valid inventory ID is required"),
+    body("items.*.productName")
+      .optional()
+      .isString()
+      .withMessage("Product name must be a string"),
+    body("items.*.serialNumber")
+      .optional()
+      .isString()
+      .withMessage("Serial number must be a string"),
     body("items.*.quantity")
       .isInt({ min: 1 })
       .withMessage("Quantity must be positive"),
@@ -252,37 +267,54 @@ router.post(
       let totalAmount = 0;
       const populatedItems = [];
 
-      // Verify inventory items and calculate total
+      // Process items and calculate total
       for (const item of items) {
-        const inventoryItem = await Inventory.findById(item.inventory);
-        if (!inventoryItem) {
-          return res.status(404).json({
-            success: false,
-            message: `Inventory item with ID ${item.inventory} not found`,
-          });
-        }
-        if (!inventoryItem.product) {
-          return res.status(400).json({
-            success: false,
-            message: `Inventory item with ID ${item.inventory} is missing a product reference.`,
-          });
-        }
-        if (inventoryItem.stock < item.quantity) {
-          return res.status(400).json({
-            success: false,
-            message: `Not enough stock for ${inventoryItem.name}`,
-          });
-        }
         const totalPrice = item.quantity * item.unitPrice;
         totalAmount += totalPrice;
-        // Use the product field from the inventory item
-        populatedItems.push({
-          product: inventoryItem.product, // Store the correct product reference
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice,
-          discount: item.discount || 0,
-        });
+        
+        // For manual entries
+        if (item.productName) {
+          populatedItems.push({
+            productName: item.productName,
+            serialNumber: item.serialNumber || null,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice,
+            discount: item.discount || 0,
+            isManualEntry: true
+          });
+        } 
+        // For inventory items
+        else if (item.inventory) {
+          const inventoryItem = await Inventory.findById(item.inventory);
+          if (!inventoryItem) {
+            return res.status(404).json({
+              success: false,
+              message: `Inventory item with ID ${item.inventory} not found`,
+            });
+          }
+          if (!inventoryItem.product) {
+            return res.status(400).json({
+              success: false,
+              message: `Inventory item with ID ${item.inventory} is missing a product reference.`,
+            });
+          }
+          if (inventoryItem.stock < item.quantity) {
+            return res.status(400).json({
+              success: false,
+              message: `Not enough stock for ${inventoryItem.name}`,
+            });
+          }
+          
+          populatedItems.push({
+            product: inventoryItem.product,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice,
+            discount: item.discount || 0,
+            isManualEntry: false
+          });
+        }
       }
 
       // Create new sale
@@ -297,13 +329,6 @@ router.post(
       });
 
       await newSale.save();
-
-      // Update inventory stock
-      for (const item of items) {
-        await Inventory.findByIdAndUpdate(item.inventory, {
-          $inc: { stock: -item.quantity },
-        });
-      }
 
       const populatedSale = await Sale.findById(newSale._id)
         .populate("customer", "name email");
@@ -472,6 +497,79 @@ router.get(
       });
     }
   },
+);
+
+// GET /api/sales/stats - Get sales statistics
+router.get(
+  "/stats",
+  [
+    query("startDate").optional().isISO8601(),
+    query("endDate").optional().isISO8601(),
+    query("groupBy").optional().isIn(["day", "week", "month"]),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { startDate, endDate, groupBy = "day" } = req.query;
+      
+      // Build the match query
+      const matchQuery = { isActive: true };
+      
+      if (startDate && endDate) {
+        matchQuery.createdAt = {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate)
+        };
+      }
+
+      // Group by date
+      let groupFormat;
+      switch (groupBy) {
+        case "day":
+          groupFormat = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+          break;
+        case "week":
+          groupFormat = { $dateToString: { format: "%Y-%W", date: "$createdAt" } };
+          break;
+        case "month":
+          groupFormat = { $dateToString: { format: "%Y-%m", date: "$createdAt" } };
+          break;
+        default:
+          groupFormat = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+      }
+
+      const stats = await Sale.aggregate([
+        { $match: matchQuery },
+        {
+          $group: {
+            _id: groupFormat,
+            count: { $sum: 1 },
+            totalAmount: { $sum: "$totalAmount" },
+            itemsSold: { $sum: { $sum: "$items.quantity" } },
+            sales: { $push: "$$ROOT" },
+          },
+        },
+        {
+          $addFields: {
+            avgOrderValue: { $divide: ["$totalAmount", "$count"] },
+          },
+        },
+        { $sort: { _id: -1 } },
+      ]);
+
+      res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      console.error("[SALES STATS ERROR]", error);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching sales statistics",
+        error: error.message,
+      });
+    }
+  }
 );
 
 export default router;

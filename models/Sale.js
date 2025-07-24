@@ -4,11 +4,43 @@ import AutoIncrement from 'mongoose-sequence';
 const AutoIncrementFactory = AutoIncrement(mongoose);
 
 const saleItemSchema = new mongoose.Schema({
-  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, required: true },
-  unitPrice: { type: Number, required: true },
-  totalPrice: { type: Number, required: true },
-  discount: { type: Number, default: 0 }
+  product: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Product',
+    required: function() { return !this.isManualEntry; }
+  },
+  productName: {
+    type: String,
+    required: function() { return this.isManualEntry; }
+  },
+  serialNumber: {
+    type: String,
+    default: null
+  },
+  quantity: { 
+    type: Number, 
+    required: true,
+    min: 1
+  },
+  unitPrice: { 
+    type: Number, 
+    required: true,
+    min: 0
+  },
+  totalPrice: { 
+    type: Number, 
+    required: true,
+    min: 0
+  },
+  discount: { 
+    type: Number, 
+    default: 0,
+    min: 0
+  },
+  isManualEntry: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const saleSchema = new mongoose.Schema({

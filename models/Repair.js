@@ -63,7 +63,33 @@ const repairSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  ticketNumber: {
+    type: String,
+    unique: true,
+    index: true,
+    required: true
+  },
+  updates: [{
+    message: {
+      type: String,
+      required: true
+    },
+    sentAt: {
+      type: Date,
+      default: Date.now
+    },
+    via: {
+      whatsapp: {
+        type: Boolean,
+        default: false
+      },
+      email: {
+        type: Boolean,
+        default: false
+      }
+    }
+  }]
 });
 
 // Add pre-save hook to calculate total cost

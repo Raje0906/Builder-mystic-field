@@ -29,8 +29,8 @@ const navigation = [
     href: "/sales",
     icon: ShoppingCart,
     children: [
-      { name: "Inventory", href: "/sales/inventory" },
       { name: "New Sale", href: "/sales/new" },
+      { name: "Daily Sales", href: "/sales/daily" },
     ],
   },
   {
@@ -57,11 +57,6 @@ const navigation = [
     name: "Customers",
     href: "/customers",
     icon: Users,
-  },
-  {
-    name: "Inventory",
-    href: "/inventory",
-    icon: Package,
   },
 ];
 
