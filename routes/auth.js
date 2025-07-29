@@ -22,8 +22,9 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Generate JWT token
+// Generate JWT token with 10-minute inactivity timeout
 const generateToken = (user) => {
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds
   return jwt.sign(
     {
       id: user._id,
@@ -31,9 +32,10 @@ const generateToken = (user) => {
       name: user.name,
       role: user.role,
       store_id: user.store_id,
+      iat: now, // Issued at time
     },
     process.env.JWT_SECRET || "fallback-secret",
-    { expiresIn: "24h" }
+    { expiresIn: "24h" } // Token will still expire after 24h regardless of activity
   );
 };
 
@@ -102,39 +104,30 @@ router.post(
         });
       }
 
-      // For non-admin users, validate store access
-      if (user.role !== 'admin') {
-        if (!store_id) {
-          return res.status(400).json({
-            success: false,
-            message: "Store selection is required for your role",
-          });
-        }
-
-        // Check if user is assigned to the requested store
-        const userStoreId = user.store_id?._id?.toString() || user.store_id?.toString();
-        if (userStoreId !== store_id) {
-          console.log(`User ${user._id} attempted to login to unauthorized store ${store_id}. User's store: ${userStoreId}`);
-          return res.status(403).json({
-            success: false,
-            message: "You do not have access to the selected store",
-          });
-        }
-
-        // Verify store exists and is active
-        const store = await Store.findById(store_id);
-        if (!store || store.status !== 'active') {
-          console.log('Store status check failed:', { 
-            storeExists: !!store, 
-            storeStatus: store?.status,
-            storeId: store_id 
-          });
-          return res.status(400).json({
-            success: false,
-            message: "The selected store is not available",
-          });
-        }
+      // For all users, verify the selected store exists and is active
+      if (!store_id) {
+        return res.status(400).json({
+          success: false,
+          message: "Store selection is required",
+        });
       }
+
+      // Verify store exists and is active
+      const store = await Store.findById(store_id);
+      if (!store || store.status !== 'active') {
+        console.log('Store status check failed:', { 
+          storeExists: !!store, 
+          storeStatus: store?.status,
+          storeId: store_id 
+        });
+        return res.status(400).json({
+          success: false,
+          message: "The selected store is not available",
+        });
+      }
+      
+      // Update user's store assignment to the selected store
+      user.store_id = store_id;
 
       // Update last login timestamp
       user.lastLogin = new Date();

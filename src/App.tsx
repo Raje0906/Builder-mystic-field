@@ -1,7 +1,7 @@
-// React import not needed with React 17+
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Login } from "@/pages/Login";
 import Dashboard from "@/pages/SimpleDashboard";
@@ -22,57 +22,62 @@ import NotFound from "@/pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
 import UserManagement from "@/pages/UserManagement";
-import { toast } from "@/hooks/use-toast";
+
+const AppContent = () => {
+  const { setSessionExpiredCallback } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Set up the callback to navigate to login when session expires
+    setSessionExpiredCallback(() => {
+      navigate('/login');
+    });
+  }, [navigate, setSessionExpiredCallback]);
+
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Protected Routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Dashboard />} />
+        <Route path="sales" element={<SalesOverview />} />
+        <Route path="sales/customers" element={<SalesCustomers />} />
+        <Route path="sales/daily" element={<DailySales />} />
+        <Route path="sales/new" element={<NewSale />} />
+        <Route path="repairs" element={<RepairsOverview />} />
+        <Route path="repairs/new" element={<NewRepair />} />
+        <Route path="repairs/track" element={<TrackRepair />} />
+        <Route path="reports" element={<ReportsOverview />} />
+        <Route path="reports/sales" element={<SalesReports />} />
+        <Route path="reports/repairs" element={<RepairReports />} />
+        <Route path="reports/store" element={<StoreReports />} />
+        {/* Keep both routes for backward compatibility */}
+        <Route path="reports/stores" element={<StoreReports />} />
+        <Route path="customers" element={<CustomerManagement />} />
+        <Route path="users" element={
+          <ProtectedRoute requiredRoles={["admin"]}>
+            <UserManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="test" element={<TestPage />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-
-            {/* Protected Routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Dashboard />} />
-
-              {/* Sales Routes */}
-              <Route path="sales" element={<SalesOverview />} />
-              <Route path="sales/customers" element={<SalesCustomers />} />
-              <Route path="sales/daily" element={<DailySales />} />
-              <Route path="sales/new" element={<NewSale />} />
-
-              {/* Repair Routes */}
-              <Route path="repairs" element={<RepairsOverview />} />
-              <Route path="repairs/new" element={<NewRepair />} />
-              <Route path="repairs/track" element={<TrackRepair />} />
-
-              {/* Report Routes */}
-              <Route path="reports" element={<ReportsOverview />} />
-              <Route path="reports/sales" element={<SalesReports />} />
-              <Route path="reports/repairs" element={<RepairReports />} />
-              <Route path="reports/stores" element={<StoreReports />} />
-
-              {/* Other Routes */}
-              <Route path="customers" element={<CustomerManagement />} />
-              <Route path="test" element={<TestPage />} />
-
-              {/* Admin-only: User Management */}
-              <Route path="users" element={
-                <ProtectedRoute requiredRoles={["admin"]}>
-                  <UserManagement />
-                </ProtectedRoute>
-              } />
-            </Route>
-
-            {/* Catch-all route for 404 - outside protected routes */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppContent />
           <Toaster />
         </BrowserRouter>
       </AuthProvider>

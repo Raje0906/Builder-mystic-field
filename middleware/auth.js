@@ -23,6 +23,18 @@ export const authenticateToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-secret");
     
+    // Check for token expiration due to inactivity (10 minutes)
+    const TEN_MINUTES = 10 * 60; // 10 minutes in seconds
+    const currentTime = Math.floor(Date.now() / 1000);
+    
+    if (decoded.iat && (currentTime - decoded.iat) > TEN_MINUTES) {
+      return res.status(401).json({
+        success: false,
+        message: "Session expired due to inactivity. Please log in again.",
+        code: "SESSION_EXPIRED"
+      });
+    }
+    
     // Fetch user from database to ensure they still exist and are active
     const user = await User.findById(decoded.id).select('-password');
     

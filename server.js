@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from 'mongoose';
 import fs from 'fs';
+import { testEmailRouter } from './routes/test-email.js';
 
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
@@ -176,6 +177,7 @@ const apiRoutes = [
   { path: '/api/stores', router: storeRoutes },
   { path: '/api/reports', router: reportsRoutes },
   { path: '/api/users', router: usersRoutes },
+  { path: '/api', router: testEmailRouter },
 ];
 
 apiRoutes.forEach(route => {

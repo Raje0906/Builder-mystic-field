@@ -8,22 +8,44 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check, Send, Download } from "lucide-react";
+import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check, Send, Download, History } from "lucide-react";
 import { emailService } from '@/services/emailService';
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
+interface PriceHistoryEntry {
+  repairCost: number;
+  partsCost: number;
+  laborCost: number;
+  totalCost: number;
+  updatedAt: string | Date;
+  updatedBy?: {
+    name?: string;
+    email?: string;
+    _id?: string;
+  };
+}
+
 interface Repair {
-  _id: string; // Add this line
+  _id: string;
   ticketNumber: string;
   status: string;
   device: string;
+  deviceType?: string;
+  brand?: string;
+  model?: string;
   issue: string;
+  issueDescription?: string;
   receivedDate: string;
   estimatedCompletion: string;
+  repairCost: number;
+  partsCost: number;
+  laborCost: number;
   totalCost: number;
+  priceHistory?: PriceHistoryEntry[];
   customer: {
+    _id?: string;
     name: string;
     phone: string;
     email: string;
@@ -35,11 +57,26 @@ interface Repair {
       pincode: string;
     };
   };
+  name?: string;
+  phone?: string;
+  email?: string;
+  address?: {
+    line1?: string;
+    line2?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+  };
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
 }
 
 export function TrackRepair() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchBy, setSearchBy] = useState<"ticket" | "phone" | "email">("ticket");
+  const [searchBy, setSearchBy] = useState<"ticket" | "phone" | "name">("ticket");
   const [foundRepairs, setFoundRepairs] = useState<Repair[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isCompleting, setIsCompleting] = useState<Record<string, boolean>>({});
@@ -269,12 +306,12 @@ export function TrackRepair() {
             const emailResult = await emailService.sendCompletionEmail(templateParams);
             console.log('Email sent successfully:', emailResult);
             
-            toast({
-              title: "Success",
+        toast({
+          title: "Success",
               description: `Repair marked as completed and notification sent to ${customerEmail}`,
-              variant: "default",
-            });
-            
+          variant: "default",
+        });
+        
           } catch (error: any) {
             console.error('Failed to send completion email:', error);
             toast({
@@ -291,10 +328,10 @@ export function TrackRepair() {
             variant: "default",
           });
         }
-      }
-      
-      // Refresh the repairs list
-      await searchRepairs();
+        }
+        
+        // Refresh the repairs list
+        await searchRepairs();
       
     } catch (error: any) {
       console.error('Error in handleCompleteRepair:', error);
@@ -328,6 +365,9 @@ export function TrackRepair() {
       if (searchBy === "ticket") {
         // For ticket search, use the exact value
         params.append("ticket", trimmedQuery);
+      } else if (searchBy === "name") {
+        // For name search, use a case-insensitive search
+        params.append("customerName", trimmedQuery);
       } else if (searchBy === "phone") {
         // Clean and format phone number - ensure it has at least 10 digits
         const phoneNumber = trimmedQuery.replace(/\D/g, "");
@@ -580,20 +620,33 @@ export function TrackRepair() {
     if (!priceUpdateRepair || !newPrice) return;
     setIsUpdatingPrice(true);
     try {
-      // In a real app, you'd call an API service here.
-      // await repairService.updatePrice(priceUpdateRepair._id, Number(newPrice));
-
-      // For now, we'll just update the state locally.
-      setFoundRepairs(currentRepairs =>
-        currentRepairs.map(r =>
-          r._id === priceUpdateRepair._id ? { ...r, totalCost: Number(newPrice) } : r
-        )
+      const response = await axios.put(
+        `/api/repairs/${priceUpdateRepair._id}/price`,
+        { price: newPrice },
+        { withCredentials: true }
       );
-      toast({
-        title: "Success",
-        description: "Repair price has been updated.",
-      });
-      setPriceUpdateRepair(null);
+
+      if (response.data.success) {
+        // Update the local state with the updated repair data from the server
+        setFoundRepairs(currentRepairs =>
+          currentRepairs.map(r =>
+            r._id === priceUpdateRepair._id 
+              ? { ...r, ...response.data.data, totalCost: Number(newPrice) } 
+              : r
+          )
+        );
+        
+        // Also update the selected repair if it's the one being updated
+        if (selectedRepair?._id === priceUpdateRepair._id) {
+          setSelectedRepair(prev => prev ? { ...prev, totalCost: Number(newPrice) } : null);
+        }
+        
+        toast({
+          title: "Success",
+          description: response.data.message || "Repair price has been updated.",
+        });
+        setPriceUpdateRepair(null);
+      }
     } catch (error: any) {
       toast({
         title: "Error updating price",
@@ -632,12 +685,13 @@ export function TrackRepair() {
               >
                 <Phone className="mr-2 h-4 w-4" /> Phone
               </Button>
+
               <Button
-                variant={searchBy === "email" ? "default" : "outline"}
-                onClick={() => setSearchBy("email")}
+                variant={searchBy === "name" ? "default" : "outline"}
+                onClick={() => setSearchBy("name")}
                 className="flex-1 sm:flex-none"
               >
-                <Mail className="mr-2 h-4 w-4" /> Email
+                <User className="mr-2 h-4 w-4" /> Name
               </Button>
             </div>
             <div className="flex gap-2">
@@ -648,7 +702,7 @@ export function TrackRepair() {
                     ? "Enter your ticket number"
                     : searchBy === "phone"
                     ? "Enter your phone number (with country code)"
-                    : "Enter your email address"
+                    : "Enter customer name"
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -923,29 +977,65 @@ export function TrackRepair() {
 
       {/* Update Price Dialog */}
       <Dialog open={!!priceUpdateRepair} onOpenChange={(open) => !open && setPriceUpdateRepair(null)}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Update Repair Price</DialogTitle>
             <DialogDescription>
-              Update the price for the repair of the {priceUpdateRepair?.device}.
+              Update the repair cost and view price history.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
-                Price
+              <Label htmlFor="repairCost" className="text-right">
+                New Repair Cost
               </Label>
               <Input
-                id="price"
+                id="repairCost"
                 type="number"
+                min="0"
+                step="0.01"
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
                 className="col-span-3"
               />
             </div>
+            
+            {priceUpdateRepair?.priceHistory && priceUpdateRepair.priceHistory.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center">
+                  <History className="h-4 w-4 mr-2" />
+                  Price History
+                </h4>
+                <div className="border rounded-md p-4">
+                  <div className="grid grid-cols-5 gap-2 font-medium text-sm mb-2 pb-2 border-b">
+                    <div>Date</div>
+                    <div className="text-right">Repair</div>
+                    <div className="text-right">Parts</div>
+                    <div className="text-right">Labor</div>
+                    <div className="text-right">Total</div>
+                  </div>
+                  {[...priceUpdateRepair.priceHistory]
+                    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+                    .map((entry, index) => (
+                      <div key={index} className="grid grid-cols-5 gap-2 text-sm py-1 border-b last:border-0">
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(entry.updatedAt).toLocaleString()}
+                        </div>
+                        <div className="text-right">₹{entry.repairCost.toFixed(2)}</div>
+                        <div className="text-right">₹{entry.partsCost.toFixed(2)}</div>
+                        <div className="text-right">₹{entry.laborCost.toFixed(2)}</div>
+                        <div className="text-right font-medium">
+                          ₹{entry.totalCost.toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button
+              type="button"
               variant="outline"
               onClick={() => setPriceUpdateRepair(null)}
               disabled={isUpdatingPrice}
@@ -953,8 +1043,9 @@ export function TrackRepair() {
               Cancel
             </Button>
             <Button
+              type="button"
               onClick={handleUpdatePrice}
-              disabled={isUpdatingPrice || !newPrice || parseFloat(newPrice) < 0}
+              disabled={isUpdatingPrice || !newPrice}
             >
               {isUpdatingPrice ? (
                 <>
@@ -962,7 +1053,7 @@ export function TrackRepair() {
                   Updating...
                 </>
               ) : (
-                "Save changes"
+                'Update Price'
               )}
             </Button>
           </DialogFooter>

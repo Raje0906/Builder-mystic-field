@@ -49,7 +49,15 @@ export function Login() {
 
   // Fetch stores on component mount
   useEffect(() => {
-    fetchStores();
+    const loadStores = async () => {
+      await fetchStores();
+      // If there's only one store, preselect it
+      if (stores.length === 1) {
+        setValue('store_id', stores[0]._id);
+      }
+    };
+    
+    loadStores();
   }, []);
 
   const fetchStores = async () => {
@@ -76,12 +84,18 @@ export function Login() {
     setIsLoading(true);
     
     try {
-      // Only send identifier, password, and store_id (if present)
-      const payload: any = {
+      if (!data.store_id) {
+        toast({ title: "Error", description: "Please select a store to log into" });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Send identifier, password, and selected store_id
+      const payload = {
         identifier: data.identifier,
         password: data.password,
+        store_id: data.store_id  // Always include store_id as it's now required
       };
-      if (data.store_id) payload.store_id = data.store_id;
 
       const response = await fetch("/api/auth/login", {
         method: "POST",

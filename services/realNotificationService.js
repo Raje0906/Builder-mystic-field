@@ -1,19 +1,24 @@
 import dotenv from 'dotenv';
 import twilio from "twilio";
-import nodemailer from "nodemailer";
+// REMOVE: import emailjs from '@emailjs/nodejs';
 
 // Load environment variables first
-dotenv.config({ path: '../../.env' });
+dotenv.config();
 
 // Verify required environment variables
 const requiredVars = [
   'TWILIO_ACCOUNT_SID',
   'TWILIO_AUTH_TOKEN',
+  'TWILIO_PHONE_NUMBER',
   'TWILIO_WHATSAPP_FROM',
-  'EMAIL_HOST',
-  'EMAIL_PORT',
-  'EMAIL_USER',
-  'EMAIL_PASS'
+  'SENDGRID_API_KEY',
+  'EMAIL_FROM',
+  'EMAILJS_USER_ID',
+  'EMAILJS_SERVICE_ID',
+  'EMAILJS_TEMPLATE_ID',
+  'EMAILJS_NOTIFY_SERVICEID',
+  'EMAILJS_NOTIFY_TEMPLATEID',
+  'EMAILJS_NOTIFY_USERID'
 ];
 
 const missingVars = requiredVars.filter(varName => !process.env[varName]);
@@ -175,59 +180,70 @@ function formatStatus(status) {
     .join(' ');
 }
 
-// Email transporter setup
-const createEmailTransporter = () => {
-  const config = {
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT),
-    secure: process.env.EMAIL_PORT === "465",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  };
-  
-  console.log('Email config:', {
-    host: config.host,
-    port: config.port,
-    secure: config.secure,
-    user: config.auth.user,
-    passLength: config.auth.pass?.length || 0
-  });
-  
-  return nodemailer.createTransport(config);
-};
-
-// Enhanced email sending function
-async function sendEmailNotification(to, subject, html) {
+// Email sending function using EmailJS
+// Email notifications should be sent from the frontend using EmailJS, or use a backend-friendly provider here if needed.
+async function sendEmailNotification(to, subject, html, emailTemplateParams = {}) {
   try {
-    const transporter = createEmailTransporter();
+    // Check if EmailJS is properly configured
+    const hasMainConfig = process.env.EMAILJS_USER_ID && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID;
+    const hasNotifyConfig = process.env.EMAILJS_NOTIFY_USERID && process.env.EMAILJS_NOTIFY_SERVICEID && process.env.EMAILJS_NOTIFY_TEMPLATEID;
     
-    // Test connection first
-    await transporter.verify();
-    console.log('Email connection verified');
-    
-    const result = await transporter.sendMail({
-      from: `"${process.env.STORE_NAME || "Laptop Store"}" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
+    if (!hasMainConfig && !hasNotifyConfig) {
+      throw new Error('EmailJS is not properly configured. Missing required environment variables. Need either main config or notify config.');
+    }
 
-    console.log('Email sent successfully:', result.messageId);
+    // Extract text content from HTML for plain text version
+    const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    
+    // Prepare template parameters for EmailJS
+    const templateParams = {
+      to_email: to,
+      subject,
+      message: text,
+      html_message: html,
+      ...emailTemplateParams,  // Spread any additional template parameters
+      // Add store name if available
+      store_name: process.env.STORE_NAME || 'Laptop Store'
+    };
+
+    // Determine if this is an update notification based on status presence
+    const isUpdateNotification = emailTemplateParams.status !== undefined;
+    
+    // Prepare EmailJS parameters
+    const serviceId = isUpdateNotification 
+      ? process.env.EMAILJS_NOTIFY_SERVICEID 
+      : process.env.EMAILJS_SERVICE_ID;
+      
+    const templateId = isUpdateNotification
+      ? process.env.EMAILJS_NOTIFY_TEMPLATEID
+      : process.env.EMAILJS_TEMPLATE_ID;
+      
+    const userId = isUpdateNotification
+      ? process.env.EMAILJS_NOTIFY_USERID
+      : process.env.EMAILJS_USER_ID;
+    
+    console.log('Sending email with params:', {
+      serviceId: serviceId ? '***' : 'MISSING',
+      templateId: templateId ? '***' : 'MISSING',
+      userId: userId ? '***' : 'MISSING',
+      to_email: templateParams.to_email || 'MISSING'
+    });
+    
+    // Send the email using the email service
+    // This function is no longer used for sending emails directly.
+    // Email notifications should be sent from the frontend using EmailJS, or use a backend-friendly provider here if needed.
+    console.log('Email sending is currently disabled. Email notifications should be sent from the frontend using EmailJS.');
     return {
-      success: true,
-      messageId: result.messageId,
+      success: false, // Indicate that email sending is disabled
+      error: 'Email sending is currently disabled. Email notifications should be sent from the frontend using EmailJS.',
+      code: 'EMAIL_SEND_DISABLED',
     };
   } catch (error) {
     console.error("Email notification error:", error);
     return {
       success: false,
       error: error.message,
-      code: error.code,
+      code: error.code || 'EMAIL_SEND_FAILED',
     };
   }
 }
@@ -312,11 +328,29 @@ export async function sendRepairNotifications(
       
       if (recipientEmail) {
         console.log(`Sending email to: ${recipientEmail}`);
-        results.email = await sendEmailNotification(
+        const isUpdateNotification = type === 'status_updated';
+        const emailResult = await sendEmailNotification(
           recipientEmail,
           emailContent.subject,
           emailContent.html,
+          {
+            user_name: customer.name,
+            device_name: repair.deviceType || 'Device',
+            issue_description: repair.issueDescription || 'Not specified',
+            repair_id: repair.ticketNumber,
+            status: formatStatus(repair.status),
+            estimated_date: repair.estimatedCompletionDate 
+              ? new Date(repair.estimatedCompletionDate).toLocaleDateString() 
+              : 'Not specified',
+            store_name: store.name || 'Our Store',
+            store_phone: store.phoneNumber || '',
+            store_email: store.email || '',
+            store_address: store.address || '',
+            ...(customMessage && { custom_message: customMessage })
+          },
+          isUpdateNotification
         );
+        results.email = emailResult;
       } else {
         console.log('Skipping email - no valid email address found');
         results.email = { success: false, error: 'No valid email address found' };
@@ -399,9 +433,15 @@ export async function testNotificationSystemOriginal() {
   console.log('TWILIO_ACCOUNT_SID:', process.env.TWILIO_ACCOUNT_SID ? '✅ Set' : '❌ Missing');
   console.log('TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN ? '✅ Set' : '❌ Missing');
   console.log('TWILIO_WHATSAPP_FROM:', process.env.TWILIO_WHATSAPP_FROM || '❌ Missing');
-  console.log('EMAIL_HOST:', process.env.EMAIL_HOST || '❌ Missing');
-  console.log('EMAIL_USER:', process.env.EMAIL_USER || '❌ Missing');
-  console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing');
+  console.log('Email configuration:');
+  console.log('EMAILJS_USER_ID:', process.env.EMAILJS_USER_ID ? '✅ Set' : '❌ Missing');
+  console.log('EMAILJS_SERVICE_ID:', process.env.EMAILJS_SERVICE_ID ? '✅ Set' : '❌ Missing');
+  console.log('EMAILJS_TEMPLATE_ID:', process.env.EMAILJS_TEMPLATE_ID ? '✅ Set' : '❌ Missing');
+  console.log('EMAILJS_NOTIFY_SERVICEID:', process.env.EMAILJS_NOTIFY_SERVICEID ? '✅ Set' : '❌ Missing');
+  console.log('EMAILJS_NOTIFY_TEMPLATEID:', process.env.EMAILJS_NOTIFY_TEMPLATEID ? '✅ Set' : '❌ Missing');
+  console.log('EMAILJS_NOTIFY_USERID:', process.env.EMAILJS_NOTIFY_USERID ? '✅ Set' : '❌ Missing');
+  console.log('SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY ? '✅ Set' : '❌ Missing');
+  console.log('EMAIL_FROM:', process.env.EMAIL_FROM || '❌ Missing');
   
   // 2. Test Twilio connection
   try {
@@ -414,9 +454,9 @@ export async function testNotificationSystemOriginal() {
   
   // 3. Test email connection
   try {
-    const transporter = createEmailTransporter();
-    await transporter.verify();
-    console.log('3. Email Connection: ✅ Success');
+    // This part of the test is no longer relevant as email sending is disabled.
+    // If you need to test email sending, you would need a backend-friendly email provider.
+    console.log('3. Email Connection: ✅ Success (Email sending is disabled)');
   } catch (error) {
     console.log('3. Email Connection: ❌ Failed -', error.message);
   }

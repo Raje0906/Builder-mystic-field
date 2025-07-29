@@ -1,5 +1,20 @@
 import mongoose from 'mongoose';
 
+const priceHistorySchema = new mongoose.Schema({
+  repairCost: Number,
+  partsCost: Number,
+  laborCost: Number,
+  totalCost: Number,
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
+}, { _id: false });
+
 const repairSchema = new mongoose.Schema({
   customer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -89,12 +104,34 @@ const repairSchema = new mongoose.Schema({
         default: false
       }
     }
-  }]
+  }],
+  priceHistory: [priceHistorySchema]
 });
 
-// Add pre-save hook to calculate total cost
+// Add pre-save hook to calculate total cost and track price history
 repairSchema.pre('save', function(next) {
-  this.totalCost = this.repairCost + this.partsCost + this.laborCost;
+  const currentTotal = this.repairCost + this.partsCost + this.laborCost;
+  
+  // Only add to history if this is an update and costs have changed
+  if (this.isModified() && this.isNew === false) {
+    const priceUpdate = {
+      repairCost: this.repairCost,
+      partsCost: this.partsCost,
+      laborCost: this.laborCost,
+      totalCost: currentTotal,
+      updatedAt: new Date(),
+      updatedBy: this.updatedBy // This should be set by the controller
+    };
+    
+    // Add to history if it's the first time or if costs have changed
+    if (!this.priceHistory || this.priceHistory.length === 0 || 
+        this.priceHistory[this.priceHistory.length - 1].totalCost !== currentTotal) {
+      this.priceHistory = this.priceHistory || [];
+      this.priceHistory.push(priceUpdate);
+    }
+  }
+  
+  this.totalCost = currentTotal;
   this.updatedAt = new Date();
   next();
 });

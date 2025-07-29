@@ -36,33 +36,21 @@ router.get('/track/status', async (req, res) => {
   
   try {
     // Manually validate query parameters
-    const { ticket, phone, email } = req.query;
+    const { ticket, phone, customerName } = req.query;
     
     // Check if at least one parameter is provided
-    if (!ticket && !phone && !email) {
+    if (!ticket && !phone && !customerName) {
       console.log('Validation error: No search parameters provided');
       return res.status(400).json({
         success: false,
-        message: 'Please provide a ticket number, phone number, or email address'
+        message: 'Please provide a ticket number, phone number, or customer name'
       });
-    }
-    
-    // Validate email format if provided
-    if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        console.log('Validation error: Invalid email format');
-        return res.status(400).json({
-          success: false,
-          message: 'Please provide a valid email address'
-        });
-      }
     }
     
     console.log('Processing repair tracking request with:', { 
       ticket, 
       phone: phone ? '***' : undefined, 
-      email 
+      customerName: customerName ? '***' : undefined
     });
     
     // Build the query based on provided parameters
@@ -72,17 +60,26 @@ router.get('/track/status', async (req, res) => {
     if (ticket) {
       query.ticketNumber = ticket;
     }
+    
+    // If customer name is provided, add it to the customer query
+    if (customerName) {
+      // If we already have a customer query, add to it, otherwise create a new one
+      if (!query.customer) {
+        query.customer = {};
+      }
+      query.customer.name = { $regex: customerName, $options: 'i' };
+    }
 
-    // If searching by phone or email, first find matching customers
+    // If searching by phone or name, first find matching customers
     let customerIds = [];
-    if (phone || email) {
+    if (phone || customerName) {
       const customerQuery = {};
       if (phone) {
         const cleanPhone = phone.replace(/\D/g, '');
         customerQuery.phone = { $regex: cleanPhone, $options: 'i' };
       }
-      if (email) {
-        customerQuery.email = email.toLowerCase();
+      if (customerName) {
+        customerQuery.name = { $regex: customerName, $options: 'i' };
       }
       const customers = await Customer.find(customerQuery).select('_id');
       customerIds = customers.map(c => c._id);
@@ -97,8 +94,8 @@ router.get('/track/status', async (req, res) => {
       }
     }
 
-    // If both ticket and phone are provided, ensure both match
-    // (query already has both conditions above)
+    // If we have multiple search criteria, ensure they all match
+    // (query already has the combined conditions above)
 
     // Find repairs with the built query
     const repairs = await Repair.find(query)
@@ -413,19 +410,11 @@ router.post('/:repairId/send-update', async (req, res) => {
     // Send email notification if email exists
     let emailSent = false;
     if (customer.email) {
-      try {
-        const emailSubject = `🔧 Update on Your Repair #${repair.ticketNumber}`;
-        const notificationService = (await import('../services/realNotificationService.js')).default;
-        await notificationService.sendEmailNotification(
-          customer.email, 
-          emailSubject, 
-          formattedMessage.replace(/\n/g, '<br/>')
-        );
-        emailSent = true;
-        console.log('Email update sent to:', customer.email);
-      } catch (error) {
-        console.error('Error sending email update:', error);
-      }
+      // Email notifications should be sent from the frontend using EmailJS.
+      // Remove backend email sending logic.
+      // Example: await emailService.sendEmail(...)
+      // emailSent = true;
+      // console.log('Email update sent to:', customer.email);
     }
 
     // Add update to repair history
@@ -543,32 +532,10 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
 
         // Email notification
         if (customer.email) {
-          const emailSubject = `✅ Device Ready for Pickup - ${deviceInfo}`;
-          const emailBody = `Dear ${customer.name},
-
-Great news! Your device repair is complete and ready for pickup.
-
-📋 Repair Details:
-• Device: ${deviceInfo}
-• Issue: ${repair.issueDescription || 'Not specified'}
-• Total Cost: ₹${totalCost.toLocaleString()}
-• Completion Date: ${new Date().toLocaleDateString()}
-
-📍 Pickup Location: Laptop Store
-📞 Contact: +91 98765 43210
-⏰ Store Hours: Mon-Sat 10AM-8PM, Sun 11AM-6PM
-
-Please bring a valid ID when collecting your device.
-
-Thank you for choosing our repair service!
-
-Best regards,
-Laptop Store Team`;
-
-          // Import and send email notification
-          const { sendEmailNotification } = await import('../services/emailService.js');
-          await sendEmailNotification(customer.email, emailSubject, emailBody);
-          console.log('Email notification sent to:', customer.email);
+          // Email notifications should be sent from the frontend using EmailJS.
+          // Remove backend email sending logic.
+          // Example: await emailService.sendEmail(...)
+          // console.log('Email notification sent to:', customer.email);
         }
       } catch (notificationError) {
         console.error('Error sending notifications:', notificationError);
@@ -610,6 +577,73 @@ Laptop Store Team`;
     res.status(500).json({
       success: false,
       message: 'An error occurred while updating the repair status',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Update repair price
+router.put('/:id/price', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { price } = req.body;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid repair ID format'
+      });
+    }
+
+    if (price === undefined || isNaN(parseFloat(price))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid price is required'
+      });
+    }
+
+    const repair = await Repair.findById(id);
+    if (!repair) {
+      return res.status(404).json({
+        success: false,
+        message: 'Repair not found'
+      });
+    }
+
+    // Create price history entry
+    const priceHistoryEntry = {
+      repairCost: parseFloat(price),
+      partsCost: repair.partsCost || 0,
+      laborCost: repair.laborCost || 0,
+      totalCost: parseFloat(price) + (repair.partsCost || 0) + (repair.laborCost || 0),
+      updatedAt: new Date(),
+      updatedBy: req.user?._id || null
+    };
+
+    // Update repair with new price and history
+    const updatedRepair = await Repair.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          repairCost: parseFloat(price),
+          totalCost: priceHistoryEntry.totalCost,
+          updatedAt: new Date()
+        },
+        $push: { priceHistory: priceHistoryEntry }
+      },
+      { new: true }
+    ).populate('customer');
+
+    res.json({
+      success: true,
+      message: 'Repair price updated successfully',
+      data: updatedRepair
+    });
+  } catch (error) {
+    console.error('Error updating repair price:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating repair price',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
@@ -711,7 +745,10 @@ router.post('/:id/complete', async (req, res) => {
 
       // Email notification
       if (customer?.email) {
-        console.log('Email notification not attempted from backend');
+        // Email notifications should be sent from the frontend using EmailJS.
+        // Remove backend email sending logic.
+        // Example: await emailService.sendEmail(...)
+        // console.log('Email notification sent to:', customer.email);
       } else {
         console.log('No email address available for email notification');
       }

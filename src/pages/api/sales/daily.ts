@@ -44,7 +44,7 @@ export default async function handler(
       localEnd: endOfDay.toString()
     });
 
-    // Build the query
+    // Build the query - allow access to all stores
     const query: any = {
       isActive: true,
       $or: [
@@ -64,6 +64,7 @@ export default async function handler(
       ]
     };
 
+    // Still allow filtering by store if specified, but don't restrict to user's store
     if (storeId) {
       query.store = storeId;
     }

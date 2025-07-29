@@ -376,25 +376,59 @@ Please bring a valid ID for pickup. Thank you for choosing Laptop Store! 🙏`;
 
     setIsSendingUpdate(true);
     try {
-      const response = await fetch(`/api/repairs/${selectedRepair.id}/send-update`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: updateMessage.trim()
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to send update');
+      // Get customer details
+      const customer = customers.find(c => c.id === selectedRepair.customerId);
+      if (!customer) {
+        throw new Error('Customer not found');
       }
+
+      // Prepare notification content
+      const notificationContent = `🔧 Repair Update - ${selectedRepair.deviceInfo.brand} ${selectedRepair.deviceInfo.model}
+
+${updateMessage.trim()}
+
+Thank you for choosing our service!`;
+
+      // Send WhatsApp notification if number is available
+      if (customer.phone) {
+        await sendWhatsAppNotification(customer.phone, notificationContent);
+      }
+
+      // Send email notification if email is available
+      if (customer.email) {
+        const templateParams = {
+          to_email: customer.email,
+          user_name: customer.name,
+          device_name: `${selectedRepair.deviceInfo.brand} ${selectedRepair.deviceInfo.model}`,
+          repair_id: selectedRepair.id,
+          message: updateMessage.trim(),
+          subject: `Repair Update: ${selectedRepair.deviceInfo.brand} ${selectedRepair.deviceInfo.model}`,
+          reply_to: 'support@laptopstore.com',
+          template_id: 'template_59o95vh'  // Using the provided template ID
+        };
+        
+        await emailService.sendEmail(templateParams, true);
+      }
+
+      // Log the update in the repair notes
+      const updatedNotes = [
+        ...selectedRepair.notes,
+        `Update sent to customer: ${updateMessage.trim()}`
+      ];
+      
+      // Update the repair record
+      const updatedRepair = {
+        ...selectedRepair,
+        notes: updatedNotes,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      updateRepair(updatedRepair);
+      setRepairs(prev => prev.map(r => r.id === selectedRepair.id ? updatedRepair : r));
 
       toast({
         title: "Update sent!",
-        description: `The repair update has been sent to the customer.`,
+        description: `The repair update has been sent to the customer via ${customer.email ? 'email and WhatsApp' : 'WhatsApp'}.`,
       });
 
       // Reset form

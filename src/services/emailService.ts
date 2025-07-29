@@ -1,11 +1,54 @@
 // EmailJS Frontend Service
 import emailjs from '@emailjs/browser';
 
-// Use VITE_ env variables for frontend config
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || import.meta.env.VITE_EMAILJS_NOTIFY_SERVICE_ID;
-const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || import.meta.env.VITE_EMAILJS_NOTIFY_TEMPLATE_ID;
-const COMPLETE_TEMPLATE_ID = 'template_lmw75qc';
-const USER_ID = import.meta.env.VITE_EMAILJS_USER_ID || import.meta.env.VITE_EMAILJS_NOTIFY_USER_ID;
+// Configuration - these should be set in your .env file
+const CONFIG = {
+  // Main service IDs and template IDs
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
+  COMPLETE_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_COMPLETE_TEMPLATE_ID || 'template_lmw75qc',
+  USER_ID: import.meta.env.VITE_EMAILJS_USER_ID || '',
+  
+  // Notify service configuration for update notifications
+  NOTIFY_SERVICE_ID: import.meta.env.VITE_EMAILJS_NOTIFY_SERVICEID || '',
+  NOTIFY_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_NOTIFY_TEMPLATEID || '',
+  NOTIFY_USER_ID: import.meta.env.VITE_EMAILJS_NOTIFY_USERID || '',
+  
+  // Get service ID - use notify service for updates, fallback to main service
+  get serviceId() {
+    return this.SERVICE_ID || '';
+  },
+  
+  // Get template ID - use notify template for updates, fallback to main template
+  get templateId() {
+    return this.TEMPLATE_ID || '';
+  },
+  
+  // Get user ID - use notify user ID for updates, fallback to main user ID
+  get userId() {
+    return this.USER_ID || '';
+  },
+  
+  // Get notify service configuration
+  get notifyConfig() {
+    return {
+      serviceId: this.NOTIFY_SERVICE_ID,
+      templateId: this.NOTIFY_TEMPLATE_ID,
+      userId: this.NOTIFY_USER_ID
+    };
+  }
+};
+
+// Initialize EmailJS
+if (CONFIG.userId) {
+  try {
+    emailjs.init(CONFIG.userId);
+  } catch (error) {
+    console.error('Failed to initialize EmailJS:', error);
+  }
+} else {
+  console.warn('EmailJS User ID is not set. Email functionality will be disabled.');
+}
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,7 +93,34 @@ export const emailService = {
   /**
    * Send a standard email using the default template
    */
-  async sendEmail(templateParams: EmailParams) {
+  /**
+   * Send a standard email using the default template
+   */
+  async sendEmail(templateParams: EmailParams, isUpdateNotification = false) {
+    console.log('Starting email send process...');
+    console.log('Is update notification:', isUpdateNotification);
+    
+    // For update notifications, use the notify configuration
+    const config = isUpdateNotification 
+      ? CONFIG.notifyConfig 
+      : {
+          serviceId: CONFIG.serviceId,
+          templateId: CONFIG.templateId,
+          userId: CONFIG.userId
+        };
+        
+    console.log('Using config:', {
+      serviceId: config.serviceId ? '***' : 'MISSING',
+      templateId: config.templateId ? '***' : 'MISSING',
+      userId: config.userId ? '***' : 'MISSING'
+    });
+
+    if (!config.userId || !config.serviceId || !config.templateId) {
+      const error = 'EmailJS is not properly configured. Missing required configuration.';
+      console.error(error);
+      throw new Error(error);
+    }
+
     const validation = validateEmailParams(templateParams);
     if (!validation.valid) {
       console.error('Email validation failed:', validation.error);
@@ -58,19 +128,51 @@ export const emailService = {
     }
     
     try {
-      const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID);
-      console.log('Email sent successfully:', result.status, result.text);
-      return { success: true, messageId: result.text };
+      const templateId = templateParams.template_id || config.templateId;
+      console.log('Sending email with params:', {
+        serviceId: config.serviceId ? '***' : 'MISSING',
+        templateId: templateId ? '***' : 'MISSING',
+        toEmail: templateParams.to_email || 'MISSING',
+        userId: config.userId ? '***' : 'MISSING'
+      });
+      
+      const result = await emailjs.send(
+        config.serviceId,
+        templateId,
+        templateParams,
+        config.userId
+      );
+      
+      console.log('Email sent successfully:', {
+        status: result.status,
+        text: result.text,
+        statusText: result.statusText
+      });
+      return { 
+        success: true, 
+        messageId: result.text,
+        status: result.status
+      };
     } catch (error: any) {
-      console.error('Failed to send email:', error);
-      throw new Error(error?.text || error?.message || 'Failed to send email');
+      const errorMessage = error?.text || error?.message || 'Failed to send email';
+      console.error('Failed to send email:', errorMessage, error);
+      throw new Error(errorMessage);
     }
   },
   
   /**
    * Send a repair completion email
    */
+  /**
+   * Send a repair completion email
+   */
   async sendCompletionEmail(templateParams: EmailParams) {
+    if (!CONFIG.userId || !CONFIG.serviceId || !CONFIG.COMPLETE_TEMPLATE_ID) {
+      const error = 'EmailJS is not properly configured for completion emails. Missing required configuration.';
+      console.error(error);
+      throw new Error(error);
+    }
+
     const validation = validateEmailParams(templateParams);
     if (!validation.valid) {
       console.error('Completion email validation failed:', validation.error);
@@ -78,12 +180,23 @@ export const emailService = {
     }
     
     try {
-      const result = await emailjs.send(SERVICE_ID, COMPLETE_TEMPLATE_ID, templateParams, USER_ID);
+      const result = await emailjs.send(
+        CONFIG.serviceId,
+        CONFIG.COMPLETE_TEMPLATE_ID,
+        templateParams,
+        CONFIG.userId
+      );
+      
       console.log('Completion email sent successfully:', result.status, result.text);
-      return { success: true, messageId: result.text };
+      return { 
+        success: true, 
+        messageId: result.text,
+        status: result.status
+      };
     } catch (error: any) {
-      console.error('Failed to send completion email:', error);
-      throw new Error(error?.text || error?.message || 'Failed to send completion email');
+      const errorMessage = error?.text || error?.message || 'Failed to send completion email';
+      console.error('Failed to send completion email:', errorMessage, error);
+      throw new Error(errorMessage);
     }
   },
   
