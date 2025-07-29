@@ -92,3 +92,24 @@ ehthumbs_vista.db
 .env.development
 .env.local
 .env.example
+
+
+
+# Node
+node_modules/
+.env
+.env.*
+dist/
+build/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+.vite/
+
+# Optional
+.git_disabled/
+scripts/
