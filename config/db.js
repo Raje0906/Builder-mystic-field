@@ -1,23 +1,36 @@
 import mongoose from 'mongoose';
 
 const connectDB = async () => {
-  const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/laptop-store';
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop-store';
   
-  console.log('Attempting to connect to MongoDB...');
-  console.log('Connection string:', mongoUri);
+  console.log('🔗 Using MongoDB URI:', mongoUri.replace(/:[^:]*@/, ':***@'));
   
   try {
+    // Connection options
+    const options = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    };
+
     mongoose.connection.on('connecting', () => {
-      console.log('MongoDB connecting...');
+      console.log('🔄 Connecting to MongoDB...');
     });
     
     mongoose.connection.on('connected', () => {
-      console.log('MongoDB connected successfully');
-      console.log('MongoDB connection state:', mongoose.connection.readyState);
+      console.log('✅ MongoDB Connected to:', mongoose.connection.host);
+      console.log('📊 Database Name:', mongoose.connection.name);
+      console.log('🏷️  Connection State:', mongoose.connection.readyState);
     });
     
     mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
+      console.error('❌ MongoDB Connection Error:', err.name);
+      console.error('Error message:', err.message);
+      if (err.name === 'MongoServerError') {
+        console.error('Error code:', err.code);
+        console.error('Error code name:', err.codeName);
+      }
     });
     
     mongoose.connection.on('disconnected', () => {

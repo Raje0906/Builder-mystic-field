@@ -10,9 +10,12 @@
     "preview": "vite preview",
     "seed": "node scripts/seedDatabase.js",
     "seed:auth": "node scripts/seedAuthData.js",
-    "reset": "node scripts/resetDatabase.js"
+    "reset": "node scripts/resetDatabase.js",
+    "start": "node server.js"
   },
+  
   "dependencies": {
+    
     "@emailjs/browser": "^4.4.1",
     "@emailjs/nodejs": "^5.0.2",
     "@hookform/resolvers": "^3.3.2",
@@ -107,3 +110,5 @@
     "vite": "^4.5.0"
   }
 }
+
+

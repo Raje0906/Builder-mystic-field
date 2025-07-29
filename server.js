@@ -8,7 +8,17 @@ import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from 'mongoose';
 import fs from 'fs';
+import connectDB from './config/db.js';
 import { testEmailRouter } from './routes/test-email.js';
+
+// Load environment variables
+dotenv.config();
+
+// Load environment variables
+dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
@@ -80,9 +90,6 @@ app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
-
-// Import the database connection
-import connectDB from './config/db.js';
 
 // Initialize database connection
 await connectDB();
