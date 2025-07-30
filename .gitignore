@@ -89,9 +89,7 @@ ehthumbs_vista.db
 *.msm
 *.msp
 *.lnk
-.env.development
-.env.local
-.env.example
+
 
 
 

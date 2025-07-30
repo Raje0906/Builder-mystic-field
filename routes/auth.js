@@ -3,7 +3,8 @@ import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import User from "../models/User.js";
-import Store from "../models/StoreMongoose.js";
+import Store from "../models/Store.js";
+import StoreMongoose from "../models/StoreMongoose.js";
 import { authenticateToken } from "../middleware/auth.js";
 import bcrypt from "bcryptjs";
 
