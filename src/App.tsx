@@ -39,7 +39,7 @@ const AppContent = () => {
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
 
-      {/* Redirect root to login if not authenticated */}
+      {/* Protected Routes */}
       <Route path="/" element={
         <ProtectedRoute>
           <Layout />
