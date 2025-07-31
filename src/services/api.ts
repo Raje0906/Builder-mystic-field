@@ -1,6 +1,11 @@
 // API client for backend communication
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
+// Log the API URL in development for debugging
+if (import.meta.env.DEV) {
+  console.log('API Base URL:', API_BASE_URL);
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   message?: string;
