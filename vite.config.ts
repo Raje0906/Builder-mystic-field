@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
     root: __dirname,
     publicDir: 'public',
     define: {
-      'process.env': {}
+      'process.env': {},
+      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl)
     },
     server: {
       port: 8080,
@@ -51,17 +52,22 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
-    define: {
-      'process.env': {},
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || '/api')
-    },
     build: {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: mode === 'development',
+      chunkSizeWarningLimit: 1000, // Increase chunk size warning limit
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+        },
+        output: {
+          manualChunks: {
+            // Split vendor libraries into separate chunks
+            'vendor': ['react', 'react-dom', 'react-router-dom'],
+            'charts': ['recharts'],
+            'ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+          },
         },
       },
     },
