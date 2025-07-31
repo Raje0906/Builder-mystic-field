@@ -6,15 +6,23 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isProduction = mode === 'production';
-  const apiUrl = env.VITE_API_URL || 'http://localhost:3002';
+  const apiUrl = isProduction 
+    ? 'https://laptop-crm-backend.onrender.com' 
+    : 'http://localhost:3002';
   
   return {
     root: __dirname,
     publicDir: 'public',
     define: {
       'process.env': {},
-      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl)
+      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
+      'import.meta.env.PROD': isProduction
     },
+    // Disable service worker in development
+    plugins: [
+      react(),
+      // Remove or disable any service worker plugins if not needed
+    ],
     server: {
       port: 8080,
       host: '0.0.0.0',
