@@ -224,18 +224,20 @@ if (process.env.NODE_ENV === "production") {
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
-// Server will use the PORT constant declared at the top
-console.log(`🔵 Starting server on port: ${PORT}`);
+// Get port from environment variable or use default
+const port = process.env.PORT || PORT;
 
 // Start the server
-const server = app.listen(PORT, '0.0.0.0', () => {
+console.log(`🔵 Starting server on port: ${port}`);
+
+const server = app.listen(port, '0.0.0.0', () => {
   const host = server.address().address;
-  const port = server.address().port;
+  const actualPort = server.address().port;
   console.log(`\n🚀 Server running at:`);
-  console.log(`   - Local:   http://localhost:${port}`);
-  console.log(`   - Network: http://${host === '::' ? 'localhost' : host}:${port}`);
+  console.log(`   - Local:   http://localhost:${actualPort}`);
+  console.log(`   - Network: http://${host === '::' ? 'localhost' : host}:${actualPort}`);
   console.log(`\n🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 API Base URL: http://localhost:${port}/api`);
+  console.log(`🔗 API Base URL: ${process.env.NODE_ENV === 'production' ? 'https://laptop-crm-backend.onrender.com' : `http://localhost:${actualPort}`}/api`);
   
   // Log all registered routes
   console.log('\n🔍 Registered API Routes:');

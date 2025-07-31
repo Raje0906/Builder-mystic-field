@@ -2,39 +2,29 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  const isProduction = mode === 'production';
-  const apiUrl = isProduction 
-    ? 'https://laptop-crm-backend.onrender.com' 
-    : 'http://localhost:3002';
-  
+  // Load VITE_ variables from .env files
+  const env = loadEnv(mode, process.cwd());
+
   return {
     root: __dirname,
     publicDir: 'public',
     define: {
-      'process.env': {},
-      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
-      'import.meta.env.PROD': isProduction
+      // Don't redefine import.meta.env manually
+      'process.env': {}, // optional fallback
     },
-    // Disable service worker in development
-    plugins: [
-      react(),
-      // Remove or disable any service worker plugins if not needed
-    ],
+    plugins: [react()],
     server: {
       port: 8080,
       host: '0.0.0.0',
       strictPort: true,
       open: true,
-      proxy: isProduction ? undefined : {
+      proxy: mode === 'production' ? undefined : {
         '/api': {
           target: 'http://localhost:3002',
           changeOrigin: true,
           secure: false,
           ws: true,
-          // Configure proxy headers and logging
           configure: (proxy, _options) => {
             proxy.on('error', (err, _req, _res) => {
               console.log('Proxy error:', err);
@@ -47,14 +37,12 @@ export default defineConfig(({ mode }) => {
               console.log('Received response:', proxyRes.statusCode, req.url);
             });
           },
-          // Don't rewrite the path - keep /api prefix
           pathRewrite: {
-            '^/api': '/api' // Keep the /api prefix
+            '^/api': '/api'
           }
         }
       }
     },
-    plugins: [react()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -64,17 +52,20 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: mode === 'development',
-      chunkSizeWarningLimit: 1000, // Increase chunk size warning limit
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
         },
         output: {
           manualChunks: {
-            // Split vendor libraries into separate chunks
-            'vendor': ['react', 'react-dom', 'react-router-dom'],
-            'charts': ['recharts'],
-            'ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            charts: ['recharts'],
+            ui: [
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-dropdown-menu',
+              '@radix-ui/react-toast',
+            ],
           },
         },
       },
