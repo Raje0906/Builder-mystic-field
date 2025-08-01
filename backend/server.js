@@ -20,9 +20,6 @@ dotenv.config();
 // Connect to MongoDB
 connectDB();
 
-// Add health check route (before other routes and auth middleware)
-app.use('/api/health', healthRouter);
-
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
 const originalConsoleLog = console.log;
@@ -50,7 +47,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Import routes
+// Import routes after app initialization
 import customerRoutes from "./routes/customers.js";
 import productRoutes from "./routes/products.js";
 import saleRoutes from "./routes/sales.js";
@@ -95,8 +92,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Initialize database connection
-await connectDB();
+// Add health check route (before other routes and auth middleware)
+app.use('/api/health', healthRouter);
 
 // Middleware
 app.use(
@@ -186,8 +183,8 @@ const apiRoutes = [
   { path: '/api/repairs', router: repairRoutes },
   { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
   { path: '/api/stores', router: storeRoutes },
-  { path: '/api/reports', router: reportsRoutes },
-  { path: '/api/users', router: usersRoutes },
+  { path: '/api/reports', router: reportRoutes },  // Fixed variable name
+  { path: '/api/users', router: userRoutes },      // Fixed variable name
   { path: '/api', router: testEmailRouter },
 ];
 

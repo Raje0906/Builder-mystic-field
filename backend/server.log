@@ -925,3 +925,50 @@
 [2025-07-30T16:03:09.928Z] [LOG] [2025-07-30T16:03:09.928Z] GET /api/repairs?status=in_progress&limit=5
 [2025-07-30T16:03:09.935Z] [LOG] [2025-07-30T16:03:09.935Z] OPTIONS /api/repairs?status=received
 [2025-07-30T16:03:10.258Z] [LOG] [2025-07-30T16:03:10.258Z] GET /api/repairs?status=received
+[2025-08-01T14:18:00.680Z] [LOG] Registering route: /api/auth
+[2025-08-01T14:18:00.732Z] [LOG] Registering route: /api/customers
+[2025-08-01T14:18:00.752Z] [LOG] Registering route: /api/products
+[2025-08-01T14:18:00.755Z] [LOG] Registering route: /api/sales
+[2025-08-01T14:18:00.757Z] [LOG] Registering route: /api/repairs
+[2025-08-01T14:18:00.758Z] [LOG] Registering route: /api/notifications
+[2025-08-01T14:18:00.758Z] [LOG] Registering route: /api/stores
+[2025-08-01T14:18:00.759Z] [LOG] Registering route: /api/reports
+[2025-08-01T14:18:00.759Z] [LOG] Registering route: /api/users
+[2025-08-01T14:18:00.760Z] [LOG] Registering route: /api
+[2025-08-01T14:18:00.760Z] [LOG] 🔵 Starting server on port: 10000
+[2025-08-01T14:18:00.764Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-01T14:18:00.772Z] [LOG] 
+🚀 Server running at:
+[2025-08-01T14:18:00.811Z] [LOG]    - Local:   http://localhost:10000
+[2025-08-01T14:18:00.813Z] [LOG]    - Network: http://0.0.0.0:10000
+[2025-08-01T14:18:00.814Z] [LOG] 
+🌐 Environment: development
+[2025-08-01T14:18:00.814Z] [LOG] 🔗 API Base URL: http://localhost:10000/api
+[2025-08-01T14:18:00.815Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-01T14:18:00.815Z] [LOG]    - /api/auth
+[2025-08-01T14:18:00.815Z] [LOG]    - /api/customers
+[2025-08-01T14:18:00.816Z] [LOG]    - /api/products
+[2025-08-01T14:18:00.816Z] [LOG]    - /api/sales
+[2025-08-01T14:18:00.816Z] [LOG]    - /api/repairs
+[2025-08-01T14:18:00.817Z] [LOG]    - /api/notifications
+[2025-08-01T14:18:00.818Z] [LOG]    - /api/stores
+[2025-08-01T14:18:00.819Z] [LOG]    - /api/reports
+[2025-08-01T14:18:00.820Z] [LOG]    - /api/users
+[2025-08-01T14:18:00.820Z] [LOG]    - /api
+[2025-08-01T14:18:00.821Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-01T14:18:00.821Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-01T14:18:00.822Z] [LOG]    - Test URL: http://localhost:10000/api/repairs/track/status?email=test@example.com
+[2025-08-01T14:18:00.913Z] [LOG] ✅ MongoDB Connected
+[2025-08-01T14:18:00.914Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-01T14:18:00.914Z] [LOG] 🏷️  Connection State: 1
+[2025-08-01T14:18:00.915Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-01T14:18:00.916Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-01T14:18:00.916Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-01T14:18:00.916Z] [LOG] 🏷️  Connection State: 1
+[2025-08-01T14:18:00.917Z] [LOG] ✅ MongoDB Connected
+[2025-08-01T14:18:00.922Z] [LOG] MongoDB Connected to: localhost
+[2025-08-01T14:18:00.922Z] [LOG] MongoDB connection state: 1
+[2025-08-01T14:18:04.059Z] [LOG] ❌ MongoDB Disconnected
