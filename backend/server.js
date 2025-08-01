@@ -84,7 +84,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const app = express();
-const PORT = 3002; // Using port 3002 to avoid conflicts with other services
+const PORT = process.env.PORT || 3002;
+ // Using port 3002 to avoid conflicts with other services
 
 // Add request logging
 // CORS configuration must come before any route definitions

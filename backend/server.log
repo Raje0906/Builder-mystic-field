@@ -1373,3 +1373,31 @@
 [2025-08-01T15:47:37.380Z] [LOG] ✅ MongoDB Connected
 [2025-08-01T15:47:37.384Z] [LOG] MongoDB Connected to: localhost
 [2025-08-01T15:47:37.385Z] [LOG] MongoDB connection state: 1
+[2025-08-01T15:47:56.027Z] [LOG] [2025-08-01T15:47:56.027Z] GET /api/auth/stores
+[2025-08-01T15:47:56.031Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-01T15:47:56.031Z] [LOG] 🔍 Querying stores from database...
+[2025-08-01T15:47:56.057Z] [LOG] ✅ Found 3 stores
+[2025-08-01T15:47:56.058Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-01T15:47:56.082Z] [LOG] [2025-08-01T15:47:56.082Z] GET /api/health
+[2025-08-01T15:47:59.612Z] [LOG] [2025-08-01T15:47:59.612Z] POST /api/auth/login
+[2025-08-01T15:47:59.691Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf791"}
+[2025-08-01T15:47:59.731Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},"isActive":true}
+[2025-08-01T15:47:59.735Z] [LOG] Attempting password verification...
+[2025-08-01T15:47:59.999Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf791"}
+[2025-08-01T15:48:00.428Z] [LOG] [2025-08-01T15:48:00.428Z] GET /api/reports/summary
+[2025-08-01T15:48:00.549Z] [LOG] [2025-08-01T15:48:00.549Z] GET /api/health
+[2025-08-01T15:49:01.565Z] [LOG] [2025-08-01T15:49:01.565Z] GET /api/health
+[2025-08-01T15:50:01.565Z] [LOG] [2025-08-01T15:50:01.565Z] GET /api/health
+[2025-08-01T15:51:01.730Z] [LOG] [2025-08-01T15:51:01.730Z] GET /api/health
+[2025-08-01T15:52:01.559Z] [LOG] [2025-08-01T15:52:01.559Z] GET /api/health
+[2025-08-01T15:53:01.521Z] [LOG] [2025-08-01T15:53:01.521Z] GET /api/health
+[2025-08-01T15:54:01.558Z] [LOG] [2025-08-01T15:54:01.558Z] GET /api/health
+[2025-08-01T15:55:28.646Z] [LOG] [2025-08-01T15:55:28.646Z] GET /api/health
+[2025-08-01T15:56:28.572Z] [LOG] [2025-08-01T15:56:28.572Z] GET /api/health
+[2025-08-01T15:57:28.572Z] [LOG] [2025-08-01T15:57:28.572Z] GET /api/health
+[2025-08-01T15:58:28.291Z] [LOG] [2025-08-01T15:58:28.291Z] GET /api/health
+[2025-08-01T15:58:28.654Z] [LOG] [2025-08-01T15:58:28.654Z] GET /api/auth/stores
+[2025-08-01T15:58:28.655Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-01T15:58:28.655Z] [LOG] 🔍 Querying stores from database...
+[2025-08-01T15:58:28.660Z] [LOG] ✅ Found 3 stores
+[2025-08-01T15:58:28.660Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
