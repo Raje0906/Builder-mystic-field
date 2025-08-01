@@ -20,6 +20,9 @@ dotenv.config();
 // Connect to MongoDB
 connectDB();
 
+// Add health check route (before other routes and auth middleware)
+app.use('/api/health', healthRouter);
+
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
 const originalConsoleLog = console.log;
@@ -51,12 +54,13 @@ process.on('unhandledRejection', (reason, promise) => {
 import customerRoutes from "./routes/customers.js";
 import productRoutes from "./routes/products.js";
 import saleRoutes from "./routes/sales.js";
+import storeRoutes from "./routes/stores.js";
+import userRoutes from "./routes/users.js";
 import repairRoutes from "./routes/repairs.js";
 import notificationRoutes from "./routes/notifications.js";
-import storeRoutes from "./routes/stores.js";
+import reportRoutes from "./routes/reports.js";
 import authRoutes from "./routes/auth.js";
-import reportsRoutes from "./routes/reports.js";
-import usersRoutes from "./routes/users.js";
+import healthRouter from './routes/health.js';
 
 // Import middleware
 import errorHandler from "./middleware/errorHandler.js";

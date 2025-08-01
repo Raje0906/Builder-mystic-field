@@ -6,9 +6,22 @@ services:
     # Point to the root directory where package.json is located
     root: ..
     # Build command (runs from the root directory)
-    buildCommand: npm install && npm run build
+    buildCommand: npm install
     # Start command (runs from the root directory)
     startCommand: node backend/start-server.js
+    # Health check path (make sure this endpoint exists in your backend)
+    healthCheckPath: /api/health
+    env: node
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        required: true
+      - key: JWT_SECRET
+        required: true
+        generateValue: true
     # Environment variables
     envVars:
       - key: NODE_ENV

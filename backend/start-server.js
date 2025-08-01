@@ -5,7 +5,11 @@ import app from './server.js';
 // Load environment variables
 dotenv.config();
 
+// Get port from environment variables or use default
 const PORT = process.env.PORT || 3002;
+
+// For Render deployment
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 // Start the server with proper error handling
 async function startServer() {
@@ -15,7 +19,7 @@ async function startServer() {
     await connectDB();
     
     // Start the Express server
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, HOST, () => {
       console.log(`\n🚀 Server running on port ${PORT}`);
       console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
     });
