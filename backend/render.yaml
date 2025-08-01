@@ -11,7 +11,7 @@ services:
     startCommand: node backend/start-server.js
     # Health check path (make sure this endpoint exists in your backend)
     healthCheckPath: /api/health
-    env: node
+    # Environment variables
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,24 +19,11 @@ services:
         value: 10000
       - key: MONGODB_URI
         required: true
-      - key: JWT_SECRET
-        required: true
-        generateValue: true
-    # Environment variables
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 10000  # Render automatically assigns a port, but we can specify a default
-      - key: MONGODB_URI
-        required: true
         # This should be set in your Render dashboard
         generateValue: true
       - key: JWT_SECRET
         required: true
         generateValue: true
-    # Health check path
-    healthCheckPath: /api/health
     # Auto-deploy from Git
     autoDeploy: true
     # Region (choose one closest to your users)

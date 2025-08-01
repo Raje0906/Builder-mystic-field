@@ -87,32 +87,26 @@ const app = express();
 const PORT = 3002; // Using port 3002 to avoid conflicts with other services
 
 // Add request logging
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-  next();
-});
-
-// Add health check route (before other routes and auth middleware)
-app.use('/api/health', healthRouter);
-
-// Middleware
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  }),
-);
-
+// CORS configuration must come before any route definitions
 // Allowed origins
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',')
-  : ['http://localhost:3000', 'http://localhost:8080'];
+  : ['http://localhost:3000', 'http://localhost:8080', 'http://127.0.0.1:8080'];
+
+console.log('Allowed CORS origins:', allowedOrigins);
 
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
+    // Check if the origin is in the allowed list or is a subdomain of an allowed origin
+    const isAllowed = allowedOrigins.some(allowedOrigin => 
+      origin === allowedOrigin || 
+      origin.startsWith(allowedOrigin.replace(/\*$/, ''))
+    );
+    
+    if (!isAllowed) {
       const msg = `The CORS policy for this site does not allow access from ${origin}`;
       console.warn(msg);
       return callback(new Error(msg), false);
@@ -126,7 +120,22 @@ const corsOptions = {
   exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 };
 
+// Apply CORS middleware first
 app.use(cors(corsOptions));
+
+// Then apply other middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Add health check route
+app.use('/api/health', healthRouter);
 
 app.use(compression());
 

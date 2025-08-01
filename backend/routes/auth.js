@@ -384,20 +384,61 @@ router.get("/me", async (req, res) => {
 // @desc    Get all stores for dropdown
 // @access  Public
 router.get("/stores", async (req, res) => {
+  console.log('🔍 /api/auth/stores endpoint hit');
+  
   try {
-    console.log('Fetching stores...');
-    const stores = await Store.find({ status: "active" }).select("name address");
-    console.log('Found stores:', stores);
+    // Check if Store model is available
+    if (!Store) {
+      const error = new Error('Store model not available');
+      console.error('❌ Store model is not available');
+      return res.status(500).json({
+        success: false,
+        message: 'Server configuration error',
+        error: process.env.NODE_ENV === 'development' ? 'Store model not found' : undefined,
+      });
+    }
     
-    res.json({
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      console.error('❌ Database not connected. State:', mongoose.connection.readyState);
+      return res.status(500).json({
+        success: false,
+        message: 'Database connection error',
+        dbState: mongoose.connection.readyState,
+      });
+    }
+    
+    console.log('🔍 Querying stores from database...');
+    const stores = await Store.find({ status: "active" })
+      .select("name address")
+      .lean()
+      .catch(err => {
+        console.error('❌ Database query error:', err);
+        throw err;
+      });
+    
+    console.log(`✅ Found ${stores.length} stores`);
+    
+    const response = {
       success: true,
       data: { stores },
-    });
+    };
+    
+    console.log('📤 Sending response:', JSON.stringify(response).substring(0, 200) + '...');
+    return res.json(response);
+    
   } catch (error) {
-    console.error("Get stores error:", error);
+    console.error('❌ Error in /api/auth/stores:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+    
+    // Ensure we send a valid JSON response even if there's an error
     res.status(500).json({
       success: false,
-      message: "Error fetching stores",
+      message: 'Failed to fetch stores',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });

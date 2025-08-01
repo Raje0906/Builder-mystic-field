@@ -1,6 +1,6 @@
 // Safe API client that gracefully handles backend unavailability
-// Note: This should match the backend server port in server.js (3002)
-const API_BASE_URL = "http://localhost:3002/api";
+// Note: This should match the backend server port in server.js (10000)
+const API_BASE_URL = "http://localhost:10000/api";
 
 class SafeApiClient {
   private isBackendAvailable: boolean = false;

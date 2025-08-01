@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       open: true,
       proxy: mode === 'production' ? undefined : {
         '/api': {
-          target: 'http://localhost:3002',
+          target: 'http://localhost:10000',
           changeOrigin: true,
           secure: false,
           ws: true,
