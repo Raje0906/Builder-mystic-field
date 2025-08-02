@@ -3324,3 +3324,65 @@
 [2025-08-02T12:59:46.701Z] [LOG] ✅ MongoDB Connected
 [2025-08-02T12:59:46.716Z] [LOG] MongoDB Connected to: localhost
 [2025-08-02T12:59:46.716Z] [LOG] MongoDB connection state: 1
+[2025-08-02T13:01:17.195Z] [LOG] [2025-08-02T13:01:17.195Z] GET /api/auth/stores from unknown origin
+[2025-08-02T13:01:17.198Z] [LOG] [2025-08-02T13:01:17.198Z] GET /api/auth/stores
+[2025-08-02T13:01:17.200Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T13:01:17.201Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T13:01:17.224Z] [LOG] ✅ Found 3 stores
+[2025-08-02T13:01:17.226Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T13:01:17.361Z] [LOG] [2025-08-02T13:01:17.361Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:01:17.361Z] [LOG] [2025-08-02T13:01:17.361Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:01:17.682Z] [LOG] [2025-08-02T13:01:17.682Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:01:17.683Z] [LOG] [2025-08-02T13:01:17.683Z] GET /api/health
+[2025-08-02T13:01:24.652Z] [LOG] [2025-08-02T13:01:24.652Z] POST /api/auth/login from http://localhost:8080
+[2025-08-02T13:01:24.652Z] [LOG] [2025-08-02T13:01:24.652Z] POST /api/auth/login
+[2025-08-02T13:01:24.687Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf792"}
+[2025-08-02T13:01:24.715Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"},"isActive":true}
+[2025-08-02T13:01:24.717Z] [LOG] Attempting password verification...
+[2025-08-02T13:01:24.931Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf792"}
+[2025-08-02T13:01:25.286Z] [LOG] [2025-08-02T13:01:25.286Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T13:01:25.287Z] [LOG] [2025-08-02T13:01:25.287Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:01:25.293Z] [LOG] [2025-08-02T13:01:25.293Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T13:01:25.293Z] [LOG] [2025-08-02T13:01:25.293Z] GET /api/reports/summary
+[2025-08-02T13:01:25.382Z] [LOG] [2025-08-02T13:01:25.382Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:01:25.383Z] [LOG] [2025-08-02T13:01:25.383Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:01:25.690Z] [LOG] [2025-08-02T13:01:25.690Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:01:25.691Z] [LOG] [2025-08-02T13:01:25.691Z] GET /api/health
+[2025-08-02T13:02:17.995Z] [LOG] [2025-08-02T13:02:17.995Z] GET /api/auth/stores from unknown origin
+[2025-08-02T13:02:18.002Z] [LOG] [2025-08-02T13:02:18.002Z] GET /api/auth/stores
+[2025-08-02T13:02:18.003Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T13:02:18.010Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T13:02:18.016Z] [LOG] [2025-08-02T13:02:18.016Z] GET /api/auth/me from unknown origin
+[2025-08-02T13:02:18.018Z] [LOG] [2025-08-02T13:02:18.018Z] GET /api/auth/me
+[2025-08-02T13:02:18.026Z] [LOG] ✅ Found 3 stores
+[2025-08-02T13:02:18.054Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T13:02:18.065Z] [LOG] [2025-08-02T13:02:18.065Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:02:18.068Z] [LOG] [2025-08-02T13:02:18.068Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:02:18.075Z] [LOG] [2025-08-02T13:02:18.075Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:02:18.078Z] [LOG] [2025-08-02T13:02:18.078Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:02:18.407Z] [LOG] [2025-08-02T13:02:18.407Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:02:18.407Z] [LOG] [2025-08-02T13:02:18.407Z] GET /api/health
+[2025-08-02T13:02:18.411Z] [LOG] [2025-08-02T13:02:18.411Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:02:18.411Z] [LOG] [2025-08-02T13:02:18.411Z] GET /api/health
+[2025-08-02T13:02:19.196Z] [LOG] [2025-08-02T13:02:19.196Z] GET /api/auth/stores from unknown origin
+[2025-08-02T13:02:19.196Z] [LOG] [2025-08-02T13:02:19.196Z] GET /api/auth/stores
+[2025-08-02T13:02:19.197Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T13:02:19.197Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T13:02:19.201Z] [LOG] ✅ Found 3 stores
+[2025-08-02T13:02:19.202Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T13:02:19.346Z] [LOG] [2025-08-02T13:02:19.346Z] GET /api/auth/me from unknown origin
+[2025-08-02T13:02:19.346Z] [LOG] [2025-08-02T13:02:19.346Z] GET /api/auth/me
+[2025-08-02T13:02:26.560Z] [LOG] [2025-08-02T13:02:26.560Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:02:26.561Z] [LOG] [2025-08-02T13:02:26.561Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:02:26.866Z] [LOG] [2025-08-02T13:02:26.866Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:02:26.867Z] [LOG] [2025-08-02T13:02:26.867Z] GET /api/health
+[2025-08-02T13:03:26.570Z] [LOG] [2025-08-02T13:03:26.570Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:03:26.571Z] [LOG] [2025-08-02T13:03:26.571Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:03:26.890Z] [LOG] [2025-08-02T13:03:26.890Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:03:26.891Z] [LOG] [2025-08-02T13:03:26.891Z] GET /api/health
+[2025-08-02T13:04:26.570Z] [LOG] [2025-08-02T13:04:26.570Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:04:26.570Z] [LOG] [2025-08-02T13:04:26.570Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:04:26.877Z] [LOG] [2025-08-02T13:04:26.877Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:04:26.879Z] [LOG] [2025-08-02T13:04:26.879Z] GET /api/health
+[2025-08-02T13:04:41.175Z] [LOG] [2025-08-02T13:04:41.175Z] GET /api/stores from unknown origin
+[2025-08-02T13:04:41.176Z] [LOG] [2025-08-02T13:04:41.176Z] GET /api/stores

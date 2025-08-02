@@ -63,20 +63,23 @@ export function Login() {
   const fetchStores = async () => {
     try {
       console.log("Fetching stores...");
-      const response = await fetch("/api/auth/stores");
+      const response = await fetch("/api/stores");
       const data = await response.json();
       
       console.log("Stores response:", data);
       
       if (data.success) {
-        setStores(data.data.stores);
-        console.log("Stores loaded:", data.data.stores);
+        setStores(data.data);
+        console.log("Stores loaded:", data.data);
       } else {
-        toast({ title: "Error", description: "Failed to fetch stores" });
+        toast({ title: "Error", description: data.message || "Failed to fetch stores" });
       }
     } catch (error) {
       console.error("Error fetching stores:", error);
-      toast({ title: "Error", description: "Failed to fetch stores" });
+      toast({ 
+        title: "Error", 
+        description: error instanceof Error ? error.message : "Failed to fetch stores" 
+      });
     }
   };
 

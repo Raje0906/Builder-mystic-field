@@ -110,10 +110,14 @@ const UserManagement: React.FC = () => {
 
   const fetchStores = async () => {
     try {
-      const res = await axios.get(`${apiBase}/api/auth/stores`);
-      setStores(res.data.data.stores);
+      const res = await axios.get(`${apiBase}/api/stores`);
+      if (res.data.success) {
+        setStores(res.data.data);
+      } else {
+        console.error('Failed to fetch stores:', res.data.message);
+      }
     } catch (err) {
-      // ignore store fetch errors for now
+      console.error('Error fetching stores:', err);
     }
   };
 
