@@ -3204,3 +3204,47 @@
 [2025-08-02T09:32:32.195Z] [LOG] [2025-08-02T09:32:32.195Z] GET /api/health
 [2025-08-02T09:33:50.128Z] [LOG] [2025-08-02T09:33:50.128Z] GET /api/health from https://world-laptop.vercel.app
 [2025-08-02T09:33:50.128Z] [LOG] [2025-08-02T09:33:50.128Z] GET /api/health
+[2025-08-02T09:36:17.241Z] [LOG] [2025-08-02T09:36:17.240Z] GET /api/health from https://world-laptop.vercel.app
+[2025-08-02T09:36:17.241Z] [LOG] [2025-08-02T09:36:17.241Z] GET /api/health
+[2025-08-02T09:40:13.651Z] [LOG] [2025-08-02T09:40:13.651Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:40:13.662Z] [LOG] [2025-08-02T09:40:13.662Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:40:14.206Z] [LOG] [2025-08-02T09:40:14.206Z] GET /api/auth/stores from unknown origin
+[2025-08-02T09:40:14.251Z] [LOG] [2025-08-02T09:40:14.251Z] GET /api/auth/stores
+[2025-08-02T09:40:14.264Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:40:14.271Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:40:14.314Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:40:14.315Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T09:40:14.423Z] [LOG] [2025-08-02T09:40:14.423Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:40:14.425Z] [LOG] [2025-08-02T09:40:14.425Z] GET /api/health
+[2025-08-02T09:40:23.119Z] [LOG] [2025-08-02T09:40:23.119Z] POST /api/auth/login from http://localhost:8080
+[2025-08-02T09:40:23.125Z] [LOG] [2025-08-02T09:40:23.125Z] POST /api/auth/login
+[2025-08-02T09:40:23.128Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf790"}
+[2025-08-02T09:40:23.137Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},"isActive":true}
+[2025-08-02T09:40:23.143Z] [LOG] Attempting password verification...
+[2025-08-02T09:40:23.348Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf790"}
+[2025-08-02T09:40:23.746Z] [LOG] [2025-08-02T09:40:23.746Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:40:23.747Z] [LOG] [2025-08-02T09:40:23.747Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:40:23.750Z] [LOG] [2025-08-02T09:40:23.750Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:40:23.751Z] [LOG] [2025-08-02T09:40:23.751Z] GET /api/reports/summary
+[2025-08-02T09:40:23.846Z] [LOG] [2025-08-02T09:40:23.846Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:40:23.862Z] [LOG] [2025-08-02T09:40:23.862Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:40:24.176Z] [LOG] [2025-08-02T09:40:24.176Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:40:24.177Z] [LOG] [2025-08-02T09:40:24.176Z] GET /api/health
+[2025-08-02T09:40:25.515Z] [LOG] [2025-08-02T09:40:25.515Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:40:25.523Z] [LOG] [2025-08-02T09:40:25.523Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:40:25.527Z] [LOG] [2025-08-02T09:40:25.527Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:40:25.549Z] [LOG] [2025-08-02T09:40:25.549Z] GET /api/repairs
+[2025-08-02T09:40:26.774Z] [LOG] [2025-08-02T09:40:26.774Z] GET /api/users from unknown origin
+[2025-08-02T09:40:26.774Z] [LOG] [2025-08-02T09:40:26.774Z] GET /api/users?role=engineer
+[2025-08-02T09:40:27.446Z] [LOG] [2025-08-02T09:40:27.446Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:40:27.447Z] [LOG] [2025-08-02T09:40:27.447Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T09:40:27.450Z] [LOG] [2025-08-02T09:40:27.450Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:40:27.450Z] [LOG] [2025-08-02T09:40:27.450Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:40:27.768Z] [LOG] [2025-08-02T09:40:27.768Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:40:27.769Z] [LOG] [2025-08-02T09:40:27.769Z] GET /api/repairs?status=received
+[2025-08-02T09:51:03.649Z] [LOG] [2025-08-02T09:51:03.649Z] GET /api/auth/stores from unknown origin
+[2025-08-02T09:51:03.649Z] [LOG] [2025-08-02T09:51:03.649Z] GET /api/auth/stores
+[2025-08-02T09:51:03.650Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:51:03.650Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:51:03.653Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:51:03.653Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...

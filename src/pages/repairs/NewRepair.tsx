@@ -25,9 +25,10 @@ import { emailService } from '@/services/emailService';
 
 // Define the Repair interface
 export interface Repair {
-  id: string;
+  id?: string;
   _id?: string; // For MongoDB compatibility
   customer: string;
+  customerId?: string;
   deviceType: string;
   deviceInfo: {
     brand: string;
@@ -48,7 +49,7 @@ export interface Repair {
   storeId: string;
   technicianId: string;
   technician?: string;
-  notes?: string;
+  notes?: string | string[];
   contactInfo: {
     whatsappNumber: string;
     notificationEmail: string;
@@ -60,7 +61,7 @@ export interface Repair {
   estimatedDays: number;
   createdAt?: string;
   updatedAt?: string;
-  ticketNumber?: string; // Added for display purposes
+  ticketNumber?: string; // For display purposes
 }
 
 interface RepairFormData {
@@ -209,46 +210,77 @@ export function NewRepair() {
       });
       return;
     }
+
+    // Validate notification consent if contact info is provided
+    if ((formData.whatsappNumber || formData.notificationEmail) && !formData.notificationConsent) {
+      toast({
+        title: "Consent Required",
+        description: "Please confirm customer consent for notifications.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
       const estimatedCompletion = calculateEstimatedCompletion();
+      const store = stores.find(s => s.id === formData.storeId) || userStore || stores[0];
+      const technician = engineers.find(e => e._id === formData.technicianId);
       
-      // Get the correct store based on form data
-      const selectedStore = stores.find(store => store.id === formData.storeId) || userStore;
-      const store = selectedStore || stores[0]; // Fallback to first store if needed
+      if (!technician) {
+        throw new Error("Selected technician not found");
+      }
       
-      const technician = engineers.find((e) => e._id === formData.technicianId)?.name || '';
-      
-      // Create repair data object with only required properties for backend
-      const repairData = {
+      // Create repair data object with proper typing
+      const repairData: Omit<Repair, '_id' | 'createdAt' | 'updatedAt'> = {
         customer: selectedCustomer._id || selectedCustomer.id || '',
+        customerId: selectedCustomer._id || selectedCustomer.id || '',
         deviceType: 'Laptop',
-        brand: formData.deviceBrand.trim(),
-        model: formData.deviceModel.trim(),
-        serialNumber: formData.serialNumber.trim() || 'N/A',
-        imei: formData.imei.trim() || 'N/A',
+        deviceInfo: {
+          brand: formData.deviceBrand.trim(),
+          model: formData.deviceModel.trim(),
+          serialNumber: formData.serialNumber.trim() || 'N/A',
+          imei: formData.imei.trim() || 'N/A',
+        },
+        issue: formData.issue.trim(),
         issueDescription: formData.issue.trim(),
         diagnosis: (formData.diagnosis || 'Pending diagnosis').trim(),
-        repairCost: parseFloat(String(formData.estimatedCost)) || 0,
+        estimatedCost: Number(formData.estimatedCost) || 0,
+        repairCost: Number(formData.estimatedCost) || 0,
         partsCost: 0,
         laborCost: 0,
         priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
-        estimatedCompletion: calculateEstimatedCompletion().toISOString(),
-        technician: engineers.find((e) => e._id === formData.technicianId)?.name || '',
+        estimatedCompletion: estimatedCompletion.toISOString(),
+        storeId: formData.storeId,
+        technicianId: formData.technicianId,
+        technician: technician.name,
         notes: [
           `Issue reported: ${formData.issue}`,
           `Estimated cost: ₹${formData.estimatedCost}`,
           `WhatsApp contact: ${formData.whatsappNumber || 'Not provided'}`,
           `Email contact: ${formData.notificationEmail || 'Not provided'}`,
           `Store: ${store?.name || 'Not specified'}`
-        ].join('\n'),
+        ],
+        contactInfo: {
+          whatsappNumber: formData.whatsappNumber,
+          notificationEmail: formData.notificationEmail,
+          consentGiven: formData.notificationConsent,
+          consentDate: new Date().toISOString()
+        },
+        status: 'received',
+        warrantyPeriod: 30,
+        estimatedDays: formData.estimatedDays
       };
+      
       console.log('[DEBUG] Submitting repairData:', repairData);
       
       // Submit repair to the API
       const newRepair = await addRepair(repairData);
+      
+      if (!newRepair) {
+        throw new Error("Failed to create repair");
+      }
       
       // Reset form after successful submission
       setFormData({
@@ -289,7 +321,7 @@ export function NewRepair() {
       console.error("Error creating repair:", error);
       toast({
         title: "❌ Error",
-        description: "Failed to create repair. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create repair. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -298,14 +330,8 @@ export function NewRepair() {
   };
   
   // Helper function to send repair notifications
-  interface RepairNotificationData {
-    _id?: string;
-    id?: string;
-    [key: string]: any;
-  }
-
   const sendRepairNotifications = async (
-    newRepair: RepairNotificationData, 
+    newRepair: Repair, 
     formData: RepairFormData, 
     customer: Customer | null, 
     store: any
@@ -350,10 +376,10 @@ We'll keep you updated on the progress.
       
       // Send email notification if email is provided
       try {
-        if (formData.notificationEmail) {
+        if (formData.notificationEmail && customer) {
           const emailSubject = `Repair Confirmation - ${formData.deviceBrand || 'Device'} ${formData.deviceModel || ''}`.trim();
           const emailBody = `
-Dear ${customer?.name || 'Valued Customer'},
+Dear ${customer.name || 'Valued Customer'},
 
 Thank you for choosing our repair service. Here are your repair details:
 
@@ -366,11 +392,12 @@ Thank you for choosing our repair service. Here are your repair details:
 
           const templateParams = {
             user_name: customer.name,
-            device_name: formData.deviceBrand + ' ' + formData.deviceModel,
+            device_name: `${formData.deviceBrand || ''} ${formData.deviceModel || ''}`.trim(),
             issue_description: formData.issue,
             repair_id: repairId,
             estimated_date: completionDate.toLocaleDateString(),
-            to_email: customer.email,
+            to_email: formData.notificationEmail,
+            message: emailBody
           };
 
           await emailService.sendEmail(templateParams);
@@ -380,194 +407,8 @@ Thank you for choosing our repair service. Here are your repair details:
         // Don't fail the whole operation if email fails
       }
     } catch (error) {
-      console.error('Error sending notifications:', error);
+      console.error('Error in sendRepairNotifications:', error);
       // Don't fail the whole operation if notifications fail
-    }
-
-    if (!formData.whatsappNumber || !formData.notificationEmail) {
-      toast({
-        title: "Contact Information Required",
-        description: "Please provide WhatsApp number and email for notifications",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.notificationConsent) {
-      toast({
-        title: "Customer Consent Required",
-        description: "Customer must consent to receive repair notifications",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const estimatedCompletion = calculateEstimatedCompletion();
-      const technician = engineers.find(e => e._id === formData.technicianId)?.name || '';
-      const estimatedCost = formData.estimatedCost || 0;
-
-      // Format data for the API
-      const repairData: Omit<Repair, '_id' | 'createdAt' | 'updatedAt'> = {
-        id: '', // Will be set by the server
-        customer: selectedCustomer.id || '',
-        customerId: selectedCustomer.id || '',
-        deviceType: 'Laptop',
-        deviceInfo: {
-          brand: formData.deviceBrand,
-          model: formData.deviceModel,
-          serialNumber: formData.serialNumber || '',
-          imei: formData.imei || ''
-        },
-        issue: formData.issue,
-        issueDescription: formData.issue,
-        diagnosis: formData.diagnosis || "Initial assessment pending",
-        estimatedCost,
-        actualCost: estimatedCost, // Initially same as estimated
-        repairCost: estimatedCost,
-        partsCost: 0,
-        laborCost: 0,
-        priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
-        estimatedCompletion: calculateEstimatedCompletion().toISOString(),
-        storeId: formData.storeId,
-        technicianId: formData.technicianId,
-        technician,
-        notes: JSON.stringify({
-          customerNotes: [
-            `Issue reported: ${formData.issue}`,
-            `Estimated cost: ₹${estimatedCost}`,
-            `WhatsApp contact: ${formData.whatsappNumber}`,
-            `Email contact: ${formData.notificationEmail}`,
-            "Customer consented to notifications",
-          ],
-          internalNotes: []
-        }),
-        contactInfo: {
-          whatsappNumber: formData.whatsappNumber,
-          notificationEmail: formData.notificationEmail,
-          consentGiven: formData.notificationConsent,
-          consentDate: new Date().toISOString()
-        },
-        status: 'received',
-        warrantyPeriod: 30,
-        estimatedDays: formData.estimatedDays
-      };
-
-      const newRepair = await addRepair(repairData);
-
-      // Calculate completion date
-      const estimatedCompletionDate = new Date();
-      estimatedCompletionDate.setDate(estimatedCompletionDate.getDate() + formData.estimatedDays);
-      const completionDate = estimatedCompletionDate.toLocaleDateString();
-      const formattedCost = formData.estimatedCost.toLocaleString('en-IN');
-      
-      // Get store info for notifications
-      const store = stores.find(s => s.id === formData.storeId);
-      
-      // Create confirmation message
-      const confirmationMessage = `Hi ${selectedCustomer?.name || 'Customer'},
-
-📱 Your ${formData.deviceBrand} ${formData.deviceModel} has been received for repair!
-
-🆔 Repair Ticket: ${newRepair.ticketNumber || newRepair._id || 'N/A'}
-🔧 Issue: ${formData.issue}
-💰 Estimated Cost: ₹${formattedCost}
-📅 Expected Completion: ${completionDate}
-
-We'll keep you updated on the progress.
-
-📞 Questions? Call ${store?.phone || 'us'}
-📍 ${store?.name || 'Laptop Store'}`;
-
-      // Reset form after successful submission
-      setFormData({
-        deviceBrand: "",
-        deviceModel: "",
-        serialNumber: "",
-        imei: "",
-        issue: "",
-        diagnosis: "",
-        estimatedCost: 0,
-        priority: "medium",
-        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: "",
-        estimatedDays: 3,
-        whatsappNumber: "",
-        notificationEmail: "",
-        notificationConsent: false,
-      });
-      setSelectedCustomer(null);
-      setShowCustomerSearch(true);
-
-      // Send notifications if consent was given
-      if (formData.notificationConsent) {
-        try {
-          if (formData.whatsappNumber) {
-            await sendWhatsAppNotification(
-              formData.whatsappNumber,
-              confirmationMessage
-            );
-          }
-          
-          if (formData.notificationEmail) {
-            await emailService.sendEmail(
-              formData.notificationEmail,
-              `Repair Confirmation - ${formData.deviceBrand} ${formData.deviceModel}`,
-              `Dear ${selectedCustomer?.name || 'Valued Customer'}, we've received your device for repair. Repair ID: ${newRepair.ticketNumber || newRepair._id || 'N/A'}. We'll keep you updated!`
-            );
-          }
-          
-          toast({
-            title: '✅ Repair Created & Customer Notified!',
-            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} | Customer notified via ${formData.whatsappNumber ? 'WhatsApp' : ''}${formData.whatsappNumber && formData.notificationEmail ? ' & ' : ''}${formData.notificationEmail ? 'Email' : ''}`,
-            duration: 5000,
-          });
-        } catch (error) {
-          console.error('Error sending notifications:', error);
-          // Still show success even if notifications fail
-          toast({
-            title: '✅ Repair Created!',
-            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} created successfully, but there was an issue sending notifications.`,
-            duration: 5000,
-          });
-        }
-      } else {
-        toast({
-          title: '✅ Repair Created!',
-          description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} has been created successfully!`,
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      console.error("Error creating repair:", error);
-      toast({
-        title: "❌ Error",
-        description: "Failed to create repair request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-      
-      // Reset form
-      setSelectedCustomer(null);
-      setShowCustomerSearch(true);
-      setFormData({
-        deviceBrand: "",
-        deviceModel: "",
-        serialNumber: "",
-        imei: "",
-        issue: "",
-        diagnosis: "",
-        estimatedCost: 0,
-        priority: "medium",
-        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: "",
-        estimatedDays: 3,
-        whatsappNumber: "",
-        notificationEmail: "",
-        notificationConsent: false,
-      });
     }
   };
 

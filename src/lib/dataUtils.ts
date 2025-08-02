@@ -1013,16 +1013,48 @@ export const sendEmailNotification = async (
 };
 
 export const getStores = async (): Promise<any[]> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = import.meta.env.VITE_API_URL || ''; 
   try {
-    const response = await fetch(`${apiUrl}/stores`);
+    const response = await fetch(`${apiUrl}/api/stores`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch stores');
+      const errorText = await response.text();
+      console.error('Failed to fetch stores:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Failed to fetch stores: ${response.status} ${response.statusText}`);
     }
+    
     const data = await response.json();
-    return Array.isArray(data.data) ? data.data : [];
+    
+    // Handle both response formats for backward compatibility
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && Array.isArray(data.data)) {
+      return data.data;
+    }
+    
+    console.warn('Unexpected response format from /api/stores:', data);
+    return [];
   } catch (error) {
     console.error('Error fetching stores:', error);
+    // Try to return from IndexedDB as fallback
+    try {
+      const stores = await getStoresFromIDB();
+      if (stores && stores.length > 0) {
+        console.warn('Using cached stores from IndexedDB');
+        return stores;
+      }
+    } catch (idbError) {
+      console.error('Error fetching stores from IndexedDB:', idbError);
+    }
     return [];
   }
 };

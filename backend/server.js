@@ -68,8 +68,9 @@ import { authenticateToken } from "./middleware/auth.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config();
+// Initialize Express app
+const app = express();
+const PORT = process.env.PORT || 3002;
 
 // Run notification system test in development
 if (process.env.NODE_ENV !== 'production') {
@@ -84,9 +85,6 @@ if (process.env.NODE_ENV !== 'production') {
       console.error('Error in notification system test:', error);
     });
 }
-
-const app = express();
-const PORT = process.env.PORT || 3002;
  // Using port 3002 to avoid conflicts with other services
 
 // Add request logging
@@ -229,27 +227,59 @@ apiRoutes.forEach(route => {
   }
 });
 
-// Serve static files from the React app in production
-if (process.env.NODE_ENV === "production") {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
+// Serve static files based on environment
+const clientBuildPath = path.join(process.cwd(), 'dist');
+
+// Check if we're running in production or if the client build exists
+const isProduction = process.env.NODE_ENV === 'production';
+const clientBuildExists = fs.existsSync(clientBuildPath);
+
+console.log(`Environment: ${isProduction ? 'production' : 'development'}`);
+console.log(`Client build path: ${clientBuildPath}`);
+console.log(`Client build exists: ${clientBuildExists}`);
+
+// Serve static files if they exist
+if (clientBuildExists) {
+  console.log('Serving static files from:', clientBuildPath);
   
   // Serve static files from the React app
-  app.use(express.static(path.join(__dirname, "dist")));
-
+  app.use(express.static(clientBuildPath));
+  
   // Handle React routing, return all requests to React app
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
+  app.get('*', (req, res) => {
+    console.log(`Serving index.html for ${req.path}`);
+    res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).json({
+          error: 'Error serving the application',
+          path: req.path,
+          resolvedPath: path.join(clientBuildPath, 'index.html')
+        });
+      }
+    });
   });
 } else {
-  // Simple response in development
-  app.get("/", (req, res) => {
+  // If no client build exists, just serve the API
+  console.log('No client build found, serving API only');
+  
+  app.get('/', (req, res) => {
     res.json({
-      message: "Welcome to the Laptop Store CRM API",
-      status: "running",
+      message: 'Welcome to the Laptop Store CRM API',
+      status: 'running',
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString(),
-      api_docs: "/api"
+      clientBuildAvailable: false,
+      api_docs: '/api'
+    });
+  });
+  
+  // Catch-all for unhandled routes
+  app.use((req, res) => {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `The requested resource ${req.path} was not found on this server.`,
+      timestamp: new Date().toISOString()
     });
   });
 }
