@@ -50,68 +50,127 @@ import { authenticateToken } from './middleware/auth.js';
 let isMongoConnected = false;
 
 // Connect to MongoDB and start the server
-async function startServer() {
-  // If already connected, return the existing connection
-  if (isMongoConnected) {
-    console.log('ℹ️ Using existing MongoDB connection');
-    return mongoose.connection;
-  }
-
+const startServer = async () => {
   try {
-    // Use MONGO_URI if available, otherwise fall back to MONGODB_URI or localhost
-    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop-store';
-    const isAtlas = mongoUri.includes('mongodb+srv://');
-    
-    console.log(`🔗 Connecting to ${isAtlas ? 'MongoDB Atlas' : 'MongoDB'}...`);
-    
-    // Connection options
-    const options = {
-      serverSelectionTimeoutMS: 10000, // 10 seconds
-      socketTimeoutMS: 45000, // 45 seconds
-      maxPoolSize: 10,
-      retryWrites: true,
-      w: 'majority',
-      family: 4, // Use IPv4, skip IPv6
-    };
-    
-    // Event handlers
-    mongoose.connection.on('connecting', () => {
-      console.log('🔄 Connecting to MongoDB...');
-    });
-    
-    mongoose.connection.on('connected', () => {
-      isMongoConnected = true;
-      console.log('✅ MongoDB Connected to:', mongoose.connection.host);
-      console.log('📊 Database Name:', mongoose.connection.name);
-    });
-    
-    mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB Connection Error:', err.name);
-      console.error('Error message:', err.message);
+    // MongoDB Connection
+    if (!isMongoConnected) {
+      const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop-store';
+      const isAtlas = mongoUri.includes('mongodb+srv://');
       
-      if (process.env.NODE_ENV === 'production' && isAtlas) {
-        console.error('❌ Critical: Failed to connect to MongoDB Atlas in production');
-        process.exit(1);
+      console.log(`🔗 Connecting to ${isAtlas ? 'MongoDB Atlas' : 'MongoDB'}...`);
+      
+      // Connection options
+      const options = {
+        serverSelectionTimeoutMS: 10000, // 10 seconds
+        socketTimeoutMS: 45000, // 45 seconds
+        maxPoolSize: 10,
+        retryWrites: true,
+        w: 'majority',
+        family: 4, // Use IPv4, skip IPv6
+      };
+      
+      // Event handlers
+      mongoose.connection.on('connecting', () => {
+        console.log('🔄 Connecting to MongoDB...');
+      });
+      
+      mongoose.connection.on('connected', () => {
+        isMongoConnected = true;
+        console.log('✅ MongoDB Connected to:', mongoose.connection.host);
+        console.log('📊 Database Name:', mongoose.connection.name);
+      });
+      
+      mongoose.connection.on('error', (err) => {
+        console.error('❌ MongoDB Connection Error:', err.name);
+        console.error('Error message:', err.message);
+        
+        if (process.env.NODE_ENV === 'production' && isAtlas) {
+          console.error('❌ Critical: Failed to connect to MongoDB Atlas in production');
+          process.exit(1);
+        }
+      });
+      
+      mongoose.connection.on('disconnected', () => {
+        isMongoConnected = false;
+        console.warn('ℹ️ MongoDB disconnected');
+      });
+      
+      // Connect to MongoDB
+      await mongoose.connect(mongoUri, options);
+    }
+
+    // Start the Express server
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+      console.log(`📡 API URL: http://localhost:${PORT}/api`);
+      console.log(`🌍 Web Interface: http://localhost:${PORT}`);
+      console.log(`🔄 Process ID: ${process.pid}`);
+      console.log('📅 Server Time:', new Date().toISOString());
+      console.log('✅ Server is ready to accept connections');
+      
+      // Log database connection status
+      if (mongoose.connection.readyState === 1) {
+        console.log('\n📊 Database Connection Status:');
+        console.log(`   - Status: ✅ Connected`);
+        console.log(`   - Database: ${mongoose.connection.name}`);
+        console.log(`   - Host: ${mongoose.connection.host}`);
+        console.log(`   - Port: ${mongoose.connection.port || 'default'}`);
+        console.log(`   - Using: ${mongoose.connection.host.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
+      } else {
+        console.warn('⚠️  Database connection status: Not connected');
       }
     });
-    
-    mongoose.connection.on('disconnected', () => {
-      isMongoConnected = false;
-      console.warn('ℹ️ MongoDB disconnected');
+
+    // Graceful shutdown handler
+    const gracefulShutdown = async () => {
+      console.log('\n🛑 Received shutdown signal. Closing server...');
+      
+      // Close the server
+      server.close(() => {
+        console.log('✅ HTTP server closed');
+        
+        // Close MongoDB connection if connected
+        if (mongoose.connection.readyState === 1) {
+          mongoose.connection.close(false, () => {
+            console.log('✅ MongoDB connection closed');
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      });
+      
+      // Force close after 5 seconds
+      setTimeout(() => {
+        console.error('❌ Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+      }, 5000);
+    };
+
+    // Handle termination signals
+    process.on('SIGTERM', gracefulShutdown);
+    process.on('SIGINT', gracefulShutdown);
+
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
     });
-    
-    // Connect to MongoDB
-    await mongoose.connect(mongoUri, options);
-    return mongoose.connection;
-    
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      gracefulShutdown().catch(err => {
+        console.error('Error during graceful shutdown:', err);
+        process.exit(1);
+      });
+    });
+
+    return server;
   } catch (error) {
-    console.error('❌ Failed to connect to MongoDB:', error);
-    if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
-    }
-    throw error;
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
   }
-}
+};
 
 // CORS configuration
 const corsOptions = {
@@ -613,81 +672,12 @@ const startApp = async () => {
   }
 };
 
-// Start the application
-let server;
 
-// Start the server and store the server instance
-server = app.listen(port, '0.0.0.0', () => {
-  console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
-  console.log(`📡 API URL: http://localhost:${port}/api`);
-  console.log(`🌍 Web Interface: http://localhost:${port}`);
-  console.log(`🔄 Process ID: ${process.pid}`);
-  console.log('📅 Server Time:', new Date().toISOString());
-  console.log('✅ Server is ready to accept connections');
-  
-  // Log database connection status
-      if (mongoose.connection.readyState === 1) {
-        console.log('\n📊 Database Connection Status:');
-        console.log(`   - Status: ✅ Connected`);
-        console.log(`   - Database: ${mongoose.connection.name}`);
-        console.log(`   - Host: ${mongoose.connection.host}`);
-        console.log(`   - Port: ${mongoose.connection.port || 'default'}`);
-        console.log(`   - Using: ${mongoose.connection.host.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
-      } else {
-        console.warn('⚠️  Database connection status: Not connected');
-      }
-    });
 
-    // Graceful shutdown handler
-    const gracefulShutdown = async () => {
-      console.log('\n🛑 Received shutdown signal. Closing server...');
-      
-      // Close the server
-      server.close(() => {
-        console.log('✅ HTTP server closed');
-        
-        // Close MongoDB connection if connected
-        if (mongoose.connection.readyState === 1) {
-          mongoose.connection.close(false, () => {
-            console.log('✅ MongoDB connection closed');
-            process.exit(0);
-          });
-        } else {
-          process.exit(0);
-        }
-      });
-      
-      // Force close after 5 seconds
-      setTimeout(() => {
-        console.error('❌ Could not close connections in time, forcefully shutting down');
-        process.exit(1);
-      }, 5000);
-    };
-
-    // Handle termination signals
-    process.on('SIGTERM', gracefulShutdown);
-    process.on('SIGINT', gracefulShutdown);
-
-    // Handle unhandled promise rejections
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    });
-
-    // Handle uncaught exceptions
-    process.on('uncaughtException', (error) => {
-      console.error('Uncaught Exception:', error);
-      gracefulShutdown().catch(err => {
-        console.error('Error during graceful shutdown:', err);
-        process.exit(1);
-      });
-    });
-
-    return server;
-    
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
-  }
+// Start the server
+startServer().catch(err => {
+  console.error('Fatal error during server startup:', err);
+  process.exit(1);
 });
 
 export default app;
