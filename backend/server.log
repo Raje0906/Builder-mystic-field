@@ -1868,3 +1868,195 @@
 [2025-08-02T07:01:52.472Z] [LOG] [2025-08-02T07:01:52.472Z] GET /api/health
 [2025-08-02T07:01:53.594Z] [LOG] [2025-08-02T07:01:53.594Z] GET /api/repairs?status=in_progress&limit=5
 [2025-08-02T07:01:53.611Z] [LOG] [2025-08-02T07:01:53.611Z] GET /api/repairs?status=received
+[2025-08-02T07:03:59.415Z] [LOG] [2025-08-02T07:03:59.415Z] GET /api/auth/me
+[2025-08-02T07:03:59.522Z] [LOG] [2025-08-02T07:03:59.522Z] GET /api/health
+[2025-08-02T07:04:00.872Z] [LOG] [2025-08-02T07:04:00.872Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T07:04:01.223Z] [LOG] [2025-08-02T07:04:01.223Z] GET /api/repairs?status=received
+[2025-08-02T07:06:23.414Z] [LOG] [2025-08-02T07:06:23.414Z] GET /api/auth/me
+[2025-08-02T07:06:23.491Z] [LOG] [2025-08-02T07:06:23.491Z] GET /api/health
+[2025-08-02T07:06:24.458Z] [LOG] [2025-08-02T07:06:24.458Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T07:06:24.472Z] [LOG] [2025-08-02T07:06:24.472Z] GET /api/repairs?status=received
+[2025-08-02T07:07:21.587Z] [LOG] [2025-08-02T07:07:21.587Z] GET /api/health
+[2025-08-02T07:07:21.830Z] [LOG] [2025-08-02T07:07:21.830Z] GET /api/auth/me
+[2025-08-02T07:07:22.882Z] [LOG] [2025-08-02T07:07:22.882Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T07:07:22.899Z] [LOG] [2025-08-02T07:07:22.899Z] GET /api/repairs?status=received
+[2025-08-02T07:11:49.978Z] [LOG] [2025-08-02T07:11:49.978Z] GET /api/auth/me
+[2025-08-02T07:11:50.074Z] [LOG] [2025-08-02T07:11:50.074Z] GET /api/health
+[2025-08-02T07:11:50.765Z] [LOG] [2025-08-02T07:11:50.765Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T07:11:50.777Z] [LOG] [2025-08-02T07:11:50.777Z] GET /api/repairs?status=received
+[2025-08-02T07:11:53.230Z] [LOG] [2025-08-02T07:11:53.230Z] GET /api/auth/stores
+[2025-08-02T07:11:53.232Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:11:53.232Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:11:53.237Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:11:53.248Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:11:56.495Z] [LOG] [2025-08-02T07:11:56.495Z] GET /api/auth/stores
+[2025-08-02T07:11:56.495Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:11:56.496Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:11:56.499Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:11:56.501Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:11:56.610Z] [LOG] [2025-08-02T07:11:56.610Z] GET /api/health
+[2025-08-02T07:13:40.882Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:42.903Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:42.907Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:45.036Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:45.058Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:49.466Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:51.526Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:51.530Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:53.549Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:13:53.553Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:21:20.228Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:21:22.297Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:21:22.303Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:21:24.321Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:21:24.325Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)

@@ -10,9 +10,11 @@ export default defineConfig(({ mode }) => {
     root: __dirname,
     publicDir: 'public',
     define: {
-      'process.env': {}, // optional fallback
+      'process.env': {},
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
       __APP_ENV__: JSON.stringify(mode),
     },
+    envPrefix: 'VITE_',
     plugins: [
       react(),
       // Disable service worker in development

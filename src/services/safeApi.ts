@@ -1,14 +1,16 @@
 // Safe API client that gracefully handles backend unavailability
 
 // Determine the base URL based on the environment
-const getApiBaseUrl = () => {
+const getApiBaseUrl = (): string => {
   // In production, use the environment variable or relative URL
   if (import.meta.env.PROD) {
-    return import.meta.env.VITE_API_URL || '/api';
+    const prodUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
+    // Ensure no trailing slash
+    return prodUrl.endsWith('/') ? prodUrl.slice(0, -1) : prodUrl;
   }
   
   // In development, use the local backend
-  return 'http://localhost:3002/api';
+  return 'http://localhost:3002';
 };
 
 const API_BASE_URL = getApiBaseUrl();
