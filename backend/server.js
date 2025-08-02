@@ -90,17 +90,23 @@ const PORT = process.env.PORT || 3002;
 // Add request logging
 // CORS configuration must come before any route definitions
 // Allowed origins
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(',')
-  : [
-      'http://localhost:3000',
-      'http://localhost:8080',
-      'http://127.0.0.1:8080',
-      'http://localhost:3002',
-      'http://127.0.0.1:3002'
-    ];
+const allowedOrigins = [
+  'https://world-laptop.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'http://localhost:3002',
+  'http://127.0.0.1:3002'
+];
 
-console.log('Allowed CORS origins:', allowedOrigins);
+// Add any additional origins from environment variable
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(...process.env.FRONTEND_URL.split(','));
+}
+
+// Remove duplicates
+const uniqueOrigins = [...new Set(allowedOrigins)];
+console.log('Allowed CORS origins:', uniqueOrigins);
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -114,10 +120,12 @@ const corsOptions = {
     }
     
     // Check if the origin is in the allowed list or is a subdomain of an allowed origin
-    const isAllowed = allowedOrigins.some(allowedOrigin => 
+    const isAllowed = uniqueOrigins.some(allowedOrigin => 
       origin === allowedOrigin || 
       origin.startsWith(allowedOrigin.replace(/\*$/, ''))
     );
+    
+    console.log(`Origin check: ${origin} - ${isAllowed ? 'Allowed' : 'Blocked'}`);
     
     if (!isAllowed) {
       const msg = `The CORS policy for this site does not allow access from ${origin}`;

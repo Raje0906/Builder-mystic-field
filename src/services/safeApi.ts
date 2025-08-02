@@ -1,6 +1,17 @@
 // Safe API client that gracefully handles backend unavailability
-// Note: This should match the backend server port in server.js (3002)
-const API_BASE_URL = "http://localhost:3002/api";
+
+// Determine the base URL based on the environment
+const getApiBaseUrl = () => {
+  // In production, use the environment variable or relative URL
+  if (import.meta.env.PROD) {
+    return import.meta.env.VITE_API_URL || '/api';
+  }
+  
+  // In development, use the local backend
+  return 'http://localhost:3002/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Add a small delay to prevent rapid reconnection attempts
 const CONNECTION_RETRY_DELAY = 2000; // 2 seconds

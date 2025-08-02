@@ -7,6 +7,7 @@ import {
   Report,
 } from "@/types";
 import { openDB } from 'idb';
+import { safeApiClient } from "@/services/safeApi";
 
 // Local storage keys
 const STORAGE_KEYS = {
@@ -217,102 +218,108 @@ export const getCustomer = async (id: string): Promise<Customer | null> => {
 };
 
 export const addCustomer = async (
-  customer: Omit<Customer, "id" | "dateAdded" | "totalPurchases">,
+  customerInput: Omit<Customer, "id" | "dateAdded" | "totalPurchases" | "lastPurchase">,
 ): Promise<Customer> => {
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002/api';
-  
   try {
     // Validate required fields
-    if (!customer) {
+    if (!customerInput) {
       throw new Error('Customer data is required');
     }
     
-    if (!customer.name?.trim()) {
+    if (!customerInput.name?.trim()) {
       throw new Error('Customer name is required');
     }
     
-    if (!customer.phone?.trim()) {
+    if (!customerInput.phone?.trim()) {
       throw new Error('Customer phone number is required');
     }
 
-    // Ensure address exists and set defaults
-    const { line1, city, state, pincode, ...restAddress } = customer.address || {};
+    // Prepare the request body with proper types
     const requestBody = {
-      name: customer.name.trim(),
-      email: customer.email?.trim() || '',
-      phone: customer.phone.trim(),
+      name: customerInput.name.trim(),
+      email: customerInput.email?.trim() || '',
+      phone: customerInput.phone.trim(),
       address: {
-        ...restAddress,
-        line1: line1?.trim() || 'Not specified',
-        city: city?.trim() || 'Not specified',
-        state: state?.trim() || 'Not specified',
-        pincode: pincode?.trim() || '000000'
+        line1: customerInput.address?.line1?.trim() || 'Not specified',
+        line2: customerInput.address?.line2?.trim() || '',
+        city: customerInput.address?.city?.trim() || 'Not specified',
+        state: customerInput.address?.state?.trim() || 'Not specified',
+        pincode: customerInput.address?.pincode?.trim() || '000000',
+        country: customerInput.address?.country?.trim() || 'India',
+        // For backward compatibility with postalCode
+        postalCode: customerInput.address?.pincode?.trim() || '000000'
       },
-      status: 'active' // Ensure status is always set
+      // For backward compatibility
+      city: customerInput.address?.city?.trim() || 'Not specified',
+      status: 'active' as const,
+      // Include any additional fields that might be in the customer data
+      ...(customerInput as any)
     };
 
-    let response;
-    let responseData;
+    // Make the API request using safeApiClient
+    const response = await safeApiClient.safeRequest<{ data: Customer }>('/customers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(requestBody),
+      credentials: 'include' as RequestCredentials
+    });
+
+    if (!response.success) {
+      throw new Error(response.error || 'Failed to add customer');
+    }
+
+    if (!response.data) {
+      throw new Error('Invalid response from server');
+    }
+
+    // Handle both direct Customer object and { data: Customer } response formats
+    const responseData = response.data as any;
+    const customerResponse = responseData.data || responseData;
     
-    try {
-      response = await fetch(`${apiUrl}/customers`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        credentials: 'include', // Important for cookies/auth
-        body: JSON.stringify(requestBody),
-      });
-
-      // Handle non-JSON responses
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        responseData = await response.json();
-      } else {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error(`Unexpected response format: ${response.status} ${response.statusText}`);
-      }
-    } catch (e) {
-      console.error('Network error:', e);
-      if (e instanceof TypeError) {
-        throw new Error('Network error: Could not connect to the server. Please check your internet connection.');
-      }
-      throw e;
+    if (!customerResponse) {
+      throw new Error('No customer data received from server');
     }
 
-    if (!response.ok) {
-      const errorMessage = responseData.errors?.[0]?.msg || 
-                         responseData.message || 
-                         `Failed to add customer: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
+    // Extract customer ID, handling both _id and id fields
+    const customerId = customerResponse._id || customerResponse.id || `temp-${Date.now()}`;
+    const address = customerResponse.address || {};
 
-    if (!responseData || !responseData.data) {
-      throw new Error('Invalid response format from server');
-    }
-
-    // Ensure we have a valid ID and created date
-    const customerId = responseData.data._id || responseData.data.id;
-    if (!customerId) {
-      throw new Error('No customer ID returned from server');
-    }
-
+    // Return the customer data with proper typing
     return {
-      ...responseData.data,
       id: customerId,
-      dateAdded: responseData.data.createdAt || new Date().toISOString(),
-      totalPurchases: responseData.data.totalPurchases || 0,
-      status: responseData.data.status || 'active',
+      name: customerResponse.name,
+      email: customerResponse.email || '',
+      phone: customerResponse.phone,
+      address: {
+        line1: address.line1 || 'Not specified',
+        line2: address.line2 || '',
+        city: address.city || 'Not specified',
+        state: address.state || 'Not specified',
+        pincode: address.pincode || '000000',
+        country: address.country || 'India',
+        postalCode: address.pincode || '000000'
+      },
+      city: customerResponse.city || address.city || 'Not specified',
+      dateAdded: customerResponse.dateAdded || customerResponse.createdAt || new Date().toISOString(),
+      totalPurchases: customerResponse.totalPurchases || 0,
+      status: customerResponse.status || 'active',
+      lastPurchase: customerResponse.lastPurchase
     };
   } catch (error) {
     console.error('Error in addCustomer:', error);
-    // Re-throw the error with a more user-friendly message if it's not already an Error object
+    
     if (error instanceof Error) {
+      // Handle specific error cases
+      if (error.message.includes('NetworkError')) {
+        throw new Error('Network error: Could not connect to the server. Please check your internet connection.');
+      }
       throw error;
     }
-    throw new Error(typeof error === 'string' ? error : 'Failed to add customer');
+    
+    throw new Error('An unknown error occurred while adding the customer');
   }
 };
 
