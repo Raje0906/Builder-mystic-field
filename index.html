@@ -13,10 +13,48 @@
     <script type="module" src="/src/main.tsx"></script>
     <!-- Unregister service workers in production -->
     <script>
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        const script = document.createElement('script');
-        script.src = '/sw-unregister.js';
-        document.body.appendChild(script);
+      // Enhanced service worker unregistration
+      if ('serviceWorker' in navigator) {
+        console.log('Service Worker API is supported');
+        
+        // Unregister any existing service workers
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          console.log('Found', registrations.length, 'service worker registrations to unregister');
+          const unregisterPromises = registrations.map(registration => {
+            console.log('Unregistering service worker:', registration.scope);
+            return registration.unregister()
+              .then(success => {
+                console.log('Service worker unregistered:', registration.scope, success);
+                return success;
+              });
+          });
+          
+          // Clear all caches
+          if (window.caches) {
+            console.log('Clearing all caches...');
+            return caches.keys().then(cacheNames => {
+              console.log('Found', cacheNames.length, 'caches to delete');
+              return Promise.all(
+                cacheNames.map(cacheName => {
+                  console.log('Deleting cache:', cacheName);
+                  return caches.delete(cacheName);
+                })
+              );
+            });
+          }
+          return Promise.all(unregisterPromises);
+        }).then(() => {
+          console.log('Service workers unregistered and caches cleared');
+          // Force reload to ensure fresh content
+          if (!window.location.search.includes('noreload')) {
+            console.log('Reloading page to apply changes...');
+            window.location.href = window.location.href.split('?')[0] + '?noreload=1';
+          }
+        }).catch(error => {
+          console.error('Error during service worker unregistration:', error);
+        });
+      } else {
+        console.log('Service Worker API is not supported in this browser');
       }
     </script>
   </body>
