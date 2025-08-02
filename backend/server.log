@@ -3798,3 +3798,1712 @@
 [2025-08-02T14:34:40.662Z] [LOG]    - Host: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
 [2025-08-02T14:34:40.663Z] [LOG]    - Port: 27017
 [2025-08-02T14:34:40.663Z] [LOG]    - Using: MongoDB Atlas
+[2025-08-02T14:42:19.184Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:42:19.185Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T14:42:19.186Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T14:42:19.187Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:42:19.188Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T14:42:19.188Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T14:42:19.189Z] [LOG] Registering route: /api/products
+[2025-08-02T14:42:19.190Z] [LOG]   - No middleware for /api/products
+[2025-08-02T14:42:19.190Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T14:42:19.191Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:42:19.191Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T14:42:19.192Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T14:42:19.192Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:42:19.193Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T14:42:19.193Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T14:42:19.193Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:42:19.193Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T14:42:19.194Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T14:42:19.194Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:42:19.194Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T14:42:19.194Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T14:42:19.195Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:42:19.195Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T14:42:19.195Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T14:42:19.196Z] [LOG] Registering route: /api/users
+[2025-08-02T14:42:19.196Z] [LOG]   - No middleware for /api/users
+[2025-08-02T14:42:19.197Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T14:42:19.199Z] [LOG] Registering route: /api
+[2025-08-02T14:42:19.200Z] [LOG]   - No middleware for /api
+[2025-08-02T14:42:19.200Z] [LOG]   - Successfully registered /api
+[2025-08-02T14:42:19.201Z] [LOG] Registered route: * [OPTIONS]
+[2025-08-02T14:42:19.201Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T14:42:19.202Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.202Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T14:42:19.202Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T14:42:19.202Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T14:42:19.202Z] [LOG]   - /login [POST]
+[2025-08-02T14:42:19.203Z] [LOG]   - /register [POST]
+[2025-08-02T14:42:19.203Z] [LOG]   - /me [GET]
+[2025-08-02T14:42:19.203Z] [LOG]   - /stores [GET]
+[2025-08-02T14:42:19.203Z] [LOG]   - /debug/users [GET]
+[2025-08-02T14:42:19.203Z] [LOG]   - /admin/users [GET]
+[2025-08-02T14:42:19.204Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T14:42:19.205Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T14:42:19.205Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T14:42:19.206Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T14:42:19.206Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.206Z] [LOG]   - /search [GET]
+[2025-08-02T14:42:19.207Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.207Z] [LOG]   - /stats [GET]
+[2025-08-02T14:42:19.207Z] [LOG]   - /:id [GET]
+[2025-08-02T14:42:19.208Z] [LOG]   - /:id [PUT]
+[2025-08-02T14:42:19.208Z] [LOG]   - /:id [DELETE]
+[2025-08-02T14:42:19.208Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T14:42:19.209Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T14:42:19.209Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.210Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.213Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T14:42:19.215Z] [LOG]   - /search [GET]
+[2025-08-02T14:42:19.215Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T14:42:19.215Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T14:42:19.215Z] [LOG]   - /:id [GET]
+[2025-08-02T14:42:19.215Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.216Z] [LOG]   - /:id [PUT]
+[2025-08-02T14:42:19.216Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T14:42:19.216Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T14:42:19.216Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T14:42:19.217Z] [LOG]   - /:id [DELETE]
+[2025-08-02T14:42:19.217Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T14:42:19.217Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.217Z] [LOG]   - /stats [GET]
+[2025-08-02T14:42:19.218Z] [LOG]   - /:id [GET]
+[2025-08-02T14:42:19.218Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T14:42:19.218Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.218Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T14:42:19.218Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T14:42:19.219Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T14:42:19.219Z] [LOG]   - /stats [GET]
+[2025-08-02T14:42:19.219Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T14:42:19.220Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.220Z] [LOG]   - /track/status [GET]
+[2025-08-02T14:42:19.220Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.221Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T14:42:19.221Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T14:42:19.222Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T14:42:19.222Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T14:42:19.222Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T14:42:19.223Z] [LOG]   - /test [GET]
+[2025-08-02T14:42:19.223Z] [LOG]   - /test-send [POST]
+[2025-08-02T14:42:19.224Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T14:42:19.224Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T14:42:19.227Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T14:42:19.228Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T14:42:19.228Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.228Z] [LOG]   - /active [GET]
+[2025-08-02T14:42:19.229Z] [LOG]   - /:id [GET]
+[2025-08-02T14:42:19.229Z] [LOG]   - /code/:code [GET]
+[2025-08-02T14:42:19.229Z] [LOG]   - / [POST]
+[2025-08-02T14:42:19.229Z] [LOG]   - /:id [PUT]
+[2025-08-02T14:42:19.230Z] [LOG]   - /:id [DELETE]
+[2025-08-02T14:42:19.230Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T14:42:19.231Z] [LOG]   - /summary [GET]
+[2025-08-02T14:42:19.231Z] [LOG]   - /monthly [GET]
+[2025-08-02T14:42:19.231Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T14:42:19.231Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T14:42:19.232Z] [LOG]   - /quarterly [GET]
+[2025-08-02T14:42:19.232Z] [LOG]   - /annual [GET]
+[2025-08-02T14:42:19.232Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T14:42:19.232Z] [LOG]   - / [GET]
+[2025-08-02T14:42:19.233Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T14:42:19.233Z] [LOG]   - /test-email [GET]
+[2025-08-02T14:42:19.234Z] [LOG] Environment: production
+[2025-08-02T14:42:19.235Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:42:19.235Z] [LOG] Client build exists: true
+[2025-08-02T14:42:19.236Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:42:19.237Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T14:42:19.245Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:42:19.246Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:42:19.870Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:42:19.871Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T14:42:19.871Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T14:42:19.872Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T14:42:19.872Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T14:42:19.872Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T14:42:19.883Z] [LOG] 
+🚀 Server running in production mode
+[2025-08-02T14:42:19.883Z] [LOG] 📡 API URL: http://localhost:3002/api
+[2025-08-02T14:42:19.883Z] [LOG] 🌍 Web Interface: http://localhost:3002
+[2025-08-02T14:42:19.884Z] [LOG] 🔄 Process ID: 5828
+[2025-08-02T14:42:19.885Z] [LOG] 📅 Server Time: 2025-08-02T14:42:19.885Z
+[2025-08-02T14:42:19.886Z] [LOG] ✅ Server is ready to accept connections
+[2025-08-02T14:42:19.886Z] [LOG] 
+📊 Database Connection Status:
+[2025-08-02T14:42:19.887Z] [LOG]    - Status: ✅ Connected
+[2025-08-02T14:42:19.887Z] [LOG]    - Database: laptop-store
+[2025-08-02T14:42:19.888Z] [LOG]    - Host: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T14:42:19.888Z] [LOG]    - Port: 27017
+[2025-08-02T14:42:19.889Z] [LOG]    - Using: MongoDB Atlas
+[2025-08-02T15:11:13.450Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:11:13.455Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:11:13.457Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:11:13.458Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:11:13.460Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:11:13.464Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:11:13.466Z] [LOG] Registering route: /api/products
+[2025-08-02T15:11:13.467Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:11:13.473Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:11:13.475Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:11:13.476Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:11:13.476Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:11:13.477Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:11:13.478Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:11:13.478Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:11:13.479Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:11:13.479Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:11:13.481Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:11:13.481Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:11:13.482Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:11:13.482Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:11:13.482Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:11:13.483Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:11:13.483Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:11:13.483Z] [LOG] Registering route: /api/users
+[2025-08-02T15:11:13.484Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:11:13.484Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:11:13.484Z] [LOG] Registering route: /api
+[2025-08-02T15:11:13.485Z] [LOG]   - No middleware for /api
+[2025-08-02T15:11:13.485Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:11:13.486Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:11:13.488Z] [LOG]   - /login [POST]
+[2025-08-02T15:11:13.489Z] [LOG]   - /register [POST]
+[2025-08-02T15:11:13.489Z] [LOG]   - /me [GET]
+[2025-08-02T15:11:13.490Z] [LOG]   - /stores [GET]
+[2025-08-02T15:11:13.490Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:11:13.490Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:11:13.490Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:11:13.491Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:11:13.492Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:11:13.493Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:11:13.493Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.494Z] [LOG]   - /search [GET]
+[2025-08-02T15:11:13.494Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.495Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.497Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.497Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.497Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.498Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:11:13.500Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:11:13.500Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.500Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.501Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:11:13.501Z] [LOG]   - /search [GET]
+[2025-08-02T15:11:13.501Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:11:13.502Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:11:13.502Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.502Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.503Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.504Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:11:13.505Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:11:13.505Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:11:13.505Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.506Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:11:13.506Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.507Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.508Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.508Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:11:13.510Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.513Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:11:13.513Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:11:13.514Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:11:13.514Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.515Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:11:13.515Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.517Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:11:13.518Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.519Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:11:13.521Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:11:13.522Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:11:13.522Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:11:13.523Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:11:13.524Z] [LOG]   - /test [GET]
+[2025-08-02T15:11:13.524Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:11:13.525Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:11:13.525Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:11:13.527Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:11:13.534Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:11:13.537Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.538Z] [LOG]   - /active [GET]
+[2025-08-02T15:11:13.540Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.540Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:11:13.541Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.541Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.541Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.543Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:11:13.545Z] [LOG]   - /summary [GET]
+[2025-08-02T15:11:13.547Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:11:13.553Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:11:13.554Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:11:13.556Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:11:13.558Z] [LOG]   - /annual [GET]
+[2025-08-02T15:11:13.562Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:11:13.579Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.587Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:11:13.644Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.658Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:11:13.661Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:11:13.667Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.682Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:11:13.687Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:11:13.689Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:11:13.691Z] [LOG]   - /login [POST]
+[2025-08-02T15:11:13.700Z] [LOG]   - /register [POST]
+[2025-08-02T15:11:13.705Z] [LOG]   - /me [GET]
+[2025-08-02T15:11:13.705Z] [LOG]   - /stores [GET]
+[2025-08-02T15:11:13.706Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:11:13.706Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:11:13.707Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:11:13.710Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:11:13.711Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:11:13.713Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:11:13.714Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.714Z] [LOG]   - /search [GET]
+[2025-08-02T15:11:13.715Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.715Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.716Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.716Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.717Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.718Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:11:13.719Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:11:13.719Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.719Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.721Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:11:13.722Z] [LOG]   - /search [GET]
+[2025-08-02T15:11:13.725Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:11:13.726Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:11:13.730Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.731Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.733Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.734Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:11:13.735Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:11:13.737Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:11:13.741Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.741Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:11:13.742Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.742Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.742Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.742Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:11:13.743Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.743Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:11:13.744Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:11:13.744Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:11:13.745Z] [LOG]   - /stats [GET]
+[2025-08-02T15:11:13.746Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:11:13.747Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.747Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:11:13.748Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.748Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:11:13.748Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:11:13.749Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:11:13.749Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:11:13.749Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:11:13.750Z] [LOG]   - /test [GET]
+[2025-08-02T15:11:13.751Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:11:13.751Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:11:13.753Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:11:13.753Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:11:13.753Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:11:13.755Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.756Z] [LOG]   - /active [GET]
+[2025-08-02T15:11:13.756Z] [LOG]   - /:id [GET]
+[2025-08-02T15:11:13.757Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:11:13.759Z] [LOG]   - / [POST]
+[2025-08-02T15:11:13.762Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:11:13.762Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:11:13.764Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:11:13.764Z] [LOG]   - /summary [GET]
+[2025-08-02T15:11:13.764Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:11:13.765Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:11:13.765Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:11:13.766Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:11:13.766Z] [LOG]   - /annual [GET]
+[2025-08-02T15:11:13.767Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:11:13.772Z] [LOG]   - / [GET]
+[2025-08-02T15:11:13.772Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:11:13.774Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:11:13.776Z] [LOG] Environment: production
+[2025-08-02T15:11:13.777Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:11:13.780Z] [LOG] Client build exists: true
+[2025-08-02T15:11:13.781Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:11:13.787Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:11:13.790Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:11:13.790Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:11:14.292Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:11:14.293Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:11:14.293Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:11:14.293Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:11:14.294Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-02T15:11:14.294Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:11:14.305Z] [LOG] 
+🚀 Server running in production mode
+[2025-08-02T15:11:14.306Z] [LOG] 📡 API URL: http://localhost:3002/api
+[2025-08-02T15:11:14.306Z] [LOG] 🌍 Web Interface: http://localhost:3002
+[2025-08-02T15:11:14.307Z] [LOG] 🔄 Process ID: 12292
+[2025-08-02T15:11:14.307Z] [LOG] 📅 Server Time: 2025-08-02T15:11:14.307Z
+[2025-08-02T15:11:14.307Z] [LOG] ✅ Server is ready to accept connections
+[2025-08-02T15:11:14.307Z] [LOG] 
+📊 Database Connection Status:
+[2025-08-02T15:11:14.308Z] [LOG]    - Status: ✅ Connected
+[2025-08-02T15:11:14.308Z] [LOG]    - Database: laptop-store
+[2025-08-02T15:11:14.308Z] [LOG]    - Host: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-02T15:11:14.308Z] [LOG]    - Port: 27017
+[2025-08-02T15:11:14.308Z] [LOG]    - Using: MongoDB Atlas
+[2025-08-02T15:12:00.612Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:12:00.614Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:12:00.614Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:12:00.615Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:12:00.615Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:12:00.615Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:12:00.616Z] [LOG] Registering route: /api/products
+[2025-08-02T15:12:00.616Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:12:00.616Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:12:00.617Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:12:00.617Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:12:00.617Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:12:00.617Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:12:00.617Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:12:00.617Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:12:00.618Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:12:00.618Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:12:00.618Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:12:00.619Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:12:00.619Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:12:00.619Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:12:00.620Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:12:00.621Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:12:00.621Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:12:00.622Z] [LOG] Registering route: /api/users
+[2025-08-02T15:12:00.622Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:12:00.623Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:12:00.625Z] [LOG] Registering route: /api
+[2025-08-02T15:12:00.625Z] [LOG]   - No middleware for /api
+[2025-08-02T15:12:00.625Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:12:00.626Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:12:00.626Z] [LOG]   - /login [POST]
+[2025-08-02T15:12:00.626Z] [LOG]   - /register [POST]
+[2025-08-02T15:12:00.627Z] [LOG]   - /me [GET]
+[2025-08-02T15:12:00.627Z] [LOG]   - /stores [GET]
+[2025-08-02T15:12:00.627Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:12:00.627Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:12:00.628Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:12:00.628Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:12:00.628Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:12:00.629Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:12:00.629Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.629Z] [LOG]   - /search [GET]
+[2025-08-02T15:12:00.630Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.630Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.630Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.630Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.630Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.631Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:12:00.631Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:12:00.631Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.631Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.632Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:12:00.637Z] [LOG]   - /search [GET]
+[2025-08-02T15:12:00.638Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:12:00.638Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:12:00.638Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.639Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.639Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.639Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:12:00.639Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:12:00.640Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:12:00.641Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.641Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:12:00.642Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.642Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.643Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.643Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:12:00.644Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.644Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:12:00.644Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:12:00.644Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:12:00.645Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.645Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:12:00.645Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.645Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:12:00.646Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.646Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:12:00.646Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:12:00.646Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:12:00.647Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:12:00.647Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:12:00.647Z] [LOG]   - /test [GET]
+[2025-08-02T15:12:00.648Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:12:00.648Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:12:00.649Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:12:00.649Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:12:00.649Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:12:00.650Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.650Z] [LOG]   - /active [GET]
+[2025-08-02T15:12:00.650Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.650Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:12:00.651Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.651Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.652Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.652Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:12:00.653Z] [LOG]   - /summary [GET]
+[2025-08-02T15:12:00.654Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:12:00.655Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:12:00.655Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:12:00.655Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:12:00.656Z] [LOG]   - /annual [GET]
+[2025-08-02T15:12:00.656Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:12:00.657Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.657Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:12:00.657Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.658Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:12:00.658Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:12:00.659Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.660Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:12:00.661Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:12:00.661Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:12:00.661Z] [LOG]   - /login [POST]
+[2025-08-02T15:12:00.662Z] [LOG]   - /register [POST]
+[2025-08-02T15:12:00.662Z] [LOG]   - /me [GET]
+[2025-08-02T15:12:00.662Z] [LOG]   - /stores [GET]
+[2025-08-02T15:12:00.663Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:12:00.663Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:12:00.664Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:12:00.664Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:12:00.665Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:12:00.665Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:12:00.665Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.665Z] [LOG]   - /search [GET]
+[2025-08-02T15:12:00.666Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.666Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.666Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.667Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.667Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.668Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:12:00.668Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:12:00.668Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.669Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.669Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:12:00.669Z] [LOG]   - /search [GET]
+[2025-08-02T15:12:00.669Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:12:00.670Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:12:00.670Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.670Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.671Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.671Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:12:00.671Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:12:00.672Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:12:00.672Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.673Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:12:00.673Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.673Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.674Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.674Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:12:00.674Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.675Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:12:00.679Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:12:00.684Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:12:00.689Z] [LOG]   - /stats [GET]
+[2025-08-02T15:12:00.689Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:12:00.690Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.690Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:12:00.690Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.691Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:12:00.691Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:12:00.691Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:12:00.691Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:12:00.692Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:12:00.692Z] [LOG]   - /test [GET]
+[2025-08-02T15:12:00.692Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:12:00.692Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:12:00.693Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:12:00.693Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:12:00.694Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:12:00.694Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.694Z] [LOG]   - /active [GET]
+[2025-08-02T15:12:00.695Z] [LOG]   - /:id [GET]
+[2025-08-02T15:12:00.695Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:12:00.695Z] [LOG]   - / [POST]
+[2025-08-02T15:12:00.696Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:12:00.696Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:12:00.697Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:12:00.697Z] [LOG]   - /summary [GET]
+[2025-08-02T15:12:00.697Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:12:00.697Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:12:00.698Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:12:00.698Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:12:00.699Z] [LOG]   - /annual [GET]
+[2025-08-02T15:12:00.699Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:12:00.700Z] [LOG]   - / [GET]
+[2025-08-02T15:12:00.700Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:12:00.701Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:12:00.705Z] [LOG] Environment: production
+[2025-08-02T15:12:00.705Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:12:00.706Z] [LOG] Client build exists: true
+[2025-08-02T15:12:00.707Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:12:00.708Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:12:00.711Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:12:00.713Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:12:01.389Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:12:01.390Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:12:01.390Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:12:01.391Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:12:01.391Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-02T15:12:01.391Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:12:01.401Z] [ERROR] Uncaught Exception: Error: listen EADDRINUSE: address already in use 0.0.0.0:3002
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2025-08-02T15:12:01.403Z] [LOG] 
+🛑 Received shutdown signal. Closing server...
+[2025-08-02T15:12:01.404Z] [LOG] ✅ HTTP server closed
+[2025-08-02T15:12:01.415Z] [ERROR] Unhandled Rejection at: {} reason: MongooseError: Connection.prototype.close() no longer accepts a callback
+    at NativeConnection.close (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\mongoose\lib\connection.js:1205:11)
+    at file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:134:31
+    at Server.close (node:net:2356:9)
+    at Object.onceWrapper (node:events:632:28)
+    at Server.emit (node:events:518:28)
+    at emitCloseNT (node:net:2416:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2025-08-02T15:12:06.409Z] [ERROR] ❌ Could not close connections in time, forcefully shutting down
+[2025-08-02T15:13:08.047Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:13:08.049Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:13:08.050Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:13:08.051Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:13:08.052Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:13:08.053Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:13:08.054Z] [LOG] Registering route: /api/products
+[2025-08-02T15:13:08.059Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:13:08.061Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:13:08.061Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:13:08.062Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:13:08.062Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:13:08.062Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:13:08.063Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:13:08.063Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:13:08.064Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:13:08.065Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:13:08.065Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:13:08.066Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:13:08.066Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:13:08.066Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:13:08.067Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:13:08.067Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:13:08.067Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:13:08.067Z] [LOG] Registering route: /api/users
+[2025-08-02T15:13:08.068Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:13:08.068Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:13:08.068Z] [LOG] Registering route: /api
+[2025-08-02T15:13:08.069Z] [LOG]   - No middleware for /api
+[2025-08-02T15:13:08.069Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:13:08.069Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:13:08.073Z] [LOG]   - /login [POST]
+[2025-08-02T15:13:08.073Z] [LOG]   - /register [POST]
+[2025-08-02T15:13:08.074Z] [LOG]   - /me [GET]
+[2025-08-02T15:13:08.074Z] [LOG]   - /stores [GET]
+[2025-08-02T15:13:08.075Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:13:08.075Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:13:08.075Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:13:08.076Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:13:08.076Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:13:08.076Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:13:08.077Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.077Z] [LOG]   - /search [GET]
+[2025-08-02T15:13:08.077Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.077Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.078Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.079Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.080Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.080Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:13:08.081Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:13:08.081Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.081Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.081Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:13:08.082Z] [LOG]   - /search [GET]
+[2025-08-02T15:13:08.082Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:13:08.082Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:13:08.082Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.083Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.083Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.084Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:13:08.084Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:13:08.084Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:13:08.084Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.085Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:13:08.085Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.085Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.086Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.086Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:13:08.086Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.091Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:13:08.093Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:13:08.093Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:13:08.094Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.094Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:13:08.095Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.096Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:13:08.096Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.097Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:13:08.098Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:13:08.100Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:13:08.101Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:13:08.101Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:13:08.101Z] [LOG]   - /test [GET]
+[2025-08-02T15:13:08.102Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:13:08.102Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:13:08.102Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:13:08.106Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:13:08.108Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:13:08.109Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.109Z] [LOG]   - /active [GET]
+[2025-08-02T15:13:08.110Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.110Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:13:08.111Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.112Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.112Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.112Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:13:08.113Z] [LOG]   - /summary [GET]
+[2025-08-02T15:13:08.113Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:13:08.113Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:13:08.114Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:13:08.114Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:13:08.114Z] [LOG]   - /annual [GET]
+[2025-08-02T15:13:08.115Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:13:08.115Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.115Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:13:08.115Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.116Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:13:08.116Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:13:08.116Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.116Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:13:08.117Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:13:08.117Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:13:08.119Z] [LOG]   - /login [POST]
+[2025-08-02T15:13:08.120Z] [LOG]   - /register [POST]
+[2025-08-02T15:13:08.123Z] [LOG]   - /me [GET]
+[2025-08-02T15:13:08.124Z] [LOG]   - /stores [GET]
+[2025-08-02T15:13:08.125Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:13:08.126Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:13:08.126Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:13:08.128Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:13:08.129Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:13:08.129Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:13:08.129Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.130Z] [LOG]   - /search [GET]
+[2025-08-02T15:13:08.131Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.132Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.132Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.133Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.133Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.133Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:13:08.133Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:13:08.134Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.134Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.134Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:13:08.134Z] [LOG]   - /search [GET]
+[2025-08-02T15:13:08.135Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:13:08.136Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:13:08.136Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.136Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.138Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.139Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:13:08.140Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:13:08.141Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:13:08.141Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.142Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:13:08.143Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.144Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.144Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.144Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:13:08.145Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.145Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:13:08.146Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:13:08.146Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:13:08.146Z] [LOG]   - /stats [GET]
+[2025-08-02T15:13:08.147Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:13:08.147Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.147Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:13:08.148Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.148Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:13:08.148Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:13:08.149Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:13:08.149Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:13:08.149Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:13:08.150Z] [LOG]   - /test [GET]
+[2025-08-02T15:13:08.150Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:13:08.151Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:13:08.152Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:13:08.152Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:13:08.155Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:13:08.156Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.156Z] [LOG]   - /active [GET]
+[2025-08-02T15:13:08.157Z] [LOG]   - /:id [GET]
+[2025-08-02T15:13:08.160Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:13:08.160Z] [LOG]   - / [POST]
+[2025-08-02T15:13:08.161Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:13:08.161Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:13:08.162Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:13:08.162Z] [LOG]   - /summary [GET]
+[2025-08-02T15:13:08.163Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:13:08.163Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:13:08.163Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:13:08.164Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:13:08.164Z] [LOG]   - /annual [GET]
+[2025-08-02T15:13:08.165Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:13:08.165Z] [LOG]   - / [GET]
+[2025-08-02T15:13:08.165Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:13:08.166Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:13:08.166Z] [LOG] Environment: production
+[2025-08-02T15:13:08.167Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:13:08.167Z] [LOG] Client build exists: true
+[2025-08-02T15:13:08.168Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:13:08.169Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:13:08.176Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:13:08.177Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:13:08.666Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:13:08.667Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:13:08.668Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:13:08.668Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:13:08.668Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T15:13:08.668Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:13:08.680Z] [LOG] 
+🚀 Server running in production mode
+[2025-08-02T15:13:08.680Z] [LOG] 📡 API URL: http://localhost:3002/api
+[2025-08-02T15:13:08.681Z] [LOG] 🌍 Web Interface: http://localhost:3002
+[2025-08-02T15:13:08.681Z] [LOG] 🔄 Process ID: 11772
+[2025-08-02T15:13:08.682Z] [LOG] 📅 Server Time: 2025-08-02T15:13:08.682Z
+[2025-08-02T15:13:08.682Z] [LOG] ✅ Server is ready to accept connections
+[2025-08-02T15:13:08.682Z] [LOG] 
+📊 Database Connection Status:
+[2025-08-02T15:13:08.682Z] [LOG]    - Status: ✅ Connected
+[2025-08-02T15:13:08.683Z] [LOG]    - Database: laptop-store
+[2025-08-02T15:13:08.683Z] [LOG]    - Host: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T15:13:08.683Z] [LOG]    - Port: 27017
+[2025-08-02T15:13:08.683Z] [LOG]    - Using: MongoDB Atlas
+[2025-08-02T15:13:27.576Z] [LOG] 
+=== GET /api/stores ===
+[2025-08-02T15:13:27.580Z] [LOG] Request headers: {
+  "accept-language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "referer": "http://localhost:8080/login?noreload=1",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "accept": "*/*",
+  "sec-ch-ua-mobile": "?1",
+  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"",
+  "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36",
+  "sec-ch-ua-platform": "\"Android\"",
+  "connection": "close",
+  "host": "localhost:3002"
+}
+[2025-08-02T15:13:27.588Z] [LOG] Query parameters: {}
+[2025-08-02T15:13:27.588Z] [LOG] MongoDB query: {}
+[2025-08-02T15:13:27.628Z] [LOG] Found 3 stores
+[2025-08-02T15:16:15.197Z] [LOG] 
+=== GET /api/stores ===
+[2025-08-02T15:16:15.198Z] [LOG] Request headers: {
+  "if-none-match": "W/\"653-8Hgr06OYDl2vNOCnd7hZcMlh5aY\"",
+  "accept-language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "referer": "http://localhost:8080/login?noreload=1",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "sec-ch-ua-mobile": "?1",
+  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"",
+  "accept": "*/*",
+  "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36",
+  "sec-ch-ua-platform": "\"Android\"",
+  "connection": "close",
+  "host": "localhost:3002"
+}
+[2025-08-02T15:16:15.199Z] [LOG] Query parameters: {}
+[2025-08-02T15:16:15.199Z] [LOG] MongoDB query: {}
+[2025-08-02T15:16:15.214Z] [LOG] Found 3 stores
+[2025-08-02T15:16:33.619Z] [LOG] 
+=== GET /api/stores ===
+[2025-08-02T15:16:33.619Z] [LOG] Request headers: {
+  "if-none-match": "W/\"653-8Hgr06OYDl2vNOCnd7hZcMlh5aY\"",
+  "accept-language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "referer": "http://localhost:8080/login?noreload=1",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "sec-ch-ua-mobile": "?1",
+  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"",
+  "accept": "*/*",
+  "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36",
+  "sec-ch-ua-platform": "\"Android\"",
+  "connection": "close",
+  "host": "localhost:3002"
+}
+[2025-08-02T15:16:33.634Z] [LOG] Query parameters: {}
+[2025-08-02T15:16:33.637Z] [LOG] MongoDB query: {}
+[2025-08-02T15:16:33.657Z] [LOG] Found 3 stores
+[2025-08-02T15:19:19.760Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:19:19.762Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:19:19.763Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:19:19.763Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:19:19.763Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:19:19.764Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:19:19.765Z] [LOG] Registering route: /api/products
+[2025-08-02T15:19:19.766Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:19:19.766Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:19:19.767Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:19:19.768Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:19:19.768Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:19:19.769Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:19:19.769Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:19:19.770Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:19:19.771Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:19:19.771Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:19:19.776Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:19:19.777Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:19:19.777Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:19:19.778Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:19:19.778Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:19:19.778Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:19:19.779Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:19:19.779Z] [LOG] Registering route: /api/users
+[2025-08-02T15:19:19.780Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:19:19.780Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:19:19.780Z] [LOG] Registering route: /api
+[2025-08-02T15:19:19.781Z] [LOG]   - No middleware for /api
+[2025-08-02T15:19:19.781Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:19:19.781Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:19:19.782Z] [LOG]   - /login [POST]
+[2025-08-02T15:19:19.782Z] [LOG]   - /register [POST]
+[2025-08-02T15:19:19.783Z] [LOG]   - /me [GET]
+[2025-08-02T15:19:19.783Z] [LOG]   - /stores [GET]
+[2025-08-02T15:19:19.783Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:19:19.783Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:19:19.784Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:19:19.784Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:19:19.784Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:19:19.785Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:19:19.785Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.785Z] [LOG]   - /search [GET]
+[2025-08-02T15:19:19.786Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.786Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.786Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.786Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.787Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.787Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:19:19.787Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:19:19.788Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.788Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.788Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:19:19.789Z] [LOG]   - /search [GET]
+[2025-08-02T15:19:19.789Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:19:19.792Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:19:19.793Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.794Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.794Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.795Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:19:19.795Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:19:19.795Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:19:19.796Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.796Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:19:19.797Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.797Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.797Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.798Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:19:19.798Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.798Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:19:19.799Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:19:19.799Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:19:19.799Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.799Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:19:19.799Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.800Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:19:19.800Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.800Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:19:19.800Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:19:19.800Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:19:19.801Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:19:19.801Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:19:19.801Z] [LOG]   - /test [GET]
+[2025-08-02T15:19:19.802Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:19:19.802Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:19:19.802Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:19:19.802Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:19:19.803Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:19:19.803Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.803Z] [LOG]   - /active [GET]
+[2025-08-02T15:19:19.803Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.804Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:19:19.804Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.804Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.804Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.804Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:19:19.805Z] [LOG]   - /summary [GET]
+[2025-08-02T15:19:19.807Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:19:19.807Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:19:19.809Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:19:19.809Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:19:19.810Z] [LOG]   - /annual [GET]
+[2025-08-02T15:19:19.811Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:19:19.811Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.811Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:19:19.812Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.812Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:19:19.812Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:19:19.813Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.813Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:19:19.813Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:19:19.813Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:19:19.813Z] [LOG]   - /login [POST]
+[2025-08-02T15:19:19.814Z] [LOG]   - /register [POST]
+[2025-08-02T15:19:19.814Z] [LOG]   - /me [GET]
+[2025-08-02T15:19:19.814Z] [LOG]   - /stores [GET]
+[2025-08-02T15:19:19.814Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:19:19.814Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:19:19.814Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:19:19.814Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:19:19.815Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:19:19.815Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:19:19.815Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.815Z] [LOG]   - /search [GET]
+[2025-08-02T15:19:19.815Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.815Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.816Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.816Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.816Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.816Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:19:19.816Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:19:19.817Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.817Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.817Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:19:19.817Z] [LOG]   - /search [GET]
+[2025-08-02T15:19:19.818Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:19:19.818Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:19:19.818Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.818Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.818Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.819Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:19:19.819Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:19:19.819Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:19:19.819Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.819Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:19:19.820Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.820Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.820Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.820Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:19:19.820Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.821Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:19:19.821Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:19:19.821Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:19:19.821Z] [LOG]   - /stats [GET]
+[2025-08-02T15:19:19.822Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:19:19.823Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.823Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:19:19.824Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.824Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:19:19.825Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:19:19.825Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:19:19.825Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:19:19.826Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:19:19.826Z] [LOG]   - /test [GET]
+[2025-08-02T15:19:19.827Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:19:19.827Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:19:19.827Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:19:19.827Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:19:19.828Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:19:19.828Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.828Z] [LOG]   - /active [GET]
+[2025-08-02T15:19:19.829Z] [LOG]   - /:id [GET]
+[2025-08-02T15:19:19.829Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:19:19.829Z] [LOG]   - / [POST]
+[2025-08-02T15:19:19.829Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:19:19.829Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:19:19.829Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:19:19.830Z] [LOG]   - /summary [GET]
+[2025-08-02T15:19:19.830Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:19:19.830Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:19:19.830Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:19:19.830Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:19:19.830Z] [LOG]   - /annual [GET]
+[2025-08-02T15:19:19.830Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:19:19.831Z] [LOG]   - / [GET]
+[2025-08-02T15:19:19.831Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:19:19.831Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:19:19.832Z] [LOG] Environment: production
+[2025-08-02T15:19:19.832Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:19:19.832Z] [LOG] Client build exists: true
+[2025-08-02T15:19:19.833Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:19:19.834Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:19:19.836Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:19:19.836Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:19:20.656Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:19:20.657Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:19:20.657Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:19:20.657Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:19:20.658Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T15:19:20.658Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:19:20.669Z] [LOG] 
+🚀 Server running in production mode
+[2025-08-02T15:19:20.669Z] [LOG] 📡 API URL: http://localhost:3002/api
+[2025-08-02T15:19:20.669Z] [LOG] 🌍 Web Interface: http://localhost:3002
+[2025-08-02T15:19:20.669Z] [LOG] 🔄 Process ID: 12296
+[2025-08-02T15:19:20.669Z] [LOG] 📅 Server Time: 2025-08-02T15:19:20.669Z
+[2025-08-02T15:19:20.670Z] [LOG] ✅ Server is ready to accept connections
+[2025-08-02T15:19:20.670Z] [LOG] 
+📊 Database Connection Status:
+[2025-08-02T15:19:20.670Z] [LOG]    - Status: ✅ Connected
+[2025-08-02T15:19:20.671Z] [LOG]    - Database: laptop-store
+[2025-08-02T15:19:20.672Z] [LOG]    - Host: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T15:19:20.672Z] [LOG]    - Port: 27017
+[2025-08-02T15:19:20.673Z] [LOG]    - Using: MongoDB Atlas
+[2025-08-02T15:24:32.753Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:24:32.754Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:24:32.755Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:24:32.755Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:24:32.756Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:24:32.756Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:24:32.757Z] [LOG] Registering route: /api/products
+[2025-08-02T15:24:32.757Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:24:32.758Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:24:32.758Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:24:32.758Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:24:32.758Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:24:32.759Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:24:32.759Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:24:32.759Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:24:32.759Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:24:32.759Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:24:32.760Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:24:32.760Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:24:32.761Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:24:32.761Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:24:32.761Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:24:32.762Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:24:32.763Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:24:32.763Z] [LOG] Registering route: /api/users
+[2025-08-02T15:24:32.763Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:24:32.763Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:24:32.764Z] [LOG] Registering route: /api
+[2025-08-02T15:24:32.764Z] [LOG]   - No middleware for /api
+[2025-08-02T15:24:32.764Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:24:32.765Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:24:32.766Z] [LOG]   - /login [POST]
+[2025-08-02T15:24:32.766Z] [LOG]   - /register [POST]
+[2025-08-02T15:24:32.766Z] [LOG]   - /me [GET]
+[2025-08-02T15:24:32.766Z] [LOG]   - /stores [GET]
+[2025-08-02T15:24:32.766Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:24:32.767Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:24:32.767Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:24:32.767Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:24:32.767Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:24:32.768Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:24:32.768Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.769Z] [LOG]   - /search [GET]
+[2025-08-02T15:24:32.769Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.769Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.772Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.773Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.778Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.779Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:24:32.779Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:24:32.779Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.780Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.780Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:24:32.780Z] [LOG]   - /search [GET]
+[2025-08-02T15:24:32.780Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:24:32.781Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:24:32.781Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.781Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.781Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.781Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:24:32.782Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:24:32.782Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:24:32.782Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.782Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:24:32.782Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.783Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.783Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.783Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:24:32.783Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.784Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:24:32.784Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:24:32.784Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:24:32.784Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.784Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:24:32.785Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.785Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:24:32.785Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.785Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:24:32.785Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:24:32.786Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:24:32.786Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:24:32.786Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:24:32.786Z] [LOG]   - /test [GET]
+[2025-08-02T15:24:32.787Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:24:32.787Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:24:32.787Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:24:32.787Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:24:32.787Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:24:32.788Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.788Z] [LOG]   - /active [GET]
+[2025-08-02T15:24:32.788Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.788Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:24:32.789Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.789Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.789Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.789Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:24:32.790Z] [LOG]   - /summary [GET]
+[2025-08-02T15:24:32.791Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:24:32.791Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:24:32.792Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:24:32.792Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:24:32.792Z] [LOG]   - /annual [GET]
+[2025-08-02T15:24:32.793Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:24:32.793Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.794Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:24:32.794Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.795Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:24:32.796Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:24:32.796Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.796Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:24:32.796Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:24:32.797Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:24:32.797Z] [LOG]   - /login [POST]
+[2025-08-02T15:24:32.797Z] [LOG]   - /register [POST]
+[2025-08-02T15:24:32.797Z] [LOG]   - /me [GET]
+[2025-08-02T15:24:32.798Z] [LOG]   - /stores [GET]
+[2025-08-02T15:24:32.798Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:24:32.799Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:24:32.799Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:24:32.799Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:24:32.799Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:24:32.800Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:24:32.800Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.800Z] [LOG]   - /search [GET]
+[2025-08-02T15:24:32.800Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.800Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.801Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.802Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.802Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.803Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:24:32.803Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:24:32.804Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.804Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.805Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:24:32.805Z] [LOG]   - /search [GET]
+[2025-08-02T15:24:32.805Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:24:32.805Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:24:32.805Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.806Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.806Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.806Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:24:32.806Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:24:32.807Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:24:32.807Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.807Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:24:32.807Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.808Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.808Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.808Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:24:32.808Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.808Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:24:32.808Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:24:32.809Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:24:32.809Z] [LOG]   - /stats [GET]
+[2025-08-02T15:24:32.809Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:24:32.809Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.809Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:24:32.810Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.810Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:24:32.810Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:24:32.810Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:24:32.811Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:24:32.811Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:24:32.812Z] [LOG]   - /test [GET]
+[2025-08-02T15:24:32.812Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:24:32.812Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:24:32.812Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:24:32.813Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:24:32.813Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:24:32.813Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.813Z] [LOG]   - /active [GET]
+[2025-08-02T15:24:32.814Z] [LOG]   - /:id [GET]
+[2025-08-02T15:24:32.815Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:24:32.815Z] [LOG]   - / [POST]
+[2025-08-02T15:24:32.815Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:24:32.816Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:24:32.816Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:24:32.817Z] [LOG]   - /summary [GET]
+[2025-08-02T15:24:32.817Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:24:32.818Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:24:32.818Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:24:32.818Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:24:32.818Z] [LOG]   - /annual [GET]
+[2025-08-02T15:24:32.818Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:24:32.819Z] [LOG]   - / [GET]
+[2025-08-02T15:24:32.819Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:24:32.819Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:24:32.819Z] [LOG] Environment: production
+[2025-08-02T15:24:32.820Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:24:32.820Z] [LOG] Client build exists: true
+[2025-08-02T15:24:32.820Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:24:32.821Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:24:32.823Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:24:32.823Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:24:33.467Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:24:33.468Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:24:33.468Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:24:33.468Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:24:33.468Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-02T15:24:33.469Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:24:33.479Z] [ERROR] Uncaught Exception: Error: listen EADDRINUSE: address already in use 0.0.0.0:3002
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2025-08-02T15:24:33.481Z] [LOG] 
+🛑 Received shutdown signal. Closing server...
+[2025-08-02T15:24:33.483Z] [LOG] ✅ HTTP server closed
+[2025-08-02T15:24:33.496Z] [ERROR] Unhandled Rejection at: {} reason: MongooseError: Connection.prototype.close() no longer accepts a callback
+    at NativeConnection.close (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\mongoose\lib\connection.js:1205:11)
+    at file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:134:31
+    at Server.close (node:net:2356:9)
+    at Object.onceWrapper (node:events:632:28)
+    at Server.emit (node:events:518:28)
+    at emitCloseNT (node:net:2416:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2025-08-02T15:24:38.493Z] [ERROR] ❌ Could not close connections in time, forcefully shutting down
+[2025-08-02T15:25:33.308Z] [LOG] 
+=== GET /api/stores ===
+[2025-08-02T15:25:33.308Z] [LOG] Request headers: {
+  "if-none-match": "W/\"653-8Hgr06OYDl2vNOCnd7hZcMlh5aY\"",
+  "accept-language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "referer": "http://localhost:8080/login?noreload=1",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "accept": "*/*",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"",
+  "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+  "sec-ch-ua-platform": "\"Windows\"",
+  "connection": "close",
+  "host": "localhost:3002"
+}
+[2025-08-02T15:25:33.309Z] [LOG] Query parameters: {}
+[2025-08-02T15:25:33.310Z] [LOG] MongoDB query: {}
+[2025-08-02T15:25:33.342Z] [LOG] Found 3 stores
+[2025-08-02T15:26:04.505Z] [LOG] Registering route: /api/auth
+[2025-08-02T15:26:04.507Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T15:26:04.508Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T15:26:04.508Z] [LOG] Registering route: /api/customers
+[2025-08-02T15:26:04.509Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T15:26:04.510Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T15:26:04.511Z] [LOG] Registering route: /api/products
+[2025-08-02T15:26:04.511Z] [LOG]   - No middleware for /api/products
+[2025-08-02T15:26:04.512Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T15:26:04.512Z] [LOG] Registering route: /api/sales
+[2025-08-02T15:26:04.513Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T15:26:04.513Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T15:26:04.513Z] [LOG] Registering route: /api/repairs
+[2025-08-02T15:26:04.514Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T15:26:04.514Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T15:26:04.514Z] [LOG] Registering route: /api/notifications
+[2025-08-02T15:26:04.514Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T15:26:04.515Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T15:26:04.516Z] [LOG] Registering route: /api/stores
+[2025-08-02T15:26:04.516Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T15:26:04.516Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T15:26:04.517Z] [LOG] Registering route: /api/reports
+[2025-08-02T15:26:04.517Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T15:26:04.518Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T15:26:04.518Z] [LOG] Registering route: /api/users
+[2025-08-02T15:26:04.519Z] [LOG]   - No middleware for /api/users
+[2025-08-02T15:26:04.520Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T15:26:04.520Z] [LOG] Registering route: /api
+[2025-08-02T15:26:04.520Z] [LOG]   - No middleware for /api
+[2025-08-02T15:26:04.521Z] [LOG]   - Successfully registered /api
+[2025-08-02T15:26:04.521Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:26:04.522Z] [LOG]   - /login [POST]
+[2025-08-02T15:26:04.522Z] [LOG]   - /register [POST]
+[2025-08-02T15:26:04.522Z] [LOG]   - /me [GET]
+[2025-08-02T15:26:04.523Z] [LOG]   - /stores [GET]
+[2025-08-02T15:26:04.523Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:26:04.523Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:26:04.524Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:26:04.524Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:26:04.524Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:26:04.525Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:26:04.525Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.525Z] [LOG]   - /search [GET]
+[2025-08-02T15:26:04.526Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.526Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.527Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.527Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.528Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.528Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:26:04.528Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:26:04.528Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.528Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.529Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:26:04.529Z] [LOG]   - /search [GET]
+[2025-08-02T15:26:04.529Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:26:04.529Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:26:04.530Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.530Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.530Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.530Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:26:04.531Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:26:04.531Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:26:04.531Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.531Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:26:04.532Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.532Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.533Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.533Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:26:04.533Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.533Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:26:04.534Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:26:04.534Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:26:04.534Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.534Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:26:04.535Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.535Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:26:04.535Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.535Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:26:04.536Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:26:04.536Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:26:04.536Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:26:04.537Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:26:04.537Z] [LOG]   - /test [GET]
+[2025-08-02T15:26:04.538Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:26:04.538Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:26:04.538Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:26:04.538Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:26:04.538Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:26:04.539Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.539Z] [LOG]   - /active [GET]
+[2025-08-02T15:26:04.539Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.539Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:26:04.540Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.540Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.540Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.541Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:26:04.541Z] [LOG]   - /summary [GET]
+[2025-08-02T15:26:04.541Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:26:04.541Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:26:04.542Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:26:04.542Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:26:04.543Z] [LOG]   - /annual [GET]
+[2025-08-02T15:26:04.543Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:26:04.544Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.544Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:26:04.545Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.545Z] [LOG] Registered route: /api [GET]
+[2025-08-02T15:26:04.545Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T15:26:04.546Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.546Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T15:26:04.546Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T15:26:04.547Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T15:26:04.547Z] [LOG]   - /login [POST]
+[2025-08-02T15:26:04.547Z] [LOG]   - /register [POST]
+[2025-08-02T15:26:04.548Z] [LOG]   - /me [GET]
+[2025-08-02T15:26:04.548Z] [LOG]   - /stores [GET]
+[2025-08-02T15:26:04.548Z] [LOG]   - /debug/users [GET]
+[2025-08-02T15:26:04.549Z] [LOG]   - /admin/users [GET]
+[2025-08-02T15:26:04.549Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T15:26:04.550Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T15:26:04.550Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T15:26:04.551Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T15:26:04.551Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.551Z] [LOG]   - /search [GET]
+[2025-08-02T15:26:04.551Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.552Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.552Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.552Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.553Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.553Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T15:26:04.553Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T15:26:04.554Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.554Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.554Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T15:26:04.555Z] [LOG]   - /search [GET]
+[2025-08-02T15:26:04.555Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T15:26:04.555Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T15:26:04.556Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.556Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.557Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.557Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T15:26:04.557Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T15:26:04.558Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T15:26:04.558Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.558Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T15:26:04.558Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.559Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.560Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.561Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T15:26:04.561Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.561Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T15:26:04.561Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T15:26:04.562Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T15:26:04.562Z] [LOG]   - /stats [GET]
+[2025-08-02T15:26:04.562Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T15:26:04.563Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.563Z] [LOG]   - /track/status [GET]
+[2025-08-02T15:26:04.563Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.564Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T15:26:04.564Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T15:26:04.565Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T15:26:04.565Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T15:26:04.566Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T15:26:04.566Z] [LOG]   - /test [GET]
+[2025-08-02T15:26:04.566Z] [LOG]   - /test-send [POST]
+[2025-08-02T15:26:04.566Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T15:26:04.567Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T15:26:04.567Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T15:26:04.568Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T15:26:04.568Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.568Z] [LOG]   - /active [GET]
+[2025-08-02T15:26:04.568Z] [LOG]   - /:id [GET]
+[2025-08-02T15:26:04.569Z] [LOG]   - /code/:code [GET]
+[2025-08-02T15:26:04.569Z] [LOG]   - / [POST]
+[2025-08-02T15:26:04.570Z] [LOG]   - /:id [PUT]
+[2025-08-02T15:26:04.570Z] [LOG]   - /:id [DELETE]
+[2025-08-02T15:26:04.570Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T15:26:04.571Z] [LOG]   - /summary [GET]
+[2025-08-02T15:26:04.571Z] [LOG]   - /monthly [GET]
+[2025-08-02T15:26:04.571Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T15:26:04.572Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T15:26:04.572Z] [LOG]   - /quarterly [GET]
+[2025-08-02T15:26:04.572Z] [LOG]   - /annual [GET]
+[2025-08-02T15:26:04.572Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T15:26:04.573Z] [LOG]   - / [GET]
+[2025-08-02T15:26:04.573Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T15:26:04.574Z] [LOG]   - /test-email [GET]
+[2025-08-02T15:26:04.574Z] [LOG] Environment: production
+[2025-08-02T15:26:04.575Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:26:04.575Z] [LOG] Client build exists: true
+[2025-08-02T15:26:04.576Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T15:26:04.578Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T15:26:04.580Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:26:04.580Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T15:26:05.037Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T15:26:05.038Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:26:05.038Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T15:26:05.039Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T15:26:05.039Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-02T15:26:05.039Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T15:26:05.051Z] [ERROR] Uncaught Exception: Error: listen EADDRINUSE: address already in use 0.0.0.0:3002
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2025-08-02T15:26:05.052Z] [LOG] 
+🛑 Received shutdown signal. Closing server...
+[2025-08-02T15:26:05.054Z] [LOG] ✅ HTTP server closed
+[2025-08-02T15:26:05.068Z] [ERROR] Unhandled Rejection at: {} reason: MongooseError: Connection.prototype.close() no longer accepts a callback
+    at NativeConnection.close (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\mongoose\lib\connection.js:1205:11)
+    at file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:134:31
+    at Server.close (node:net:2356:9)
+    at Object.onceWrapper (node:events:632:28)
+    at Server.emit (node:events:518:28)
+    at emitCloseNT (node:net:2416:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2025-08-02T15:26:10.068Z] [ERROR] ❌ Could not close connections in time, forcefully shutting down
+[2025-08-02T16:11:42.563Z] [LOG] Registering route: /api/auth
+[2025-08-02T16:11:42.564Z] [LOG]   - No middleware for /api/auth
+[2025-08-02T16:11:42.565Z] [LOG]   - Successfully registered /api/auth
+[2025-08-02T16:11:42.566Z] [LOG] Registering route: /api/customers
+[2025-08-02T16:11:42.566Z] [LOG]   - No middleware for /api/customers
+[2025-08-02T16:11:42.566Z] [LOG]   - Successfully registered /api/customers
+[2025-08-02T16:11:42.569Z] [LOG] Registering route: /api/products
+[2025-08-02T16:11:42.572Z] [LOG]   - No middleware for /api/products
+[2025-08-02T16:11:42.572Z] [LOG]   - Successfully registered /api/products
+[2025-08-02T16:11:42.576Z] [LOG] Registering route: /api/sales
+[2025-08-02T16:11:42.577Z] [LOG]   - No middleware for /api/sales
+[2025-08-02T16:11:42.578Z] [LOG]   - Successfully registered /api/sales
+[2025-08-02T16:11:42.578Z] [LOG] Registering route: /api/repairs
+[2025-08-02T16:11:42.578Z] [LOG]   - No middleware for /api/repairs
+[2025-08-02T16:11:42.580Z] [LOG]   - Successfully registered /api/repairs
+[2025-08-02T16:11:42.581Z] [LOG] Registering route: /api/notifications
+[2025-08-02T16:11:42.581Z] [LOG]   - Adding middleware for /api/notifications
+[2025-08-02T16:11:42.581Z] [LOG]   - Successfully registered /api/notifications
+[2025-08-02T16:11:42.581Z] [LOG] Registering route: /api/stores
+[2025-08-02T16:11:42.582Z] [LOG]   - No middleware for /api/stores
+[2025-08-02T16:11:42.582Z] [LOG]   - Successfully registered /api/stores
+[2025-08-02T16:11:42.582Z] [LOG] Registering route: /api/reports
+[2025-08-02T16:11:42.582Z] [LOG]   - No middleware for /api/reports
+[2025-08-02T16:11:42.582Z] [LOG]   - Successfully registered /api/reports
+[2025-08-02T16:11:42.583Z] [LOG] Registering route: /api/users
+[2025-08-02T16:11:42.583Z] [LOG]   - No middleware for /api/users
+[2025-08-02T16:11:42.583Z] [LOG]   - Successfully registered /api/users
+[2025-08-02T16:11:42.583Z] [LOG] Registering route: /api
+[2025-08-02T16:11:42.583Z] [LOG]   - No middleware for /api
+[2025-08-02T16:11:42.584Z] [LOG]   - Successfully registered /api
+[2025-08-02T16:11:42.584Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T16:11:42.584Z] [LOG]   - /login [POST]
+[2025-08-02T16:11:42.585Z] [LOG]   - /register [POST]
+[2025-08-02T16:11:42.585Z] [LOG]   - /me [GET]
+[2025-08-02T16:11:42.585Z] [LOG]   - /stores [GET]
+[2025-08-02T16:11:42.585Z] [LOG]   - /debug/users [GET]
+[2025-08-02T16:11:42.586Z] [LOG]   - /admin/users [GET]
+[2025-08-02T16:11:42.586Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T16:11:42.586Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T16:11:42.586Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T16:11:42.589Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T16:11:42.589Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.590Z] [LOG]   - /search [GET]
+[2025-08-02T16:11:42.590Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.590Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.591Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.591Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.591Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.591Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T16:11:42.591Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T16:11:42.591Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.592Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.592Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T16:11:42.592Z] [LOG]   - /search [GET]
+[2025-08-02T16:11:42.592Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T16:11:42.592Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T16:11:42.593Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.593Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.593Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.593Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T16:11:42.593Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T16:11:42.594Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T16:11:42.594Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.594Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T16:11:42.595Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.595Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.595Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.596Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T16:11:42.596Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.596Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T16:11:42.596Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T16:11:42.597Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T16:11:42.597Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.597Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T16:11:42.597Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.598Z] [LOG]   - /track/status [GET]
+[2025-08-02T16:11:42.598Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.598Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T16:11:42.598Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T16:11:42.598Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T16:11:42.599Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T16:11:42.599Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T16:11:42.600Z] [LOG]   - /test [GET]
+[2025-08-02T16:11:42.600Z] [LOG]   - /test-send [POST]
+[2025-08-02T16:11:42.600Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T16:11:42.601Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T16:11:42.601Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T16:11:42.601Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T16:11:42.602Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.602Z] [LOG]   - /active [GET]
+[2025-08-02T16:11:42.602Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.602Z] [LOG]   - /code/:code [GET]
+[2025-08-02T16:11:42.602Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.603Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.605Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.605Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T16:11:42.606Z] [LOG]   - /summary [GET]
+[2025-08-02T16:11:42.606Z] [LOG]   - /monthly [GET]
+[2025-08-02T16:11:42.606Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T16:11:42.607Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T16:11:42.607Z] [LOG]   - /quarterly [GET]
+[2025-08-02T16:11:42.607Z] [LOG]   - /annual [GET]
+[2025-08-02T16:11:42.608Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T16:11:42.608Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.608Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T16:11:42.609Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.609Z] [LOG] Registered route: /api [GET]
+[2025-08-02T16:11:42.609Z] [LOG] Router mounted at: /^\/api\/health\/?(?=\/|$)/i
+[2025-08-02T16:11:42.610Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.610Z] [LOG] Registered route: /api/health [GET]
+[2025-08-02T16:11:42.611Z] [LOG] Registered route: /api/test-repair [GET]
+[2025-08-02T16:11:42.611Z] [LOG] Router mounted at: /^\/api\/auth\/?(?=\/|$)/i
+[2025-08-02T16:11:42.611Z] [LOG]   - /login [POST]
+[2025-08-02T16:11:42.612Z] [LOG]   - /register [POST]
+[2025-08-02T16:11:42.612Z] [LOG]   - /me [GET]
+[2025-08-02T16:11:42.612Z] [LOG]   - /stores [GET]
+[2025-08-02T16:11:42.612Z] [LOG]   - /debug/users [GET]
+[2025-08-02T16:11:42.613Z] [LOG]   - /admin/users [GET]
+[2025-08-02T16:11:42.613Z] [LOG]   - /admin/users/:userId/store [PUT]
+[2025-08-02T16:11:42.613Z] [LOG]   - /admin/users/:userId/role [PUT]
+[2025-08-02T16:11:42.613Z] [LOG]   - /admin/users/:userId [DELETE]
+[2025-08-02T16:11:42.614Z] [LOG] Router mounted at: /^\/api\/customers\/?(?=\/|$)/i
+[2025-08-02T16:11:42.614Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.614Z] [LOG]   - /search [GET]
+[2025-08-02T16:11:42.616Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.617Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.618Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.618Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.618Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.619Z] [LOG] Router mounted at: /^\/api\/products\/?(?=\/|$)/i
+[2025-08-02T16:11:42.619Z] [LOG]   - /:id/stock [PUT]
+[2025-08-02T16:11:42.619Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.619Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.623Z] [LOG]   - /barcode/:barcode [GET]
+[2025-08-02T16:11:42.623Z] [LOG]   - /search [GET]
+[2025-08-02T16:11:42.624Z] [LOG]   - /low-stock/:storeId [GET]
+[2025-08-02T16:11:42.624Z] [LOG]   - /bulk-update [PATCH]
+[2025-08-02T16:11:42.624Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.625Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.625Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.625Z] [LOG]   - /:id/inventory [PUT]
+[2025-08-02T16:11:42.625Z] [LOG]   - /:id/reserve [POST]
+[2025-08-02T16:11:42.626Z] [LOG]   - /:id/release-reservation [POST]
+[2025-08-02T16:11:42.626Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.626Z] [LOG] Router mounted at: /^\/api\/sales\/?(?=\/|$)/i
+[2025-08-02T16:11:42.626Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.627Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.627Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.627Z] [LOG]   - /number/:saleNumber [GET]
+[2025-08-02T16:11:42.627Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.628Z] [LOG]   - /:id/status [PUT]
+[2025-08-02T16:11:42.628Z] [LOG]   - /:id/refund [POST]
+[2025-08-02T16:11:42.628Z] [LOG]   - /:id/warranty/:productId [GET]
+[2025-08-02T16:11:42.629Z] [LOG]   - /stats [GET]
+[2025-08-02T16:11:42.629Z] [LOG] Router mounted at: /^\/api\/repairs\/?(?=\/|$)/i
+[2025-08-02T16:11:42.629Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.630Z] [LOG]   - /track/status [GET]
+[2025-08-02T16:11:42.630Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.630Z] [LOG]   - /:repairId/send-update [POST]
+[2025-08-02T16:11:42.631Z] [LOG]   - /:repairId/status [PUT]
+[2025-08-02T16:11:42.631Z] [LOG]   - /:id/price [PUT]
+[2025-08-02T16:11:42.631Z] [LOG]   - /:id/complete [POST]
+[2025-08-02T16:11:42.632Z] [LOG] Router mounted at: /^\/api\/notifications\/?(?=\/|$)/i
+[2025-08-02T16:11:42.632Z] [LOG]   - /test [GET]
+[2025-08-02T16:11:42.633Z] [LOG]   - /test-send [POST]
+[2025-08-02T16:11:42.633Z] [LOG]   - /repair/:repairId [POST]
+[2025-08-02T16:11:42.633Z] [LOG]   - /bulk-repair [POST]
+[2025-08-02T16:11:42.634Z] [LOG]   - /history/:repairId [GET]
+[2025-08-02T16:11:42.634Z] [LOG] Router mounted at: /^\/api\/stores\/?(?=\/|$)/i
+[2025-08-02T16:11:42.634Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.635Z] [LOG]   - /active [GET]
+[2025-08-02T16:11:42.635Z] [LOG]   - /:id [GET]
+[2025-08-02T16:11:42.635Z] [LOG]   - /code/:code [GET]
+[2025-08-02T16:11:42.636Z] [LOG]   - / [POST]
+[2025-08-02T16:11:42.636Z] [LOG]   - /:id [PUT]
+[2025-08-02T16:11:42.640Z] [LOG]   - /:id [DELETE]
+[2025-08-02T16:11:42.640Z] [LOG] Router mounted at: /^\/api\/reports\/?(?=\/|$)/i
+[2025-08-02T16:11:42.641Z] [LOG]   - /summary [GET]
+[2025-08-02T16:11:42.641Z] [LOG]   - /monthly [GET]
+[2025-08-02T16:11:42.642Z] [LOG]   - /sales/monthly [GET]
+[2025-08-02T16:11:42.642Z] [LOG]   - /store/monthly [GET]
+[2025-08-02T16:11:42.642Z] [LOG]   - /quarterly [GET]
+[2025-08-02T16:11:42.642Z] [LOG]   - /annual [GET]
+[2025-08-02T16:11:42.643Z] [LOG] Router mounted at: /^\/api\/users\/?(?=\/|$)/i
+[2025-08-02T16:11:42.643Z] [LOG]   - / [GET]
+[2025-08-02T16:11:42.643Z] [LOG] Router mounted at: /^\/api\/?(?=\/|$)/i
+[2025-08-02T16:11:42.644Z] [LOG]   - /test-email [GET]
+[2025-08-02T16:11:42.644Z] [LOG] Environment: production
+[2025-08-02T16:11:42.645Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T16:11:42.645Z] [LOG] Client build exists: true
+[2025-08-02T16:11:42.645Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T16:11:42.647Z] [LOG] 🔗 Connecting to MongoDB Atlas...
+[2025-08-02T16:11:42.650Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T16:11:42.650Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T16:11:43.093Z] [LOG] ✅ MongoDB Connected

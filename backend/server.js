@@ -125,45 +125,74 @@ const startServer = async () => {
     const gracefulShutdown = async () => {
       console.log('\n🛑 Received shutdown signal. Closing server...');
       
-      // Close the server
-      server.close(() => {
+      try {
+        // Close the server
+        await new Promise((resolve) => server.close(resolve));
         console.log('✅ HTTP server closed');
         
         // Close MongoDB connection if connected
         if (mongoose.connection.readyState === 1) {
-          mongoose.connection.close(false, () => {
-            console.log('✅ MongoDB connection closed');
-            process.exit(0);
-          });
-        } else {
-          process.exit(0);
+          await mongoose.connection.close(false);
+          console.log('✅ MongoDB connection closed');
         }
-      });
+        
+        process.exit(0);
+      } catch (err) {
+        console.error('❌ Error during shutdown:', err);
+        process.exit(1);
+      }
       
-      // Force close after 5 seconds
+      // Force close after 5 seconds if not already closed
       setTimeout(() => {
         console.error('❌ Could not close connections in time, forcefully shutting down');
         process.exit(1);
       }, 5000);
     };
 
+    // Track if we're already shutting down
+    let isShuttingDown = false;
+
     // Handle termination signals
-    process.on('SIGTERM', gracefulShutdown);
-    process.on('SIGINT', gracefulShutdown);
+    const setupSignalHandlers = () => {
+      const signals = ['SIGTERM', 'SIGINT'];
+      signals.forEach(signal => {
+        process.on(signal, () => {
+          if (isShuttingDown) return;
+          isShuttingDown = true;
+          console.log(`\n${signal} received, starting graceful shutdown...`);
+          gracefulShutdown().catch(err => {
+            console.error('Error during graceful shutdown:', err);
+            process.exit(1);
+          });
+        });
+      });
+    };
 
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+      // Don't crash on unhandled rejections in production
+      if (process.env.NODE_ENV === 'production') {
+        console.log('Suppressing unhandled rejection in production');
+      } else {
+        throw reason; // Let it crash in development
+      }
     });
 
     // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {
       console.error('Uncaught Exception:', error);
-      gracefulShutdown().catch(err => {
-        console.error('Error during graceful shutdown:', err);
-        process.exit(1);
-      });
+      if (!isShuttingDown) {
+        isShuttingDown = true;
+        gracefulShutdown().catch(err => {
+          console.error('Error during graceful shutdown:', err);
+          process.exit(1);
+        });
+      }
     });
+
+    // Set up signal handlers
+    setupSignalHandlers();
 
     return server;
   } catch (error) {
@@ -174,25 +203,113 @@ const startServer = async () => {
 
 // CORS configuration
 const corsOptions = {
-  origin: [
-    'http://localhost:8080',
-    'http://localhost:3000',
-    'http://localhost:3002',
-    'http://127.0.0.1:3002',
-    'https://world-laptop.vercel.app',
-    'https://laptop-crm-backend.onrender.com'
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:8080',
+      'http://localhost:3000',
+      'http://localhost:3002',
+      'http://127.0.0.1:3002',
+      'https://world-laptop.vercel.app',
+      'https://laptop-crm-backend.onrender.com',
+      'https://laptop-crm-frontend.onrender.com'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
+      console.warn(msg);
+      return callback(new Error(msg), false);
+    }
+    
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Cache-Control',
+    'cache-control',
+    'X-API-Key'
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: [
+    'Content-Length',
+    'X-Foo',
+    'X-Bar'
+  ],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 };
 
-// Enable CORS
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// Enable CORS with more permissive settings for development
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
-// API Routes will be registered later in the file
+// Apply CORS middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // Set CORS headers
+  if (isDevelopment) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  } else {
+    // In production, only allow specific origins
+    const allowedOrigins = [
+      'https://world-laptop.vercel.app',
+      'https://laptop-crm-frontend.onrender.com',
+      'https://laptop-crm-backend.onrender.com'
+    ];
+    
+    if (origin && allowedOrigins.includes(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+    }
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-API-Key, cache-control');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
+// Also apply CORS with the cors package for additional compatibility
+app.use(cors(corsOptions));
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/sales', saleRoutes);
+app.use('/api/repairs', repairRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/stores', storeRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/health', healthRouter);
+
+// Test email route (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/api/test-email', testEmailRouter);
+}
+
+// Root route
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Welcome to the Laptop Store API',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
