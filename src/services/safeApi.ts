@@ -1,47 +1,73 @@
 // Safe API client that gracefully handles backend unavailability
-// Note: This should match the backend server port in server.js (10000)
-const API_BASE_URL = "http://localhost:10000/api";
+// Note: This should match the backend server port in server.js (3002)
+const API_BASE_URL = "http://localhost:3002/api";
+
+// Add a small delay to prevent rapid reconnection attempts
+const CONNECTION_RETRY_DELAY = 2000; // 2 seconds
 
 class SafeApiClient {
   private isBackendAvailable: boolean = false;
   private lastCheck: number = 0;
   private checkInterval: number = 30000; // Check every 30 seconds
+  private isChecking: boolean = false;
+  private retryCount: number = 0;
+  private maxRetries: number = 3;
 
   constructor() {
-    this.checkBackendAvailability();
+    // Initial check
+    this.checkBackendAvailability().catch(error => {
+      console.warn('Initial backend check failed:', error);
+    });
   }
 
   private async checkBackendAvailability(): Promise<void> {
     const now = Date.now();
 
-    // Only check if it's been more than the interval since last check
-    if (now - this.lastCheck < this.checkInterval) {
+    // If already checking or not enough time has passed since last check
+    if (this.isChecking || (now - this.lastCheck < this.checkInterval && this.retryCount === 0)) {
       return;
     }
 
+    this.isChecking = true;
     this.lastCheck = now;
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
       const response = await fetch(`${API_BASE_URL}/health`, {
         signal: controller.signal,
         method: "GET",
+        credentials: 'include'
       });
 
       clearTimeout(timeoutId);
-      this.isBackendAvailable = response.ok;
-
-      if (this.isBackendAvailable) {
+      
+      if (response.ok) {
+        this.isBackendAvailable = true;
+        this.retryCount = 0; // Reset retry counter on success
         console.log("✅ Backend server is available");
+      } else {
+        throw new Error(`Health check failed with status: ${response.status}`);
       }
     } catch (error) {
       this.isBackendAvailable = false;
-      // Only log once per check interval to avoid spam
-      console.warn(
-        "⚠️ Backend server unavailable (this is normal if not running locally)",
-      );
+      this.retryCount++;
+      
+      // Only log warnings for the first few retries to avoid console spam
+      if (this.retryCount <= this.maxRetries) {
+        console.warn(
+          `⚠️ Backend server unavailable (attempt ${this.retryCount}/${this.maxRetries}):`,
+          error instanceof Error ? error.message : 'Unknown error'
+        );
+        
+        // Schedule a retry after a delay
+        if (this.retryCount < this.maxRetries) {
+          setTimeout(() => this.checkBackendAvailability(), CONNECTION_RETRY_DELAY);
+        }
+      }
+    } finally {
+      this.isChecking = false;
     }
   }
 

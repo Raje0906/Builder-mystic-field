@@ -10,10 +10,14 @@ export default defineConfig(({ mode }) => {
     root: __dirname,
     publicDir: 'public',
     define: {
-      // Don't redefine import.meta.env manually
       'process.env': {}, // optional fallback
+      __APP_ENV__: JSON.stringify(mode),
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      // Disable service worker in development
+      mode === 'development' ? null : null, // Placeholder for service worker plugin if needed
+    ].filter(Boolean),
     server: {
       port: 8080,
       host: '0.0.0.0',
@@ -21,7 +25,7 @@ export default defineConfig(({ mode }) => {
       open: true,
       proxy: mode === 'production' ? undefined : {
         '/api': {
-          target: 'http://localhost:10000',
+          target: 'http://localhost:3002',
           changeOrigin: true,
           secure: false,
           ws: true,

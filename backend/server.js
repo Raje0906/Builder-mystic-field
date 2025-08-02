@@ -92,7 +92,13 @@ const PORT = process.env.PORT || 3002;
 // Allowed origins
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',')
-  : ['http://localhost:3000', 'http://localhost:8080', 'http://127.0.0.1:8080'];
+  : [
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+      'http://localhost:3002',
+      'http://127.0.0.1:3002'
+    ];
 
 console.log('Allowed CORS origins:', allowedOrigins);
 
@@ -100,6 +106,12 @@ const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
+    
+    // In development, allow all localhost origins
+    if (process.env.NODE_ENV === 'development') {
+      const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
+      if (isLocalhost) return callback(null, true);
+    }
     
     // Check if the origin is in the allowed list or is a subdomain of an allowed origin
     const isAllowed = allowedOrigins.some(allowedOrigin => 
@@ -115,10 +127,31 @@ const corsOptions = {
     return callback(null, true);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'X-Access-Token',
+    'X-Refresh-Token',
+    'Cache-Control',
+    'Pragma',
+    'Expires'
+  ],
+  exposedHeaders: [
+    'Content-Range',
+    'X-Total-Count',
+    'X-Access-Token',
+    'X-Refresh-Token',
+    'Content-Length',
+    'X-Foo', 
+    'X-Bar'
+  ],
   credentials: true,
   optionsSuccessStatus: 200,
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
+  // Handle preflight requests
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 // Apply CORS middleware first

@@ -219,48 +219,100 @@ export const getCustomer = async (id: string): Promise<Customer | null> => {
 export const addCustomer = async (
   customer: Omit<Customer, "id" | "dateAdded" | "totalPurchases">,
 ): Promise<Customer> => {
-  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002/api';
+  
   try {
-    // Ensure required address fields are present with defaults
+    // Validate required fields
+    if (!customer) {
+      throw new Error('Customer data is required');
+    }
+    
+    if (!customer.name?.trim()) {
+      throw new Error('Customer name is required');
+    }
+    
+    if (!customer.phone?.trim()) {
+      throw new Error('Customer phone number is required');
+    }
+
+    // Ensure address exists and set defaults
     const { line1, city, state, pincode, ...restAddress } = customer.address || {};
     const requestBody = {
-      name: customer.name,
-      email: customer.email,
-      phone: customer.phone,
+      name: customer.name.trim(),
+      email: customer.email?.trim() || '',
+      phone: customer.phone.trim(),
       address: {
         ...restAddress,
-        line1: line1 || 'Not specified',
-        city: city || 'Not specified',
-        state: state || 'Not specified',
-        pincode: pincode || '000000'
-      }
+        line1: line1?.trim() || 'Not specified',
+        city: city?.trim() || 'Not specified',
+        state: state?.trim() || 'Not specified',
+        pincode: pincode?.trim() || '000000'
+      },
+      status: 'active' // Ensure status is always set
     };
 
-    const response = await fetch(`${apiUrl}/customers`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    let response;
+    let responseData;
+    
+    try {
+      response = await fetch(`${apiUrl}/customers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include', // Important for cookies/auth
+        body: JSON.stringify(requestBody),
+      });
+
+      // Handle non-JSON responses
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error(`Unexpected response format: ${response.status} ${response.statusText}`);
+      }
+    } catch (e) {
+      console.error('Network error:', e);
+      if (e instanceof TypeError) {
+        throw new Error('Network error: Could not connect to the server. Please check your internet connection.');
+      }
+      throw e;
+    }
 
     if (!response.ok) {
-      const errorData = await response.json();
-      const errorMessage = errorData.errors?.[0]?.msg || errorData.message || 'Failed to add customer';
+      const errorMessage = responseData.errors?.[0]?.msg || 
+                         responseData.message || 
+                         `Failed to add customer: ${response.status} ${response.statusText}`;
       throw new Error(errorMessage);
     }
 
-    const result = await response.json();
+    if (!responseData || !responseData.data) {
+      throw new Error('Invalid response format from server');
+    }
+
+    // Ensure we have a valid ID and created date
+    const customerId = responseData.data._id || responseData.data.id;
+    if (!customerId) {
+      throw new Error('No customer ID returned from server');
+    }
+
     return {
-      ...result.data,
-      id: result.data._id || result.data.id,
-      dateAdded: result.data.createdAt || new Date().toISOString().split("T")[0],
-      totalPurchases: 0,
-      status: "active",
+      ...responseData.data,
+      id: customerId,
+      dateAdded: responseData.data.createdAt || new Date().toISOString(),
+      totalPurchases: responseData.data.totalPurchases || 0,
+      status: responseData.data.status || 'active',
     };
   } catch (error) {
-    console.error('Error adding customer:', error);
-    throw error;
+    console.error('Error in addCustomer:', error);
+    // Re-throw the error with a more user-friendly message if it's not already an Error object
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(typeof error === 'string' ? error : 'Failed to add customer');
   }
 };
 
