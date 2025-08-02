@@ -493,7 +493,7 @@ const parseRepair = (data: any): Repair => ({
 
 export const getRepairs = async (): Promise<Repair[]> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     const response = await fetch(`${baseUrl}/api/repairs`, {
       credentials: 'include'
     });
@@ -602,7 +602,7 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
   }
 
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     const searchParams = new URLSearchParams({
       search: query,
       limit: '10' // Limit results to 10 for better performance
@@ -633,7 +633,7 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
 
 export const searchByBarcode = async (barcode: string): Promise<Product | null> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     const response = await fetch(`${baseUrl}/api/products/barcode/${barcode}`, {
       credentials: 'include'
     });
@@ -705,7 +705,7 @@ export const generateMonthlyStoreReport = async (year: number, month: number): P
 
 export const generateQuarterlyReport = async (year: number, quarter: number): Promise<Report> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     const response = await fetch(`${baseUrl}/api/reports/quarterly?year=${year}&quarter=${quarter}`, {
       credentials: 'include'
     });
@@ -724,7 +724,7 @@ export const generateQuarterlyReport = async (year: number, quarter: number): Pr
 
 export const generateAnnualReport = async (year: number): Promise<Report> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     const response = await fetch(`${baseUrl}/api/reports/annual?year=${year}`, {
       credentials: 'include'
     });
@@ -744,7 +744,7 @@ export const generateAnnualReport = async (year: number): Promise<Report> => {
 // Add repair function
 export const addRepair = async (repairData: any): Promise<Repair> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
     
     // Ensure required fields are present
     if (!repairData.customer) {

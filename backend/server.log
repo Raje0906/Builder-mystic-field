@@ -3416,3 +3416,208 @@
 [2025-08-02T13:11:26.871Z] [LOG] [2025-08-02T13:11:26.871Z] GET /api/health
 [2025-08-02T13:12:04.680Z] [LOG] [2025-08-02T13:12:04.680Z] GET /api/stores from unknown origin
 [2025-08-02T13:12:04.680Z] [LOG] [2025-08-02T13:12:04.680Z] GET /api/stores
+[2025-08-02T13:26:00.116Z] [LOG] [2025-08-02T13:26:00.116Z] GET /api/stores from unknown origin
+[2025-08-02T13:26:00.117Z] [LOG] [2025-08-02T13:26:00.117Z] GET /api/stores
+[2025-08-02T13:26:00.246Z] [LOG] [2025-08-02T13:26:00.246Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:26:00.248Z] [LOG] [2025-08-02T13:26:00.248Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:26:00.574Z] [LOG] [2025-08-02T13:26:00.574Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:26:00.576Z] [LOG] [2025-08-02T13:26:00.576Z] GET /api/health
+[2025-08-02T13:38:24.704Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-02T13:53:33.719Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T13:53:33.723Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:53:33.723Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:53:33.789Z] [LOG] Registering route: /api/auth
+[2025-08-02T13:53:33.789Z] [LOG] Registering route: /api/customers
+[2025-08-02T13:53:33.789Z] [LOG] Registering route: /api/products
+[2025-08-02T13:53:33.790Z] [LOG] Registering route: /api/sales
+[2025-08-02T13:53:33.791Z] [LOG] Registering route: /api/repairs
+[2025-08-02T13:53:33.791Z] [LOG] Registering route: /api/notifications
+[2025-08-02T13:53:33.791Z] [LOG] Registering route: /api/stores
+[2025-08-02T13:53:33.791Z] [LOG] Registering route: /api/reports
+[2025-08-02T13:53:33.792Z] [LOG] Registering route: /api/users
+[2025-08-02T13:53:33.792Z] [LOG] Registering route: /api
+[2025-08-02T13:53:33.793Z] [LOG] Environment: production
+[2025-08-02T13:53:33.793Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:53:33.794Z] [LOG] Client build exists: true
+[2025-08-02T13:53:33.794Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:53:33.874Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T13:54:32.134Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T13:54:32.138Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:54:32.138Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:54:32.204Z] [LOG] Registering route: /api/auth
+[2025-08-02T13:54:32.204Z] [LOG] Registering route: /api/customers
+[2025-08-02T13:54:32.205Z] [LOG] Registering route: /api/products
+[2025-08-02T13:54:32.206Z] [LOG] Registering route: /api/sales
+[2025-08-02T13:54:32.207Z] [LOG] Registering route: /api/repairs
+[2025-08-02T13:54:32.207Z] [LOG] Registering route: /api/notifications
+[2025-08-02T13:54:32.208Z] [LOG] Registering route: /api/stores
+[2025-08-02T13:54:32.208Z] [LOG] Registering route: /api/reports
+[2025-08-02T13:54:32.209Z] [LOG] Registering route: /api/users
+[2025-08-02T13:54:32.213Z] [LOG] Registering route: /api
+[2025-08-02T13:54:32.215Z] [LOG] Environment: production
+[2025-08-02T13:54:32.215Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:54:32.215Z] [LOG] Client build exists: true
+[2025-08-02T13:54:32.216Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:54:32.299Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T13:56:19.209Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T13:56:19.214Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:56:19.215Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T13:56:19.281Z] [LOG] Registering route: /api/auth
+[2025-08-02T13:56:19.282Z] [LOG] Registering route: /api/customers
+[2025-08-02T13:56:19.282Z] [LOG] Registering route: /api/products
+[2025-08-02T13:56:19.283Z] [LOG] Registering route: /api/sales
+[2025-08-02T13:56:19.283Z] [LOG] Registering route: /api/repairs
+[2025-08-02T13:56:19.284Z] [LOG] Registering route: /api/notifications
+[2025-08-02T13:56:19.284Z] [LOG] Registering route: /api/stores
+[2025-08-02T13:56:19.285Z] [LOG] Registering route: /api/reports
+[2025-08-02T13:56:19.285Z] [LOG] Registering route: /api/users
+[2025-08-02T13:56:19.285Z] [LOG] Registering route: /api
+[2025-08-02T13:56:19.286Z] [LOG] Environment: production
+[2025-08-02T13:56:19.286Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:56:19.287Z] [LOG] Client build exists: true
+[2025-08-02T13:56:19.287Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T13:56:19.334Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:00:49.196Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:00:49.201Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:00:49.202Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:00:49.274Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:00:49.274Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:00:49.275Z] [LOG] Registering route: /api/products
+[2025-08-02T14:00:49.276Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:00:49.276Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:00:49.276Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:00:49.277Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:00:49.277Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:00:49.277Z] [LOG] Registering route: /api/users
+[2025-08-02T14:00:49.278Z] [LOG] Registering route: /api
+[2025-08-02T14:00:49.279Z] [LOG] Environment: production
+[2025-08-02T14:00:49.280Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:00:49.280Z] [LOG] Client build exists: true
+[2025-08-02T14:00:49.280Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:00:49.408Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:02:45.603Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:02:45.606Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:02:45.607Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:02:45.668Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:02:45.668Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:02:45.668Z] [LOG] Registering route: /api/products
+[2025-08-02T14:02:45.669Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:02:45.669Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:02:45.669Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:02:45.669Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:02:45.670Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:02:45.670Z] [LOG] Registering route: /api/users
+[2025-08-02T14:02:45.670Z] [LOG] Registering route: /api
+[2025-08-02T14:02:45.671Z] [LOG] Environment: production
+[2025-08-02T14:02:45.671Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:02:45.672Z] [LOG] Client build exists: true
+[2025-08-02T14:02:45.672Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:02:45.741Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:03:24.182Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:03:24.187Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:03:24.187Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:03:24.255Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:03:24.256Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:03:24.256Z] [LOG] Registering route: /api/products
+[2025-08-02T14:03:24.257Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:03:24.257Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:03:24.258Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:03:24.258Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:03:24.258Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:03:24.259Z] [LOG] Registering route: /api/users
+[2025-08-02T14:03:24.259Z] [LOG] Registering route: /api
+[2025-08-02T14:03:24.260Z] [LOG] Environment: production
+[2025-08-02T14:03:24.263Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:03:24.265Z] [LOG] Client build exists: true
+[2025-08-02T14:03:24.266Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:03:24.341Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:03:56.322Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:03:56.326Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:03:56.326Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:03:56.429Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:03:56.502Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:03:56.505Z] [LOG] Registering route: /api/products
+[2025-08-02T14:03:56.506Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:03:56.506Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:03:56.507Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:03:56.507Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:03:56.508Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:03:56.508Z] [LOG] Registering route: /api/users
+[2025-08-02T14:03:56.508Z] [LOG] Registering route: /api
+[2025-08-02T14:03:56.509Z] [LOG] Environment: production
+[2025-08-02T14:03:56.509Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:03:56.510Z] [LOG] Client build exists: true
+[2025-08-02T14:03:56.511Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:03:56.679Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:10:23.455Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:10:23.460Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:10:23.461Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:10:23.546Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:10:23.547Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:10:23.547Z] [LOG] Registering route: /api/products
+[2025-08-02T14:10:23.548Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:10:23.549Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:10:23.549Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:10:23.550Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:10:23.551Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:10:23.551Z] [LOG] Registering route: /api/users
+[2025-08-02T14:10:23.552Z] [LOG] Registering route: /api
+[2025-08-02T14:10:23.563Z] [LOG] Environment: production
+[2025-08-02T14:10:23.564Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:10:23.565Z] [LOG] Client build exists: true
+[2025-08-02T14:10:23.565Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:10:23.646Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:13:22.496Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:13:22.507Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:13:22.507Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:13:22.590Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:13:22.591Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:13:22.591Z] [LOG] Registering route: /api/products
+[2025-08-02T14:13:22.592Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:13:22.593Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:13:22.593Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:13:22.593Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:13:22.594Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:13:22.594Z] [LOG] Registering route: /api/users
+[2025-08-02T14:13:22.594Z] [LOG] Registering route: /api
+[2025-08-02T14:13:22.595Z] [LOG] Environment: production
+[2025-08-02T14:13:22.595Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:13:22.595Z] [LOG] Client build exists: true
+[2025-08-02T14:13:22.596Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:13:22.657Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:13:40.317Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:13:40.321Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:13:40.321Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:13:40.409Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:13:40.409Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:13:40.410Z] [LOG] Registering route: /api/products
+[2025-08-02T14:13:40.411Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:13:40.411Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:13:40.412Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:13:40.413Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:13:40.413Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:13:40.414Z] [LOG] Registering route: /api/users
+[2025-08-02T14:13:40.414Z] [LOG] Registering route: /api
+[2025-08-02T14:13:40.415Z] [LOG] Environment: production
+[2025-08-02T14:13:40.415Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:13:40.416Z] [LOG] Client build exists: true
+[2025-08-02T14:13:40.417Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:13:40.506Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T14:15:16.970Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-02T14:15:16.982Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:15:16.982Z] [LOG] 🔄 Connecting to MongoDB...
+[2025-08-02T14:15:17.058Z] [LOG] Registering route: /api/auth
+[2025-08-02T14:15:17.059Z] [LOG] Registering route: /api/customers
+[2025-08-02T14:15:17.060Z] [LOG] Registering route: /api/products
+[2025-08-02T14:15:17.060Z] [LOG] Registering route: /api/sales
+[2025-08-02T14:15:17.061Z] [LOG] Registering route: /api/repairs
+[2025-08-02T14:15:17.062Z] [LOG] Registering route: /api/notifications
+[2025-08-02T14:15:17.062Z] [LOG] Registering route: /api/stores
+[2025-08-02T14:15:17.062Z] [LOG] Registering route: /api/reports
+[2025-08-02T14:15:17.063Z] [LOG] Registering route: /api/users
+[2025-08-02T14:15:17.063Z] [LOG] Registering route: /api
+[2025-08-02T14:15:17.064Z] [LOG] Environment: production
+[2025-08-02T14:15:17.064Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:15:17.064Z] [LOG] Client build exists: true
+[2025-08-02T14:15:17.065Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T14:15:17.130Z] [LOG] ✅ MongoDB Connected

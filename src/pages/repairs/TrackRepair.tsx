@@ -135,7 +135,7 @@ export function TrackRepair() {
   const fetchRemainingRepairs = async () => {
     try {
       setIsLoadingRemaining(true);
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
       const response = await axios.get(`${baseUrl}/api/repairs?status=in_progress&limit=5`);
       if (response.data.success) {
         setRemainingRepairs(response.data.data || []);
@@ -162,7 +162,7 @@ export function TrackRepair() {
   const fetchReceivedRepairs = async () => {
     try {
       setIsLoadingReceived(true);
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
       const response = await axios.get(`${baseUrl}/api/repairs?status=received`, {
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ export function TrackRepair() {
       console.log('Starting repair completion process for ticket:', ticketNumber);
       
       // Fetch the full repair object by ticketNumber to get the _id
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
       console.log('Fetching repair details for ticket:', ticketNumber);
       
       const repairResp = await axios.get(`${baseUrl}/api/repairs/track/status?ticket=${ticketNumber}`, {
@@ -384,7 +384,7 @@ export function TrackRepair() {
         params.append("email", trimmedQuery.toLowerCase());
       }
 
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
       const apiUrl = `${baseUrl}/api/repairs/track/status?${params.toString()}`;
       console.log('Constructed API URL:', apiUrl);
 
@@ -573,7 +573,7 @@ export function TrackRepair() {
     try {
       setIsSendingUpdate(prev => ({ ...prev, [repair._id]: true }));
       
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
       const response = await fetch(`${baseUrl}/api/repairs/${repair._id}/send-update`, {
         method: 'POST',
         headers: {

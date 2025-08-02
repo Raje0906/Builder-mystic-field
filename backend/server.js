@@ -1,15 +1,35 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import compression from "compression";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+// Enable ES module syntax in this file
+'use strict';
+
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import compression from 'compression';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import fs from 'fs';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables
+dotenv.config();
+
+// Create Express app
+const app = express();
+const PORT = process.env.PORT || 3002;
+
+// Set up file logging
+const logStream = fs.createWriteStream('server.log', { flags: 'a' });
+
+// Import database connection
 import connectDB from './config/db.js';
-import { testEmailRouter } from './routes/test-email.js';
+
+// Import routes
 import authRoutes from './routes/auth.js';
 import customerRoutes from './routes/customers.js';
 import productRoutes from './routes/products.js';
@@ -20,43 +40,132 @@ import storeRoutes from './routes/stores.js';
 import reportRoutes from './routes/reports.js';
 import userRoutes from './routes/users.js';
 import healthRouter from './routes/health.js';
+import { testEmailRouter } from './routes/test-email.js';
 
-// Load environment variables
-dotenv.config();
+// Import middleware
+import errorHandler from './middleware/errorHandler.js';
+import { authenticateToken } from './middleware/auth.js';
 
-// Load environment variables
-dotenv.config();
+// Global variable to track MongoDB connection status
+let isMongoConnected = false;
 
-// Set up file logging
-const logStream = fs.createWriteStream('server.log', { flags: 'a' });
-
-// Connect to MongoDB before starting the server
-let dbConnection;
-(async () => {
-  try {
-    dbConnection = await connectDB();
-    // Start the server only after database connection is established
-    startServer();
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-    process.exit(1);
+// Connect to MongoDB and start the server
+async function startServer() {
+  // If already connected, return the existing connection
+  if (isMongoConnected) {
+    console.log('ℹ️ Using existing MongoDB connection');
+    return mongoose.connection;
   }
-})();
 
-function startServer() {
+  try {
+    // Use MONGO_URI if available, otherwise fall back to MONGODB_URI or localhost
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/laptop-store';
+    const isAtlas = mongoUri.includes('mongodb+srv://');
+    
+    console.log(`🔗 Connecting to ${isAtlas ? 'MongoDB Atlas' : 'MongoDB'}...`);
+    
+    // Connection options
+    const options = {
+      serverSelectionTimeoutMS: 10000, // 10 seconds
+      socketTimeoutMS: 45000, // 45 seconds
+      maxPoolSize: 10,
+      retryWrites: true,
+      w: 'majority',
+      family: 4, // Use IPv4, skip IPv6
+    };
+    
+    // Event handlers
+    mongoose.connection.on('connecting', () => {
+      console.log('🔄 Connecting to MongoDB...');
+    });
+    
+    mongoose.connection.on('connected', () => {
+      isMongoConnected = true;
+      console.log('✅ MongoDB Connected to:', mongoose.connection.host);
+      console.log('📊 Database Name:', mongoose.connection.name);
+    });
+    
+    mongoose.connection.on('error', (err) => {
+      console.error('❌ MongoDB Connection Error:', err.name);
+      console.error('Error message:', err.message);
+      
+      if (process.env.NODE_ENV === 'production' && isAtlas) {
+        console.error('❌ Critical: Failed to connect to MongoDB Atlas in production');
+        process.exit(1);
+      }
+    });
+    
+    mongoose.connection.on('disconnected', () => {
+      isMongoConnected = false;
+      console.warn('ℹ️ MongoDB disconnected');
+    });
+    
+    // Connect to MongoDB
+    await mongoose.connect(mongoUri, options);
+    return mongoose.connection;
+    
+  } catch (error) {
+    console.error('❌ Failed to connect to MongoDB:', error);
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    }
+    throw error;
+  }
+}
+
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://127.0.0.1:3002',
+    'https://world-laptop.vercel.app',
+    'https://laptop-crm-backend.onrender.com'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Enable CORS
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// API Routes will be registered later in the file
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('❌ Error:', err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { error: err.message })
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Not Found',
+    path: req.path
+  });
+});
+
+// Store original console methods
 const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 
-// Define __filename and __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// Override console.log to write to both console and log file
 console.log = function(...args) {
   const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
   logStream.write(`[${new Date().toISOString()}] [LOG] ${message}\n`);
   originalConsoleLog.apply(console, args);
 };
 
+// Override console.error to write to both console and log file
 console.error = function(...args) {
   const message = args.map(arg => arg instanceof Error ? arg.stack : 
     (typeof arg === 'object' ? JSON.stringify(arg) : arg)).join(' ');
@@ -64,34 +173,105 @@ console.error = function(...args) {
   originalConsoleError.apply(console, args);
 };
 
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
+// Initialize and start the server
+async function initializeServer() {
+  try {
+    console.log('🔄 Initializing server...');
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Get port from environment or use default
+    const port = process.env.PORT || 3002;
+    
+    // Connect to MongoDB first
+    console.log('🔗 Connecting to MongoDB...');
+    await startServer().catch(error => {
+      console.error('❌ Failed to connect to MongoDB:', error.message);
+      if (process.env.NODE_ENV === 'production') {
+        console.error('❌ Exiting process due to MongoDB connection failure in production');
+        process.exit(1);
+      }
+    });
+    
+    // Only proceed if MongoDB is connected or we're in development
+    if (!mongoose.connection.readyState && process.env.NODE_ENV === 'production') {
+      throw new Error('MongoDB connection failed in production mode');
+    }
+    
+    // Start the Express server
+    const server = app.listen(port, '0.0.0.0', () => {
+      console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+      console.log(`📡 API URL: http://localhost:${port}/api`);
+      console.log(`🌍 Web Interface: http://localhost:${port}`);
+      console.log(`🔄 Process ID: ${process.pid}`);
+      console.log('📅 Server Time:', new Date().toISOString());
+      console.log('✅ Server is ready to accept connections');
+      
+      // Log database connection status
+      if (mongoose.connection.readyState === 1) {
+        console.log('\n📊 Database Connection Status:');
+        console.log(`   - Status: ✅ Connected`);
+        console.log(`   - Database: ${mongoose.connection.name}`);
+        console.log(`   - Host: ${mongoose.connection.host}`);
+        console.log(`   - Port: ${mongoose.connection.port || 'default'}`);
+        console.log(`   - Using: ${mongoose.connection.host.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
+      } else {
+        console.warn('⚠️  Database connection status: Not connected');
+      }
+    });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+    // Handle server errors
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use. Please stop any other servers using this port.`);
+        console.error('Try running: netstat -ano | findstr :' + PORT);
+        console.error('Then: taskkill /PID <PID> /F');
+      } else {
+        console.error('Server error:', error);
+      }
+      process.exit(1);
+    });
 
-// Import routes after app initialization
-import customerRoutes from "./routes/customers.js";
-import productRoutes from "./routes/products.js";
-import saleRoutes from "./routes/sales.js";
-import storeRoutes from "./routes/stores.js";
-import userRoutes from "./routes/users.js";
-import repairRoutes from "./routes/repairs.js";
-import notificationRoutes from "./routes/notifications.js";
-import reportRoutes from "./routes/reports.js";
-import authRoutes from "./routes/auth.js";
-import healthRouter from './routes/health.js';
+    // Handle process termination
+    const shutdown = async () => {
+      console.log('\n🛑 Shutting down server...');
+      
+      // Close the server
+      server.close(() => {
+        console.log('✅ Server closed');
+        
+        // Close MongoDB connection
+        if (mongoose.connection) {
+          mongoose.connection.close(false, () => {
+            console.log('✅ MongoDB connection closed');
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      });
+    };
 
-// Import middleware
-import errorHandler from "./middleware/errorHandler.js";
-import { authenticateToken } from "./middleware/auth.js";
+    // Handle process termination signals
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+    
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      shutdown();
+    });
 
-// Initialize Express app
-const app = express();
-const PORT = process.env.PORT || 3002;
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err) => {
+      console.error('Unhandled Rejection:', err);
+      shutdown();
+    });
+    
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
 // Run notification system test in development
 if (process.env.NODE_ENV !== 'production') {
@@ -106,70 +286,6 @@ if (process.env.NODE_ENV !== 'production') {
       console.error('Error in notification system test:', error);
     });
 }
- // Using port 3002 to avoid conflicts with other services
-
-// Add request logging
-// CORS configuration must come before any route definitions
-// Allowed origins
-// Default allowed origins for development
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  'http://localhost:8080',
-  'http://localhost:3001',
-  'http://127.0.0.1:3001',
-  'http://localhost:3002',
-  'http://127.0.0.1:3002',
-  'https://world-laptop.vercel.app',  // Production frontend URL
-  'https://*.vercel.app'              // Allow all Vercel preview deployments
-];
-
-// Add any additional origins from environment variable
-if (process.env.FRONTEND_URL) {
-  const additionalOrigins = process.env.FRONTEND_URL.split(',')
-    .map(url => url.trim())
-    .filter(url => url);
-  allowedOrigins.push(...additionalOrigins);
-}
-
-// Simple CORS middleware for development
-const allowCors = (req, res, next) => {
-  const origin = req.headers.origin;
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} from ${origin || 'unknown origin'}`);
-  
-  // Always set CORS headers
-  res.header('Access-Control-Allow-Origin', origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    console.log(`[${new Date().toISOString()}] Handling OPTIONS preflight for ${origin}`);
-    return res.status(200).end();
-  }
-  
-  next();
-};
-
-// Apply CORS middleware to all routes
-app.use(allowCors);
-
-// Add a test endpoint to verify CORS is working
-app.get('/api/test-cors', (req, res) => {
-  res.json({ 
-    message: 'CORS test successful!',
-    timestamp: new Date().toISOString(),
-    origin: req.headers.origin,
-    allowedOrigins: 'All origins allowed in development'
-  });
-});
-
-// Then apply other middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-}));
-
 // Request logging middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
@@ -390,87 +506,130 @@ app.use(errorHandler);
 // Get port from environment variable or use default
 const port = process.env.PORT || PORT;
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// Wait for MongoDB connection to be established
-mongoose.connection.on('connected', () => {
-  console.log('✅ MongoDB Connected');
-
-  // Start server
-  const server = app.listen(port, () => {
-    console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
-    console.log(`📡 API URL: http://localhost:${port}/api`);
-    console.log(`🌍 Web Interface: http://localhost:${port}`);
-    console.log(`🔄 Process ID: ${process.pid}`);
-    console.log('📅 Server Time:', new Date().toISOString());
-    console.log('✅ Server is ready to accept connections');
-
-    // Log all registered routes
-    console.log('\n🔍 Registered API Routes:');
-    apiRoutes.forEach(route => {
-      console.log(`   - ${route.path}`);
+// Start the server
+const startApp = async () => {
+  try {
+    // First connect to MongoDB
+    await startServer();
+    
+    // Then start the Express server
+    const server = app.listen(port, '0.0.0.0', () => {
+      console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+      console.log(`📡 API URL: http://localhost:${port}/api`);
+      console.log(`🌍 Web Interface: http://localhost:${port}`);
+      console.log(`🔄 Process ID: ${process.pid}`);
+      console.log('📅 Server Time:', new Date().toISOString());
+      console.log('✅ Server is ready to accept connections');
+      
+      // Log database connection status
+      if (mongoose.connection.readyState === 1) {
+        console.log('\n📊 Database Connection Status:');
+        console.log(`   - Status: ✅ Connected`);
+        console.log(`   - Database: ${mongoose.connection.name}`);
+        console.log(`   - Host: ${mongoose.connection.host}`);
+        console.log(`   - Port: ${mongoose.connection.port || 'default'}`);
+        console.log(`   - Using: ${mongoose.connection.host.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
+      } else {
+        console.warn('⚠️  Database connection status: Not connected');
+      }
     });
+    
+    // Handle server errors
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${port} is already in use. Please stop any other servers using this port.`);
+        console.error('Try running: netstat -ano | findstr :' + port);
+        console.error('Then: taskkill /PID <PID> /F');
+      } else {
+        console.error('Server error:', error);
+      }
+      process.exit(1);
+    });
+    
+    // Handle process termination
+    const shutdown = async () => {
+      console.log('\n🛑 Shutting down server...');
+      
+      // Close the server
+      server.close(() => {
+        console.log('✅ Server closed');
+        
+        // Close MongoDB connection if connected
+        if (mongoose.connection.readyState === 1) {
+          mongoose.connection.close(false, () => {
+            console.log('✅ MongoDB connection closed');
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      });
+    };
+    
+    // Handle process termination signals
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+    
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      shutdown();
+    });
+    
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err) => {
+      console.error('Unhandled Rejection:', err);
+      shutdown();
+    });
+    
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-    // Log database connection status
-    console.log(`\n📊 Database Status: ${mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected'}`);
-    if (mongoose.connection.readyState === 1) {
-      console.log(`   - Database Name: ${mongoose.connection.name}`);
-      console.log(`   - Database Host: ${mongoose.connection.host}`);
-      console.log(`   - Database Port: ${mongoose.connection.port}`);
-    }
-  });
-});
+// Start the application
+startApp();
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection:', err);
-  // Close server & exit process
-  if (server) {
-    server.close(() => process.exit(1));
-  } else {
-    process.exit(1);
-  }
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Handle server errors
-server.on('error', (error) => {
-  if (error.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${port} is already in use. Please stop any other servers using this port.`);
-    console.error('Try running: netstat -ano | findstr :5002');
-    console.error('Then: taskkill /PID <PID> /F');
-  } else {
-    console.error('Server error:', error);
-  }
-  process.exit(1);
-});
-
-// Graceful shutdown
-process.on("SIGTERM", async () => {
-  console.log("SIGTERM received");
+// Graceful shutdown handler
+const gracefulShutdown = async () => {
+  console.log('\n🛑 Received shutdown signal. Closing server...');
   
   try {
-    // Close the server first
-    if (server) {
-      await new Promise((resolve) => server.close(resolve));
-      console.log('Server closed');
-    }
+    // Close the server
+    server.close(() => {
+      console.log('✅ HTTP server closed');
+      
+      // Close MongoDB connection if connected
+      if (mongoose.connection.readyState === 1) {
+        mongoose.connection.close(false, () => {
+          console.log('✅ MongoDB connection closed');
+          process.exit(0);
+        });
+      } else {
+        process.exit(0);
+      }
+    });
     
-    // Then close the database connection
-    if (mongoose.connection) {
-      await mongoose.connection.close();
-      console.log('MongoDB connection closed');
-    }
+    // Force close after 5 seconds
+    setTimeout(() => {
+      console.error('❌ Could not close connections in time, forcefully shutting down');
+      process.exit(1);
+    }, 5000);
     
-    console.log("Process terminated");
-    process.exit(0);
-  } catch (error) {
-    console.error('Error during shutdown:', error);
+  } catch (err) {
+    console.error('Error during shutdown:', err);
     process.exit(1);
   }
-});
+};
+
+// Handle termination signals
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 export default app;

@@ -6,27 +6,25 @@ console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
 // Determine the base URL based on the environment
 const getApiBaseUrl = (): string => {
-  // Use localhost for development, production URL for Vercel
-  let baseUrl: string;
-  
-  if (import.meta.env.DEV) {
-    // Development environment - use localhost:3002
-    baseUrl = 'http://localhost:3002';
-  } else if (window.location.hostname.includes('vercel.app')) {
-    // Vercel deployment - use production URL
-    baseUrl = 'https://laptop-crm-backend.onrender.com';
-  } else {
-    // Fallback to environment variable or default production URL
-    baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
+  // Always use VITE_API_URL if it's set in the environment
+  if (import.meta.env.VITE_API_URL) {
+    const envUrl = import.meta.env.VITE_API_URL;
+    return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
   }
-  
-  // Ensure no trailing slash
-  const url = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-  console.log('Using API URL:', url);
-  return url;
+
+  // In development, use localhost
+  if (import.meta.env.DEV) {
+    return 'http://localhost:3002';
+  }
+
+  // In production, always use the production URL
+  return 'https://laptop-crm-backend.onrender.com';
 };
 
+// Get and log the API URL
 const API_BASE_URL = getApiBaseUrl();
+console.log('Environment:', import.meta.env.MODE);
+console.log('Using API URL:', API_BASE_URL);
 
 class SafeApiClient {
   private isBackendAvailable: boolean = false;
