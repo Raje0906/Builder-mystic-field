@@ -2763,3 +2763,426 @@
 [2025-08-02T09:00:58.256Z] [LOG] Origin not allowed by CORS: http://localhost:8080
 [2025-08-02T09:00:58.257Z] [LOG] [2025-08-02T09:00:58.257Z] OPTIONS /api/health
 [2025-08-02T09:02:31.478Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-02T09:02:35.144Z] [LOG] Registering route: /api/auth
+[2025-08-02T09:02:35.146Z] [LOG] Registering route: /api/customers
+[2025-08-02T09:02:35.147Z] [LOG] Registering route: /api/products
+[2025-08-02T09:02:35.147Z] [LOG] Registering route: /api/sales
+[2025-08-02T09:02:35.148Z] [LOG] Registering route: /api/repairs
+[2025-08-02T09:02:35.148Z] [LOG] Registering route: /api/notifications
+[2025-08-02T09:02:35.149Z] [LOG] Registering route: /api/stores
+[2025-08-02T09:02:35.149Z] [LOG] Registering route: /api/reports
+[2025-08-02T09:02:35.149Z] [LOG] Registering route: /api/users
+[2025-08-02T09:02:35.150Z] [LOG] Registering route: /api
+[2025-08-02T09:02:35.150Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T09:02:35.164Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T09:02:35.164Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T09:02:35.164Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T09:02:35.165Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T09:02:35.165Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T09:02:35.165Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T09:02:35.166Z] [LOG]    - /api/auth
+[2025-08-02T09:02:35.166Z] [LOG]    - /api/customers
+[2025-08-02T09:02:35.166Z] [LOG]    - /api/products
+[2025-08-02T09:02:35.166Z] [LOG]    - /api/sales
+[2025-08-02T09:02:35.167Z] [LOG]    - /api/repairs
+[2025-08-02T09:02:35.167Z] [LOG]    - /api/notifications
+[2025-08-02T09:02:35.167Z] [LOG]    - /api/stores
+[2025-08-02T09:02:35.167Z] [LOG]    - /api/reports
+[2025-08-02T09:02:35.167Z] [LOG]    - /api/users
+[2025-08-02T09:02:35.167Z] [LOG]    - /api
+[2025-08-02T09:02:35.168Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T09:02:35.168Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T09:02:35.168Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T09:02:35.212Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T09:02:35.213Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T09:02:35.213Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T09:02:35.213Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T09:02:35.214Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T09:02:35.214Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T09:02:35.214Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T09:02:35.215Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T09:02:35.219Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T09:02:35.220Z] [LOG] MongoDB connection state: 1
+[2025-08-02T09:02:43.267Z] [LOG] [2025-08-02T09:02:43.267Z] GET /api/auth/stores from unknown origin
+[2025-08-02T09:02:43.270Z] [LOG] [2025-08-02T09:02:43.270Z] GET /api/auth/stores
+[2025-08-02T09:02:43.273Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:02:43.273Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:02:43.300Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:02:43.301Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T09:02:43.348Z] [LOG] [2025-08-02T09:02:43.347Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:02:43.349Z] [LOG] [2025-08-02T09:02:43.349Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:02:43.697Z] [LOG] [2025-08-02T09:02:43.697Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:02:43.697Z] [LOG] [2025-08-02T09:02:43.697Z] GET /api/health
+[2025-08-02T09:02:49.924Z] [LOG] [2025-08-02T09:02:49.924Z] POST /api/auth/login from http://localhost:8080
+[2025-08-02T09:02:49.926Z] [LOG] [2025-08-02T09:02:49.926Z] POST /api/auth/login
+[2025-08-02T09:02:49.972Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf790"}
+[2025-08-02T09:02:50.014Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},"isActive":true}
+[2025-08-02T09:02:50.016Z] [LOG] Attempting password verification...
+[2025-08-02T09:02:50.246Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf790"}
+[2025-08-02T09:02:50.638Z] [LOG] [2025-08-02T09:02:50.638Z] OPTIONS /reports/summary from http://localhost:8080
+[2025-08-02T09:02:50.639Z] [LOG] [2025-08-02T09:02:50.639Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:02:50.642Z] [LOG] [2025-08-02T09:02:50.642Z] GET /reports/summary from http://localhost:8080
+[2025-08-02T09:02:50.643Z] [LOG] [2025-08-02T09:02:50.643Z] GET /reports/summary
+[2025-08-02T09:02:50.651Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:04:18.591Z] [LOG] [2025-08-02T09:04:18.591Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:04:18.592Z] [LOG] [2025-08-02T09:04:18.592Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:04:18.901Z] [LOG] [2025-08-02T09:04:18.901Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:04:18.901Z] [LOG] [2025-08-02T09:04:18.901Z] GET /api/health
+[2025-08-02T09:04:19.473Z] [LOG] [2025-08-02T09:04:19.472Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:04:19.473Z] [LOG] [2025-08-02T09:04:19.473Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:04:19.488Z] [LOG] [2025-08-02T09:04:19.487Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:04:19.488Z] [LOG] [2025-08-02T09:04:19.488Z] GET /api/reports/summary
+[2025-08-02T09:05:09.861Z] [LOG] [2025-08-02T09:05:09.861Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:05:09.862Z] [LOG] [2025-08-02T09:05:09.862Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:09.866Z] [LOG] [2025-08-02T09:05:09.866Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:05:09.867Z] [LOG] [2025-08-02T09:05:09.867Z] GET /api/health
+[2025-08-02T09:05:10.105Z] [LOG] [2025-08-02T09:05:10.105Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:05:10.127Z] [LOG] [2025-08-02T09:05:10.127Z] GET /api/auth/me
+[2025-08-02T09:05:10.638Z] [LOG] [2025-08-02T09:05:10.638Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:05:10.639Z] [LOG] [2025-08-02T09:05:10.639Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:10.644Z] [LOG] [2025-08-02T09:05:10.644Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:05:10.648Z] [LOG] [2025-08-02T09:05:10.648Z] GET /api/reports/summary
+[2025-08-02T09:05:10.848Z] [LOG] [2025-08-02T09:05:10.848Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:05:10.849Z] [LOG] [2025-08-02T09:05:10.849Z] GET /api/health
+[2025-08-02T09:05:13.309Z] [LOG] [2025-08-02T09:05:13.309Z] OPTIONS /repairs from http://localhost:8080
+[2025-08-02T09:05:13.310Z] [LOG] [2025-08-02T09:05:13.310Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:13.318Z] [LOG] [2025-08-02T09:05:13.318Z] GET /repairs from http://localhost:8080
+[2025-08-02T09:05:13.361Z] [LOG] [2025-08-02T09:05:13.361Z] GET /repairs
+[2025-08-02T09:05:13.364Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:05:25.726Z] [LOG] [2025-08-02T09:05:25.726Z] GET /api/stores from unknown origin
+[2025-08-02T09:05:25.726Z] [LOG] [2025-08-02T09:05:25.726Z] GET /api/stores
+[2025-08-02T09:05:26.188Z] [LOG] [2025-08-02T09:05:26.188Z] GET /api/sales/stats from unknown origin
+[2025-08-02T09:05:26.188Z] [LOG] [2025-08-02T09:05:26.188Z] GET /api/sales/stats?startDate=2025-08-01&endDate=2025-08-02&groupBy=day
+[2025-08-02T09:05:32.686Z] [LOG] [2025-08-02T09:05:32.686Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:05:32.689Z] [LOG] [2025-08-02T09:05:32.689Z] GET /api/auth/me
+[2025-08-02T09:05:32.746Z] [LOG] [2025-08-02T09:05:32.746Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:05:32.758Z] [LOG] [2025-08-02T09:05:32.758Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:33.072Z] [LOG] [2025-08-02T09:05:33.072Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:05:33.073Z] [LOG] [2025-08-02T09:05:33.073Z] GET /api/health
+[2025-08-02T09:05:37.109Z] [LOG] [2025-08-02T09:05:37.109Z] GET /api/stores from unknown origin
+[2025-08-02T09:05:37.110Z] [LOG] [2025-08-02T09:05:37.110Z] GET /api/stores
+[2025-08-02T09:05:37.755Z] [LOG] [2025-08-02T09:05:37.755Z] OPTIONS /sales/stats from http://localhost:8080
+[2025-08-02T09:05:37.759Z] [LOG] [2025-08-02T09:05:37.759Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:37.762Z] [LOG] [2025-08-02T09:05:37.762Z] OPTIONS /sales from http://localhost:8080
+[2025-08-02T09:05:37.768Z] [LOG] [2025-08-02T09:05:37.768Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:37.770Z] [LOG] [2025-08-02T09:05:37.770Z] OPTIONS /sales/stats from http://localhost:8080
+[2025-08-02T09:05:37.771Z] [LOG] [2025-08-02T09:05:37.771Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:37.774Z] [LOG] [2025-08-02T09:05:37.774Z] OPTIONS /sales from http://localhost:8080
+[2025-08-02T09:05:37.787Z] [LOG] [2025-08-02T09:05:37.787Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:05:37.791Z] [LOG] [2025-08-02T09:05:37.791Z] GET /sales/stats from http://localhost:8080
+[2025-08-02T09:05:37.792Z] [LOG] [2025-08-02T09:05:37.792Z] GET /sales/stats
+[2025-08-02T09:05:37.794Z] [LOG] [2025-08-02T09:05:37.794Z] GET /sales from http://localhost:8080
+[2025-08-02T09:05:37.796Z] [LOG] [2025-08-02T09:05:37.796Z] GET /sales?limit=5
+[2025-08-02T09:05:37.809Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:05:37.813Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:05:37.829Z] [LOG] [2025-08-02T09:05:37.829Z] GET /sales/stats from http://localhost:8080
+[2025-08-02T09:05:37.835Z] [LOG] [2025-08-02T09:05:37.835Z] GET /sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:05:37.837Z] [LOG] [2025-08-02T09:05:37.837Z] GET /sales from http://localhost:8080
+[2025-08-02T09:05:37.839Z] [LOG] [2025-08-02T09:05:37.839Z] GET /sales?status=pending&limit=1
+[2025-08-02T09:05:37.843Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:05:37.852Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:06:38.583Z] [LOG] [2025-08-02T09:06:38.583Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:06:38.585Z] [LOG] [2025-08-02T09:06:38.585Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:06:38.920Z] [LOG] [2025-08-02T09:06:38.920Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:06:38.920Z] [LOG] [2025-08-02T09:06:38.920Z] GET /api/health
+[2025-08-02T09:06:38.936Z] [LOG] [2025-08-02T09:06:38.936Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:06:38.937Z] [LOG] [2025-08-02T09:06:38.936Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:06:38.940Z] [LOG] [2025-08-02T09:06:38.940Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:06:38.941Z] [LOG] [2025-08-02T09:06:38.941Z] GET /api/sales/stats
+[2025-08-02T09:07:47.131Z] [LOG] [2025-08-02T09:07:47.131Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:07:47.163Z] [LOG] [2025-08-02T09:07:47.163Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:07:47.165Z] [LOG] [2025-08-02T09:07:47.165Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:07:47.202Z] [LOG] [2025-08-02T09:07:47.201Z] GET /api/auth/me
+[2025-08-02T09:07:47.541Z] [LOG] [2025-08-02T09:07:47.541Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:07:47.593Z] [LOG] [2025-08-02T09:07:47.593Z] GET /api/health
+[2025-08-02T09:07:50.788Z] [LOG] [2025-08-02T09:07:50.788Z] GET /api/reports/monthly from unknown origin
+[2025-08-02T09:07:50.789Z] [LOG] [2025-08-02T09:07:50.789Z] GET /api/reports/monthly?year=2025&month=8
+[2025-08-02T09:07:50.791Z] [LOG] [2025-08-02T09:07:50.791Z] GET /api/stores from unknown origin
+[2025-08-02T09:07:50.792Z] [LOG] [2025-08-02T09:07:50.792Z] GET /api/stores
+[2025-08-02T09:07:55.521Z] [LOG] [2025-08-02T09:07:55.521Z] OPTIONS /repairs from http://localhost:8080
+[2025-08-02T09:07:55.521Z] [LOG] [2025-08-02T09:07:55.521Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:07:55.524Z] [LOG] [2025-08-02T09:07:55.524Z] GET /repairs from http://localhost:8080
+[2025-08-02T09:07:55.525Z] [LOG] [2025-08-02T09:07:55.525Z] GET /repairs
+[2025-08-02T09:07:55.526Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:09:59.720Z] [LOG] [2025-08-02T09:09:59.720Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:09:59.721Z] [LOG] [2025-08-02T09:09:59.721Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:00.026Z] [LOG] [2025-08-02T09:10:00.026Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:00.027Z] [LOG] [2025-08-02T09:10:00.027Z] GET /api/health
+[2025-08-02T09:10:00.035Z] [LOG] [2025-08-02T09:10:00.035Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:00.036Z] [LOG] [2025-08-02T09:10:00.036Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:00.041Z] [LOG] [2025-08-02T09:10:00.041Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:00.041Z] [LOG] [2025-08-02T09:10:00.041Z] GET /api/sales/stats
+[2025-08-02T09:10:00.755Z] [LOG] [2025-08-02T09:10:00.755Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:10:00.759Z] [LOG] [2025-08-02T09:10:00.759Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:00.767Z] [LOG] [2025-08-02T09:10:00.767Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:10:00.772Z] [LOG] [2025-08-02T09:10:00.772Z] GET /api/reports/summary
+[2025-08-02T09:10:00.857Z] [LOG] [2025-08-02T09:10:00.857Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:00.859Z] [LOG] [2025-08-02T09:10:00.859Z] GET /api/health
+[2025-08-02T09:10:02.156Z] [LOG] [2025-08-02T09:10:02.156Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:10:02.163Z] [LOG] [2025-08-02T09:10:02.163Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:02.165Z] [LOG] [2025-08-02T09:10:02.165Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:02.167Z] [LOG] [2025-08-02T09:10:02.166Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:02.171Z] [LOG] [2025-08-02T09:10:02.171Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:10:02.172Z] [LOG] [2025-08-02T09:10:02.172Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:02.175Z] [LOG] [2025-08-02T09:10:02.175Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:02.177Z] [LOG] [2025-08-02T09:10:02.177Z] GET /api/sales/stats
+[2025-08-02T09:10:02.180Z] [LOG] [2025-08-02T09:10:02.180Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:02.181Z] [LOG] [2025-08-02T09:10:02.181Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:10:02.213Z] [LOG] [2025-08-02T09:10:02.213Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:10:02.216Z] [LOG] [2025-08-02T09:10:02.216Z] GET /api/sales?limit=5
+[2025-08-02T09:10:02.275Z] [LOG] [2025-08-02T09:10:02.275Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:10:02.276Z] [LOG] [2025-08-02T09:10:02.276Z] GET /api/sales?status=pending&limit=1
+[2025-08-02T09:10:05.091Z] [LOG] [2025-08-02T09:10:05.091Z] GET /api/stores from unknown origin
+[2025-08-02T09:10:05.091Z] [LOG] [2025-08-02T09:10:05.091Z] GET /api/stores
+[2025-08-02T09:10:05.512Z] [LOG] [2025-08-02T09:10:05.512Z] OPTIONS /repairs from http://localhost:8080
+[2025-08-02T09:10:05.517Z] [LOG] [2025-08-02T09:10:05.516Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:05.521Z] [LOG] [2025-08-02T09:10:05.520Z] GET /repairs from http://localhost:8080
+[2025-08-02T09:10:05.521Z] [LOG] [2025-08-02T09:10:05.521Z] GET /repairs
+[2025-08-02T09:10:05.525Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:10:13.229Z] [LOG] [2025-08-02T09:10:13.229Z] GET /api/stores from unknown origin
+[2025-08-02T09:10:13.230Z] [LOG] [2025-08-02T09:10:13.230Z] GET /api/stores
+[2025-08-02T09:10:19.407Z] [LOG] [2025-08-02T09:10:19.407Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:10:19.410Z] [LOG] [2025-08-02T09:10:19.410Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:19.426Z] [LOG] [2025-08-02T09:10:19.426Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:19.443Z] [LOG] [2025-08-02T09:10:19.443Z] GET /api/health
+[2025-08-02T09:10:19.630Z] [LOG] [2025-08-02T09:10:19.630Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:10:19.631Z] [LOG] [2025-08-02T09:10:19.631Z] GET /api/auth/me
+[2025-08-02T09:10:20.182Z] [LOG] [2025-08-02T09:10:20.182Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:20.222Z] [LOG] [2025-08-02T09:10:20.222Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:20.224Z] [LOG] [2025-08-02T09:10:20.224Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:10:20.229Z] [LOG] [2025-08-02T09:10:20.229Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:20.238Z] [LOG] [2025-08-02T09:10:20.238Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:20.238Z] [LOG] [2025-08-02T09:10:20.238Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:20.240Z] [LOG] [2025-08-02T09:10:20.240Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:10:20.258Z] [LOG] [2025-08-02T09:10:20.258Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:20.261Z] [LOG] [2025-08-02T09:10:20.261Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:20.263Z] [LOG] [2025-08-02T09:10:20.263Z] GET /api/sales/stats
+[2025-08-02T09:10:20.267Z] [LOG] [2025-08-02T09:10:20.267Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:10:20.276Z] [LOG] [2025-08-02T09:10:20.276Z] GET /api/sales?limit=5
+[2025-08-02T09:10:20.280Z] [LOG] [2025-08-02T09:10:20.280Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:10:20.282Z] [LOG] [2025-08-02T09:10:20.282Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:10:20.291Z] [LOG] [2025-08-02T09:10:20.291Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:10:20.297Z] [LOG] [2025-08-02T09:10:20.297Z] GET /api/sales?status=pending&limit=1
+[2025-08-02T09:10:22.047Z] [LOG] [2025-08-02T09:10:22.047Z] GET /api/stores from unknown origin
+[2025-08-02T09:10:22.048Z] [LOG] [2025-08-02T09:10:22.048Z] GET /api/stores
+[2025-08-02T09:10:23.011Z] [LOG] [2025-08-02T09:10:23.011Z] GET /api/sales/stats from unknown origin
+[2025-08-02T09:10:23.012Z] [LOG] [2025-08-02T09:10:23.012Z] GET /api/sales/stats?startDate=2025-08-01&endDate=2025-08-02&groupBy=day
+[2025-08-02T09:10:24.316Z] [LOG] [2025-08-02T09:10:24.316Z] OPTIONS /repairs from http://localhost:8080
+[2025-08-02T09:10:24.467Z] [LOG] [2025-08-02T09:10:24.467Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:24.539Z] [LOG] [2025-08-02T09:10:24.539Z] GET /repairs from http://localhost:8080
+[2025-08-02T09:10:24.542Z] [LOG] [2025-08-02T09:10:24.542Z] GET /repairs
+[2025-08-02T09:10:24.546Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:10:26.278Z] [LOG] [2025-08-02T09:10:26.278Z] GET /api/users from unknown origin
+[2025-08-02T09:10:26.279Z] [LOG] [2025-08-02T09:10:26.279Z] GET /api/users?role=engineer
+[2025-08-02T09:10:26.883Z] [LOG] [2025-08-02T09:10:26.883Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:10:26.884Z] [LOG] [2025-08-02T09:10:26.884Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T09:10:26.920Z] [LOG] [2025-08-02T09:10:26.920Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:10:26.922Z] [LOG] [2025-08-02T09:10:26.922Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:27.243Z] [LOG] [2025-08-02T09:10:27.243Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:10:27.244Z] [LOG] [2025-08-02T09:10:27.244Z] GET /api/repairs?status=received
+[2025-08-02T09:10:35.035Z] [LOG] [2025-08-02T09:10:35.035Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:10:35.047Z] [LOG] [2025-08-02T09:10:35.047Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:35.271Z] [LOG] [2025-08-02T09:10:35.271Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:10:35.272Z] [LOG] [2025-08-02T09:10:35.272Z] GET /api/auth/me
+[2025-08-02T09:10:35.441Z] [LOG] [2025-08-02T09:10:35.441Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:35.489Z] [LOG] [2025-08-02T09:10:35.489Z] GET /api/health
+[2025-08-02T09:10:40.192Z] [LOG] [2025-08-02T09:10:40.192Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:10:40.192Z] [LOG] [2025-08-02T09:10:40.192Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:40.196Z] [LOG] [2025-08-02T09:10:40.196Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:40.196Z] [LOG] [2025-08-02T09:10:40.196Z] GET /api/health
+[2025-08-02T09:10:40.541Z] [LOG] [2025-08-02T09:10:40.540Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:10:40.541Z] [LOG] [2025-08-02T09:10:40.541Z] GET /api/auth/me
+[2025-08-02T09:10:41.403Z] [LOG] [2025-08-02T09:10:41.403Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:10:41.404Z] [LOG] [2025-08-02T09:10:41.404Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:41.407Z] [LOG] [2025-08-02T09:10:41.407Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:10:41.408Z] [LOG] [2025-08-02T09:10:41.408Z] GET /api/reports/summary
+[2025-08-02T09:10:41.773Z] [LOG] [2025-08-02T09:10:41.773Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:10:41.775Z] [LOG] [2025-08-02T09:10:41.775Z] GET /api/health
+[2025-08-02T09:10:46.591Z] [LOG] [2025-08-02T09:10:46.591Z] OPTIONS /repairs from http://localhost:8080
+[2025-08-02T09:10:46.591Z] [LOG] [2025-08-02T09:10:46.591Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:10:46.594Z] [LOG] [2025-08-02T09:10:46.594Z] GET /repairs from http://localhost:8080
+[2025-08-02T09:10:46.595Z] [LOG] [2025-08-02T09:10:46.595Z] GET /repairs
+[2025-08-02T09:10:46.596Z] [ERROR] Error: Error: ENOENT: no such file or directory, stat 'C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\backend\dist\index.html'
+[2025-08-02T09:11:36.054Z] [LOG] [2025-08-02T09:11:36.054Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:11:36.054Z] [LOG] [2025-08-02T09:11:36.054Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:11:36.374Z] [LOG] [2025-08-02T09:11:36.374Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:11:36.375Z] [LOG] [2025-08-02T09:11:36.375Z] GET /api/health
+[2025-08-02T09:11:36.470Z] [LOG] [2025-08-02T09:11:36.470Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:11:36.471Z] [LOG] [2025-08-02T09:11:36.471Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:11:36.474Z] [LOG] [2025-08-02T09:11:36.474Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:11:36.475Z] [LOG] [2025-08-02T09:11:36.475Z] GET /api/repairs
+[2025-08-02T09:12:10.453Z] [LOG] [2025-08-02T09:12:10.453Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:12:10.453Z] [LOG] [2025-08-02T09:12:10.453Z] GET /api/auth/me
+[2025-08-02T09:12:10.575Z] [LOG] [2025-08-02T09:12:10.575Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:12:10.578Z] [LOG] [2025-08-02T09:12:10.578Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:10.913Z] [LOG] [2025-08-02T09:12:10.913Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:12:10.933Z] [LOG] [2025-08-02T09:12:10.933Z] GET /api/health
+[2025-08-02T09:12:14.108Z] [LOG] [2025-08-02T09:12:14.108Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:14.113Z] [LOG] [2025-08-02T09:12:14.113Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:14.115Z] [LOG] [2025-08-02T09:12:14.115Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:12:14.117Z] [LOG] [2025-08-02T09:12:14.117Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:14.118Z] [LOG] [2025-08-02T09:12:14.118Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:14.119Z] [LOG] [2025-08-02T09:12:14.119Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:14.122Z] [LOG] [2025-08-02T09:12:14.122Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:12:14.125Z] [LOG] [2025-08-02T09:12:14.125Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:14.224Z] [LOG] [2025-08-02T09:12:14.224Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:14.235Z] [LOG] [2025-08-02T09:12:14.235Z] GET /api/sales/stats
+[2025-08-02T09:12:14.239Z] [LOG] [2025-08-02T09:12:14.239Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:12:14.250Z] [LOG] [2025-08-02T09:12:14.250Z] GET /api/sales?limit=5
+[2025-08-02T09:12:14.269Z] [LOG] [2025-08-02T09:12:14.269Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:14.270Z] [LOG] [2025-08-02T09:12:14.270Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:12:14.284Z] [LOG] [2025-08-02T09:12:14.284Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:12:14.288Z] [LOG] [2025-08-02T09:12:14.288Z] GET /api/sales?status=pending&limit=1
+[2025-08-02T09:12:14.608Z] [LOG] [2025-08-02T09:12:14.608Z] GET /api/stores from unknown origin
+[2025-08-02T09:12:14.608Z] [LOG] [2025-08-02T09:12:14.608Z] GET /api/stores
+[2025-08-02T09:12:16.663Z] [LOG] [2025-08-02T09:12:16.663Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:12:16.665Z] [LOG] [2025-08-02T09:12:16.665Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:16.671Z] [LOG] [2025-08-02T09:12:16.671Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:12:16.675Z] [LOG] [2025-08-02T09:12:16.674Z] GET /api/repairs
+[2025-08-02T09:12:18.632Z] [LOG] [2025-08-02T09:12:18.632Z] GET /api/users from unknown origin
+[2025-08-02T09:12:18.633Z] [LOG] [2025-08-02T09:12:18.633Z] GET /api/users?role=engineer
+[2025-08-02T09:12:19.236Z] [LOG] [2025-08-02T09:12:19.236Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:12:19.238Z] [LOG] [2025-08-02T09:12:19.238Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-02T09:12:19.243Z] [LOG] [2025-08-02T09:12:19.243Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:12:19.244Z] [LOG] [2025-08-02T09:12:19.244Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:19.260Z] [LOG] [2025-08-02T09:12:19.260Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:12:19.264Z] [LOG] [2025-08-02T09:12:19.264Z] GET /api/repairs?status=received
+[2025-08-02T09:12:20.149Z] [LOG] [2025-08-02T09:12:20.149Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:12:20.150Z] [LOG] [2025-08-02T09:12:20.150Z] GET /api/repairs
+[2025-08-02T09:12:24.112Z] [LOG] [2025-08-02T09:12:24.112Z] GET /api/customers from unknown origin
+[2025-08-02T09:12:24.112Z] [LOG] [2025-08-02T09:12:24.112Z] GET /api/customers
+[2025-08-02T09:12:24.116Z] [LOG] [2025-08-02T09:12:24.116Z] GET /api/customers/stats from unknown origin
+[2025-08-02T09:12:24.116Z] [LOG] [2025-08-02T09:12:24.116Z] GET /api/customers/stats
+[2025-08-02T09:12:30.136Z] [LOG] [2025-08-02T09:12:30.136Z] GET /api/auth/admin/users from unknown origin
+[2025-08-02T09:12:30.137Z] [LOG] [2025-08-02T09:12:30.137Z] GET /api/auth/admin/users
+[2025-08-02T09:12:30.141Z] [LOG] [2025-08-02T09:12:30.141Z] GET /api/auth/stores from unknown origin
+[2025-08-02T09:12:30.141Z] [LOG] [2025-08-02T09:12:30.141Z] GET /api/auth/stores
+[2025-08-02T09:12:30.142Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:12:30.142Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:12:30.147Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:12:30.148Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T09:12:39.365Z] [LOG] [2025-08-02T09:12:39.365Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:12:39.366Z] [LOG] [2025-08-02T09:12:39.366Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:39.368Z] [LOG] [2025-08-02T09:12:39.368Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:12:39.369Z] [LOG] [2025-08-02T09:12:39.369Z] GET /api/repairs
+[2025-08-02T09:12:39.995Z] [LOG] [2025-08-02T09:12:39.995Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:39.996Z] [LOG] [2025-08-02T09:12:39.996Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:39.997Z] [LOG] [2025-08-02T09:12:39.997Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:12:39.997Z] [LOG] [2025-08-02T09:12:39.997Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:39.999Z] [LOG] [2025-08-02T09:12:39.999Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:39.999Z] [LOG] [2025-08-02T09:12:39.999Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:40.001Z] [LOG] [2025-08-02T09:12:40.001Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:12:40.002Z] [LOG] [2025-08-02T09:12:40.002Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:40.005Z] [LOG] [2025-08-02T09:12:40.005Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:40.005Z] [LOG] [2025-08-02T09:12:40.005Z] GET /api/sales/stats
+[2025-08-02T09:12:40.008Z] [LOG] [2025-08-02T09:12:40.008Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:12:40.009Z] [LOG] [2025-08-02T09:12:40.009Z] GET /api/sales?limit=5
+[2025-08-02T09:12:40.013Z] [LOG] [2025-08-02T09:12:40.013Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:12:40.013Z] [LOG] [2025-08-02T09:12:40.013Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:12:40.016Z] [LOG] [2025-08-02T09:12:40.016Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:12:40.016Z] [LOG] [2025-08-02T09:12:40.016Z] GET /api/sales?status=pending&limit=1
+[2025-08-02T09:12:40.542Z] [LOG] [2025-08-02T09:12:40.542Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:12:40.570Z] [LOG] [2025-08-02T09:12:40.570Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:40.886Z] [LOG] [2025-08-02T09:12:40.886Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:12:40.887Z] [LOG] [2025-08-02T09:12:40.887Z] GET /api/health
+[2025-08-02T09:12:40.893Z] [LOG] [2025-08-02T09:12:40.893Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:12:40.894Z] [LOG] [2025-08-02T09:12:40.894Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:12:40.897Z] [LOG] [2025-08-02T09:12:40.897Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:12:40.898Z] [LOG] [2025-08-02T09:12:40.898Z] GET /api/reports/summary
+[2025-08-02T09:12:40.946Z] [LOG] [2025-08-02T09:12:40.946Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:12:40.947Z] [LOG] [2025-08-02T09:12:40.947Z] GET /api/health
+[2025-08-02T09:13:41.567Z] [LOG] [2025-08-02T09:13:41.567Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:13:41.568Z] [LOG] [2025-08-02T09:13:41.568Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:13:41.873Z] [LOG] [2025-08-02T09:13:41.873Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:13:41.874Z] [LOG] [2025-08-02T09:13:41.874Z] GET /api/health
+[2025-08-02T09:14:41.686Z] [LOG] [2025-08-02T09:14:41.686Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:14:41.687Z] [LOG] [2025-08-02T09:14:41.687Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:14:42.008Z] [LOG] [2025-08-02T09:14:42.008Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:14:42.009Z] [LOG] [2025-08-02T09:14:42.009Z] GET /api/health
+[2025-08-02T09:15:34.717Z] [LOG] [2025-08-02T09:15:34.717Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:15:34.720Z] [LOG] [2025-08-02T09:15:34.720Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:15:35.040Z] [LOG] [2025-08-02T09:15:35.040Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:15:35.041Z] [LOG] [2025-08-02T09:15:35.041Z] GET /api/health
+[2025-08-02T09:15:36.224Z] [LOG] [2025-08-02T09:15:36.223Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:15:36.224Z] [LOG] [2025-08-02T09:15:36.224Z] GET /api/auth/me
+[2025-08-02T09:15:37.869Z] [LOG] [2025-08-02T09:15:37.869Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:15:37.869Z] [LOG] [2025-08-02T09:15:37.869Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:15:37.872Z] [LOG] [2025-08-02T09:15:37.872Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:15:37.873Z] [LOG] [2025-08-02T09:15:37.873Z] GET /api/reports/summary
+[2025-08-02T09:16:57.913Z] [LOG] [2025-08-02T09:16:57.913Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:16:57.939Z] [LOG] [2025-08-02T09:16:57.939Z] GET /api/auth/me
+[2025-08-02T09:16:58.048Z] [LOG] [2025-08-02T09:16:58.048Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:16:58.079Z] [LOG] [2025-08-02T09:16:58.079Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:16:58.395Z] [LOG] [2025-08-02T09:16:58.395Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:16:58.397Z] [LOG] [2025-08-02T09:16:58.397Z] GET /api/health
+[2025-08-02T09:17:00.051Z] [LOG] [2025-08-02T09:17:00.051Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:00.056Z] [LOG] [2025-08-02T09:17:00.056Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:00.058Z] [LOG] [2025-08-02T09:17:00.058Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:17:00.063Z] [LOG] [2025-08-02T09:17:00.063Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:00.066Z] [LOG] [2025-08-02T09:17:00.066Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:00.071Z] [LOG] [2025-08-02T09:17:00.071Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:00.073Z] [LOG] [2025-08-02T09:17:00.073Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:17:00.074Z] [LOG] [2025-08-02T09:17:00.074Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:00.104Z] [LOG] [2025-08-02T09:17:00.104Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:00.117Z] [LOG] [2025-08-02T09:17:00.117Z] GET /api/sales/stats
+[2025-08-02T09:17:00.120Z] [LOG] [2025-08-02T09:17:00.120Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:17:00.122Z] [LOG] [2025-08-02T09:17:00.122Z] GET /api/sales?limit=5
+[2025-08-02T09:17:00.143Z] [LOG] [2025-08-02T09:17:00.142Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:00.153Z] [LOG] [2025-08-02T09:17:00.153Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:17:00.168Z] [LOG] [2025-08-02T09:17:00.168Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:17:00.174Z] [LOG] [2025-08-02T09:17:00.174Z] GET /api/sales?status=pending&limit=1
+[2025-08-02T09:17:00.788Z] [LOG] [2025-08-02T09:17:00.788Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:17:00.802Z] [LOG] [2025-08-02T09:17:00.802Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:00.808Z] [LOG] [2025-08-02T09:17:00.808Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:17:00.808Z] [LOG] [2025-08-02T09:17:00.808Z] GET /api/reports/summary
+[2025-08-02T09:17:38.177Z] [LOG] [2025-08-02T09:17:38.177Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:17:38.238Z] [LOG] [2025-08-02T09:17:38.238Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:38.321Z] [LOG] [2025-08-02T09:17:38.321Z] GET /api/auth/me from unknown origin
+[2025-08-02T09:17:38.359Z] [LOG] [2025-08-02T09:17:38.359Z] GET /api/auth/me
+[2025-08-02T09:17:38.710Z] [LOG] [2025-08-02T09:17:38.710Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:17:38.763Z] [LOG] [2025-08-02T09:17:38.763Z] GET /api/health
+[2025-08-02T09:17:41.231Z] [LOG] [2025-08-02T09:17:41.231Z] GET /api/auth/stores from unknown origin
+[2025-08-02T09:17:41.246Z] [LOG] [2025-08-02T09:17:41.246Z] GET /api/auth/stores
+[2025-08-02T09:17:41.247Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:17:41.248Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:17:41.251Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:17:41.254Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T09:17:43.974Z] [LOG] [2025-08-02T09:17:43.973Z] POST /api/auth/login from http://localhost:8080
+[2025-08-02T09:17:43.974Z] [LOG] [2025-08-02T09:17:43.974Z] POST /api/auth/login
+[2025-08-02T09:17:43.977Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf791"}
+[2025-08-02T09:17:43.986Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"},"isActive":true}
+[2025-08-02T09:17:43.991Z] [LOG] Attempting password verification...
+[2025-08-02T09:17:44.166Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf791"}
+[2025-08-02T09:17:44.215Z] [LOG] [2025-08-02T09:17:44.215Z] OPTIONS /api/reports/summary from http://localhost:8080
+[2025-08-02T09:17:44.237Z] [LOG] [2025-08-02T09:17:44.237Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:44.242Z] [LOG] [2025-08-02T09:17:44.242Z] GET /api/reports/summary from http://localhost:8080
+[2025-08-02T09:17:44.242Z] [LOG] [2025-08-02T09:17:44.242Z] GET /api/reports/summary
+[2025-08-02T09:17:44.312Z] [LOG] [2025-08-02T09:17:44.312Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T09:17:44.322Z] [LOG] [2025-08-02T09:17:44.322Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:44.382Z] [LOG] [2025-08-02T09:17:44.382Z] GET /api/health from http://localhost:8080
+[2025-08-02T09:17:44.428Z] [LOG] [2025-08-02T09:17:44.428Z] GET /api/health
+[2025-08-02T09:17:46.232Z] [LOG] [2025-08-02T09:17:46.232Z] OPTIONS /api/repairs from http://localhost:8080
+[2025-08-02T09:17:46.232Z] [LOG] [2025-08-02T09:17:46.232Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:46.235Z] [LOG] [2025-08-02T09:17:46.235Z] GET /api/repairs from http://localhost:8080
+[2025-08-02T09:17:46.235Z] [LOG] [2025-08-02T09:17:46.235Z] GET /api/repairs
+[2025-08-02T09:17:46.867Z] [LOG] [2025-08-02T09:17:46.867Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:46.872Z] [LOG] [2025-08-02T09:17:46.872Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:46.873Z] [LOG] [2025-08-02T09:17:46.873Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:17:46.876Z] [LOG] [2025-08-02T09:17:46.876Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:46.878Z] [LOG] [2025-08-02T09:17:46.878Z] OPTIONS /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:46.879Z] [LOG] [2025-08-02T09:17:46.879Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:46.884Z] [LOG] [2025-08-02T09:17:46.884Z] OPTIONS /api/sales from http://localhost:8080
+[2025-08-02T09:17:46.888Z] [LOG] [2025-08-02T09:17:46.888Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T09:17:46.890Z] [LOG] [2025-08-02T09:17:46.890Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:46.892Z] [LOG] [2025-08-02T09:17:46.892Z] GET /api/sales/stats
+[2025-08-02T09:17:46.924Z] [LOG] [2025-08-02T09:17:46.924Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:17:46.930Z] [LOG] [2025-08-02T09:17:46.930Z] GET /api/sales?limit=5
+[2025-08-02T09:17:46.951Z] [LOG] [2025-08-02T09:17:46.951Z] GET /api/sales/stats from http://localhost:8080
+[2025-08-02T09:17:46.951Z] [LOG] [2025-08-02T09:17:46.951Z] GET /api/sales/stats?startDate=2025-08-02T00:00:00.000Z&endDate=2025-08-02T23:59:59.999Z
+[2025-08-02T09:17:46.966Z] [LOG] [2025-08-02T09:17:46.966Z] GET /api/sales from http://localhost:8080
+[2025-08-02T09:17:46.970Z] [LOG] [2025-08-02T09:17:46.970Z] GET /api/sales?status=pending&limit=1
