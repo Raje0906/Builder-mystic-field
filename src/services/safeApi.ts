@@ -1,16 +1,16 @@
 // Safe API client that gracefully handles backend unavailability
 
-// Determine the base URL based on the environment
+// Log environment for debugging
+console.log('Environment:', import.meta.env.MODE);
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+
+// Force production URL in all environments to ensure consistency
 const getApiBaseUrl = (): string => {
-  // In production, use the environment variable or relative URL
-  if (import.meta.env.PROD) {
-    const prodUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
-    // Ensure no trailing slash
-    return prodUrl.endsWith('/') ? prodUrl.slice(0, -1) : prodUrl;
-  }
-  
-  // In development, use the local backend
-  return 'http://localhost:3002';
+  // Always use production URL, regardless of environment
+  const prodUrl = 'https://laptop-crm-backend.onrender.com';
+  const url = prodUrl.endsWith('/') ? prodUrl.slice(0, -1) : prodUrl;
+  console.log('Using API URL:', url);
+  return url;
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -33,12 +33,12 @@ class SafeApiClient {
     });
   }
 
-  private async checkBackendAvailability(): Promise<void> {
+  private async checkBackendAvailability(): Promise<boolean> {
     const now = Date.now();
 
     // If already checking or not enough time has passed since last check
     if (this.isChecking || (now - this.lastCheck < this.checkInterval && this.retryCount === 0)) {
-      return;
+      return this.isBackendAvailable;
     }
 
     this.isChecking = true;
@@ -48,22 +48,33 @@ class SafeApiClient {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      const response = await fetch(`${API_BASE_URL}/health`, {
+      console.log(`🔍 Checking backend availability at: ${API_BASE_URL}/api/health`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/health`, {
         signal: controller.signal,
         method: "GET",
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       clearTimeout(timeoutId);
       
       if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Backend health check successful:', data);
         this.isBackendAvailable = true;
         this.retryCount = 0; // Reset retry counter on success
-        console.log("✅ Backend server is available");
+        return true;
       } else {
-        throw new Error(`Health check failed with status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Health check failed with status:', response.status, errorText);
+        this.isBackendAvailable = false;
+        return false;
       }
     } catch (error) {
+      console.error('❌ Error during health check:', error);
       this.isBackendAvailable = false;
       this.retryCount++;
       
@@ -79,6 +90,7 @@ class SafeApiClient {
           setTimeout(() => this.checkBackendAvailability(), CONNECTION_RETRY_DELAY);
         }
       }
+      return false;
     } finally {
       this.isChecking = false;
     }

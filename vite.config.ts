@@ -6,15 +6,27 @@ export default defineConfig(({ mode }) => {
   // Load VITE_ variables from .env files
   const env = loadEnv(mode, process.cwd());
 
+  // Log environment variables for debugging
+  console.log('Environment variables:', {
+    mode,
+    VITE_API_URL: env.VITE_API_URL,
+    NODE_ENV: process.env.NODE_ENV
+  });
+
   return {
     root: __dirname,
     publicDir: 'public',
     define: {
       'process.env': {},
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
+      // Explicitly define each environment variable
+      'import.meta.env.MODE': JSON.stringify(mode),
+      'import.meta.env.PROD': JSON.stringify(mode === 'production'),
+      'import.meta.env.DEV': JSON.stringify(mode === 'development'),
+      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com'),
       __APP_ENV__: JSON.stringify(mode),
     },
-    envPrefix: 'VITE_',
+    // Only expose VITE_ prefixed environment variables to the client
+    envPrefix: ['VITE_'],
     plugins: [
       react(),
       // Disable service worker in development

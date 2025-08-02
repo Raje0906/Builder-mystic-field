@@ -11,5 +11,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Unregister service workers in production -->
+    <script>
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const script = document.createElement('script');
+        script.src = '/sw-unregister.js';
+        document.body.appendChild(script);
+      }
+    </script>
   </body>
 </html>

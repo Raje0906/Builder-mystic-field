@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .env-var {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-left: 4px solid #4CAF50;
+    }
+    .error {
+      border-left-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <h1>Environment Variables Test</h1>
+  
+  <div class="env-var">
+    <strong>import.meta.env.MODE:</strong>
+    <pre id="mode">Loading...</pre>
+  </div>
+  
+  <div class="env-var">
+    <strong>import.meta.env.PROD:</strong>
+    <pre id="prod">Loading...</pre>
+  </div>
+  
+  <div class="env-var">
+    <strong>import.meta.env.VITE_API_URL:</strong>
+    <pre id="apiUrl">Loading...</pre>
+  </div>
+  
+  <div class="env-var">
+    <strong>API Health Check:</strong>
+    <pre id="healthCheck">Checking...</pre>
+  </div>
+
+  <script>
+    // Display environment variables
+    document.getElementById('mode').textContent = JSON.stringify(import.meta.env.MODE, null, 2);
+    document.getElementById('prod').textContent = JSON.stringify(import.meta.env.PROD, null, 2);
+    document.getElementById('apiUrl').textContent = JSON.stringify(import.meta.env.VITE_API_URL, null, 2);
+
+    // Test API connection
+    async function testApiConnection() {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const healthCheckEl = document.getElementById('healthCheck');
+      
+      if (!apiUrl) {
+        healthCheckEl.textContent = 'VITE_API_URL is not set';
+        healthCheckEl.parentElement.classList.add('error');
+        return;
+      }
+
+      try {
+        healthCheckEl.textContent = `Testing connection to: ${apiUrl}/health`;
+        const response = await fetch(`${apiUrl}/health`);
+        const data = await response.json();
+        healthCheckEl.textContent = `✅ Success! Response: ${JSON.stringify(data, null, 2)}`;
+      } catch (error) {
+        healthCheckEl.textContent = `❌ Error: ${error.message}\n\nMake sure CORS is properly configured on the backend.`;
+        healthCheckEl.parentElement.classList.add('error');
+      }
+    }
+
+    // Run the test
+    testApiConnection();
+  </script>
+</body>
+</html>
