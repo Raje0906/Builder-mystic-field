@@ -3248,3 +3248,29 @@
 [2025-08-02T09:51:03.650Z] [LOG] 🔍 Querying stores from database...
 [2025-08-02T09:51:03.653Z] [LOG] ✅ Found 3 stores
 [2025-08-02T09:51:03.653Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T11:43:16.153Z] [LOG] [2025-08-02T11:43:16.153Z] GET /api/health from https://world-laptop.vercel.app
+[2025-08-02T11:43:16.153Z] [LOG] [2025-08-02T11:43:16.153Z] GET /api/health
+[2025-08-02T11:44:20.559Z] [LOG] [2025-08-02T11:44:20.559Z] GET /api/health from https://world-laptop.vercel.app
+[2025-08-02T11:44:20.560Z] [LOG] [2025-08-02T11:44:20.560Z] GET /api/health
+[2025-08-02T11:46:08.281Z] [LOG] [2025-08-02T11:46:08.281Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T11:46:08.283Z] [LOG] [2025-08-02T11:46:08.283Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T11:46:08.285Z] [LOG] [2025-08-02T11:46:08.285Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T11:46:08.286Z] [LOG] [2025-08-02T11:46:08.286Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T11:46:08.602Z] [LOG] [2025-08-02T11:46:08.602Z] GET /api/health from http://localhost:8080
+[2025-08-02T11:46:08.613Z] [LOG] [2025-08-02T11:46:08.613Z] GET /api/health
+[2025-08-02T11:46:08.615Z] [LOG] [2025-08-02T11:46:08.615Z] GET /api/health from http://localhost:8080
+[2025-08-02T11:46:08.624Z] [LOG] [2025-08-02T11:46:08.624Z] GET /api/health
+[2025-08-02T11:46:09.751Z] [LOG] [2025-08-02T11:46:09.751Z] GET /api/auth/stores from unknown origin
+[2025-08-02T11:46:09.752Z] [LOG] [2025-08-02T11:46:09.752Z] GET /api/auth/stores
+[2025-08-02T11:46:09.752Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T11:46:09.752Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T11:46:09.756Z] [LOG] ✅ Found 3 stores
+[2025-08-02T11:46:09.756Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T11:46:09.884Z] [LOG] [2025-08-02T11:46:09.884Z] GET /api/auth/stores from unknown origin
+[2025-08-02T11:46:09.884Z] [LOG] [2025-08-02T11:46:09.884Z] GET /api/auth/stores
+[2025-08-02T11:46:09.885Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T11:46:09.885Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T11:46:09.888Z] [LOG] ✅ Found 3 stores
+[2025-08-02T11:46:09.888Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T11:55:26.778Z] [LOG] [2025-08-02T11:55:26.778Z] GET /api/health from https://world-laptop.vercel.app
+[2025-08-02T11:55:26.779Z] [LOG] [2025-08-02T11:55:26.779Z] GET /api/health

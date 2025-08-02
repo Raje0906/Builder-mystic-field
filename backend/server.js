@@ -27,6 +27,10 @@ const logStream = fs.createWriteStream('server.log', { flags: 'a' });
 const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 
+// Define __filename and __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 console.log = function(...args) {
   const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
   logStream.write(`[${new Date().toISOString()}] [LOG] ${message}\n`);
@@ -228,11 +232,29 @@ apiRoutes.forEach(route => {
 });
 
 // Serve static files based on environment
-const clientBuildPath = path.join(process.cwd(), 'dist');
 
-// Check if we're running in production or if the client build exists
+// Try multiple possible locations for the client build
+const possibleClientPaths = [
+  path.join(process.cwd(), 'dist'),                    // For local development
+  path.join(process.cwd(), '..', 'dist'),              // For some deployment setups
+  path.join(process.cwd(), '..', '..', 'dist'),        // For Render.com
+  path.join(process.cwd(), '..', '..', '..', 'dist'),  // For deeper nesting
+  '/app/dist',                                         // Common Docker/container path
+  '/var/task/dist',                                    // AWS Lambda
+  '/opt/render/project/backend/dist'                   // Render.com backend path
+];
+
+// Find the first existing client build path
+let clientBuildPath = '';
+for (const possiblePath of possibleClientPaths) {
+  if (fs.existsSync(possiblePath)) {
+    clientBuildPath = possiblePath;
+    break;
+  }
+}
+
 const isProduction = process.env.NODE_ENV === 'production';
-const clientBuildExists = fs.existsSync(clientBuildPath);
+const clientBuildExists = clientBuildPath && fs.existsSync(clientBuildPath);
 
 console.log(`Environment: ${isProduction ? 'production' : 'development'}`);
 console.log(`Client build path: ${clientBuildPath}`);
@@ -240,37 +262,57 @@ console.log(`Client build exists: ${clientBuildExists}`);
 
 // Serve static files if they exist
 if (clientBuildExists) {
-  console.log('Serving static files from:', clientBuildPath);
+  console.log(`✅ Serving static files from: ${clientBuildPath}`);
   
   // Serve static files from the React app
-  app.use(express.static(clientBuildPath));
+  app.use(express.static(clientBuildPath, {
+    etag: true,
+    lastModified: true,
+    maxAge: '1d',
+    setHeaders: (res, path) => {
+      if (path.endsWith('.html')) {
+        // Prevent caching of HTML files
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.setHeader('Surrogate-Control', 'no-store');
+      }
+    }
+  }));
   
   // Handle React routing, return all requests to React app
   app.get('*', (req, res) => {
-    console.log(`Serving index.html for ${req.path}`);
-    res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
+    const indexPath = path.join(clientBuildPath, 'index.html');
+    console.log(`📤 Serving index.html for ${req.path} from ${indexPath}`);
+    
+    res.sendFile(indexPath, (err) => {
       if (err) {
-        console.error('Error sending file:', err);
+        console.error('❌ Error sending file:', err);
         res.status(500).json({
           error: 'Error serving the application',
           path: req.path,
-          resolvedPath: path.join(clientBuildPath, 'index.html')
+          resolvedPath: indexPath,
+          errorDetails: err.message,
+          timestamp: new Date().toISOString()
         });
       }
     });
   });
 } else {
   // If no client build exists, just serve the API
-  console.log('No client build found, serving API only');
+  console.warn('⚠️ No client build found, serving API only');
   
   app.get('/', (req, res) => {
     res.json({
       message: 'Welcome to the Laptop Store CRM API',
       status: 'running',
-      environment: process.env.NODE_ENV,
+      environment: process.env.NODE_ENV || 'development',
       timestamp: new Date().toISOString(),
       clientBuildAvailable: false,
-      api_docs: '/api'
+      api_docs: '/api',
+      possibleClientPaths: possibleClientPaths,
+      currentWorkingDir: process.cwd(),
+      filesInRoot: fs.readdirSync(process.cwd())
     });
   });
   
@@ -279,7 +321,11 @@ if (clientBuildExists) {
     res.status(404).json({
       error: 'Not Found',
       message: `The requested resource ${req.path} was not found on this server.`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      clientBuildPath: clientBuildPath,
+      currentWorkingDir: process.cwd(),
+      filesInRoot: fs.readdirSync(process.cwd())
     });
   });
 }
