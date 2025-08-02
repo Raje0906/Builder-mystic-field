@@ -92,51 +92,73 @@ const PORT = process.env.PORT || 3002;
 // Add request logging
 // CORS configuration must come before any route definitions
 // Allowed origins
+// Default allowed origins for development
 const allowedOrigins = [
-  'https://world-laptop.vercel.app',
   'http://localhost:3000',
-  'http://localhost:8080',
-  'http://127.0.0.1:8080',
+  'http://127.0.0.1:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3001',
   'http://localhost:3002',
-  'http://127.0.0.1:3002'
+  'http://127.0.0.1:3002',
+  'https://world-laptop.vercel.app',  // Production frontend URL
+  'https://*.vercel.app'              // Allow all Vercel preview deployments
 ];
 
 // Add any additional origins from environment variable
 if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(...process.env.FRONTEND_URL.split(','));
+  const additionalOrigins = process.env.FRONTEND_URL.split(',')
+    .map(url => url.trim())
+    .filter(url => url);
+  allowedOrigins.push(...additionalOrigins);
 }
 
-// Remove duplicates
+// Remove duplicates and log the final list
 const uniqueOrigins = [...new Set(allowedOrigins)];
 console.log('Allowed CORS origins:', uniqueOrigins);
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps, curl, or server-side requests)
+    if (!origin) {
+      console.log('No origin - allowing (server-side request)');
+      return callback(null, true);
+    }
     
     // In development, allow all localhost origins
     if (process.env.NODE_ENV === 'development') {
       const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-      if (isLocalhost) return callback(null, true);
+      if (isLocalhost) {
+        console.log(`Development origin allowed: ${origin}`);
+        return callback(null, true);
+      }
     }
     
-    // Check if the origin is in the allowed list or is a subdomain of an allowed origin
-    const isAllowed = uniqueOrigins.some(allowedOrigin => 
-      origin === allowedOrigin || 
-      origin.startsWith(allowedOrigin.replace(/\*$/, ''))
-    );
+    // Check if the origin is in the allowed list
+    const isAllowed = uniqueOrigins.some(allowedOrigin => {
+      // Exact match
+      if (origin === allowedOrigin) return true;
+      
+      // Wildcard subdomain match (e.g., *.vercel.app)
+      if (allowedOrigin.startsWith('*.')) {
+        const domain = allowedOrigin.substring(2);
+        return origin.endsWith(domain);
+      }
+      
+      return false;
+    });
     
-    console.log(`Origin check: ${origin} - ${isAllowed ? 'Allowed' : 'Blocked'}`);
+    console.log(`Origin check: ${origin} - ${isAllowed ? '✅ Allowed' : '❌ Blocked'}`);
     
     if (!isAllowed) {
-      const msg = `The CORS policy for this site does not allow access from ${origin}`;
+      const msg = `The CORS policy for this site does not allow access from ${origin}. Allowed origins: ${uniqueOrigins.join(', ')}`;
       console.warn(msg);
       return callback(new Error(msg), false);
     }
+    
     return callback(null, true);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true,  // Important for cookies, authorization headers with HTTPS
   allowedHeaders: [
     'Content-Type',
     'Authorization',
@@ -146,11 +168,17 @@ const corsOptions = {
     'X-Refresh-Token',
     'Cache-Control',
     'Pragma',
-    'Expires'
+    'Expires',
+    'Origin',
+    'Accept-Encoding',
+    'Accept-Language'
   ],
   exposedHeaders: [
     'Content-Range',
     'X-Total-Count',
+    'X-Pagination-Total',
+    'X-Pagination-Page',
+    'X-Pagination-Limit',
     'X-Access-Token',
     'X-Refresh-Token',
     'Content-Length',

@@ -2197,3 +2197,134 @@
 [2025-08-02T07:26:00.098Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
 [2025-08-02T07:26:03.610Z] [LOG] [2025-08-02T07:26:03.610Z] GET /health
 [2025-08-02T07:26:06.520Z] [LOG] [2025-08-02T07:26:06.520Z] GET /health
+[2025-08-02T07:26:29.810Z] [LOG] [2025-08-02T07:26:29.810Z] GET /api/auth/stores
+[2025-08-02T07:26:29.814Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:26:29.815Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:26:29.818Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:26:29.819Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:26:29.876Z] [LOG] [2025-08-02T07:26:29.876Z] GET /health
+[2025-08-02T07:26:32.442Z] [LOG] [2025-08-02T07:26:32.442Z] GET /health
+[2025-08-02T07:26:35.246Z] [LOG] [2025-08-02T07:26:35.246Z] GET /health
+[2025-08-02T07:27:05.264Z] [LOG] [2025-08-02T07:27:05.264Z] GET /api/auth/stores
+[2025-08-02T07:27:05.265Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:27:05.266Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:27:05.271Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:27:05.348Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:27:05.379Z] [LOG] [2025-08-02T07:27:05.379Z] GET /health
+[2025-08-02T07:27:08.252Z] [LOG] [2025-08-02T07:27:08.252Z] GET /health
+[2025-08-02T07:27:11.244Z] [LOG] [2025-08-02T07:27:11.244Z] GET /health
+[2025-08-02T07:27:32.674Z] [LOG] [2025-08-02T07:27:32.674Z] GET /api/auth/stores
+[2025-08-02T07:27:32.674Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:27:32.675Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:27:32.678Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:27:32.678Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:28:27.302Z] [LOG] [2025-08-02T07:28:27.302Z] GET /api/auth/stores
+[2025-08-02T07:28:27.303Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:28:27.305Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:28:27.308Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:28:27.309Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:29:04.397Z] [LOG] [2025-08-02T07:29:04.397Z] GET /api/auth/stores
+[2025-08-02T07:29:04.397Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:29:04.398Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:29:04.401Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:29:04.402Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:29:34.437Z] [LOG] [2025-08-02T07:29:34.437Z] GET /api/auth/stores
+[2025-08-02T07:29:34.516Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:29:34.726Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:29:34.779Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:29:34.808Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:29:43.671Z] [LOG] [2025-08-02T07:29:43.671Z] GET /api/auth/stores
+[2025-08-02T07:29:43.671Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:29:43.672Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:29:43.675Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:29:43.712Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:30:35.569Z] [LOG] [2025-08-02T07:30:35.569Z] GET /api/auth/stores
+[2025-08-02T07:30:35.570Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:30:35.570Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:30:35.573Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:30:35.573Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:30:51.357Z] [LOG] [2025-08-02T07:30:51.357Z] GET /api/auth/stores
+[2025-08-02T07:30:51.357Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:30:51.357Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:30:51.360Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:30:51.361Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:31:35.830Z] [LOG] [2025-08-02T07:31:35.830Z] GET /api/auth/stores
+[2025-08-02T07:31:35.831Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:31:35.831Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:31:35.834Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:31:35.834Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:33:10.840Z] [LOG] [2025-08-02T07:33:10.839Z] GET /api/auth/stores
+[2025-08-02T07:33:10.840Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:33:10.840Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:33:10.843Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:33:10.844Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:41:21.085Z] [LOG] [2025-08-02T07:41:21.085Z] GET /api/auth/stores
+[2025-08-02T07:41:21.086Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:41:21.091Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:41:21.097Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:41:21.097Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:44:13.277Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:44:15.498Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:44:15.510Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:44:17.567Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:44:17.571Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:48:12.464Z] [LOG] [2025-08-02T07:48:12.464Z] GET /api/auth/stores
+[2025-08-02T07:48:12.465Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:48:12.465Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:48:12.468Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:48:12.469Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:48:32.998Z] [LOG] [2025-08-02T07:48:32.998Z] GET /api/auth/stores
+[2025-08-02T07:48:32.998Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:48:32.999Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:48:33.001Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:48:33.002Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...

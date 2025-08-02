@@ -174,9 +174,12 @@ export const initializeData = () => {
   }
 };
 
+// API base URL configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
+
 // Customer operations
 export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'active'): Promise<Customer[]> => {
-  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
+  const apiUrl = API_BASE_URL.endsWith('/api') ? API_BASE_URL : `${API_BASE_URL}/api`;
   try {
     const response = await fetch(`${apiUrl}/customers${status !== 'all' ? `?status=${status}` : ''}`);
     if (!response.ok) {
@@ -199,7 +202,7 @@ export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'acti
 };
 
 export const getCustomer = async (id: string): Promise<Customer | null> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = API_BASE_URL.endsWith('/api') ? API_BASE_URL : `${API_BASE_URL}/api`;
   try {
     const response = await fetch(`${apiUrl}/customers/${id}`);
     if (!response.ok) {
