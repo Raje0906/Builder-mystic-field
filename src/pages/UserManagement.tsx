@@ -4,6 +4,7 @@ import { saveUsersToIDB, getUsersFromIDB } from '@/lib/dataUtils';
 
 interface User {
   _id: string;
+  id?: string; // Add optional id field for compatibility
   name: string;
   email: string;
   phone: string;
@@ -247,17 +248,18 @@ const UserManagement: React.FC = () => {
       await axios.delete(`${apiBase}/api/auth/admin/users/${userId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      // Optimistically remove from UI
-      setUsers(prev => prev.filter(u => u.id !== userId && u._id !== userId));
+      // Optimistically remove from UI using _id
+      setUsers(prev => prev.filter(u => u._id !== userId));
       // Remove from IndexedDB as well
       const usersFromIDB = await getUsersFromIDB();
-      const filtered = usersFromIDB.filter(u => u.id !== userId && u._id !== userId);
+      const filtered = usersFromIDB.filter(u => u._id !== userId);
       await saveUsersToIDB(filtered);
       await loadUsers(); // Refresh for consistency
     } catch (err: any) {
       const message = err.response?.data?.message || err.message || 'Failed to delete user';
       if (err.response && err.response.status === 404) {
-        setUsers(prev => prev.filter(u => u.id !== userId && u._id !== userId));
+        // If 404, remove from UI using _id
+        setUsers(prev => prev.filter(u => u._id !== userId));
         alert('User already deleted (404). Removed from UI.');
       } else {
         alert(message);
