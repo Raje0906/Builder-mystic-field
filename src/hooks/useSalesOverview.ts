@@ -47,10 +47,10 @@ export function useSalesOverview() {
         const endOfDay = `${yyyy}-${mm}-${dd}T23:59:59.999Z`;
 
         const [statsResponse, salesResponse, todayStatsResponse, pendingOrdersResponse] = await Promise.all([
-          safeApiClient.safeRequest<{ data: SalesStats }>('/sales/stats'),
-          safeApiClient.safeRequest<{ data: { sales: Sale[] } }>('/sales?limit=5'),
-          safeApiClient.safeRequest<{ data: SalesStats }>(`/sales/stats?startDate=${startOfDay}&endDate=${endOfDay}`),
-          safeApiClient.safeRequest<{ data: { sales: Sale[], pagination: { total: number } } }>(`/sales?status=pending&limit=1`)
+          safeApiClient.safeRequest<{ data: SalesStats }>('/api/sales/stats'),
+          safeApiClient.safeRequest<{ data: { sales: Sale[] } }>('/api/sales?limit=5'),
+          safeApiClient.safeRequest<{ data: SalesStats }>(`/api/sales/stats?startDate=${startOfDay}&endDate=${endOfDay}`),
+          safeApiClient.safeRequest<{ data: { sales: Sale[], pagination: { total: number } } }>(`/api/sales?status=pending&limit=1`)
         ]);
 
         if (statsResponse.success && statsResponse.data) {

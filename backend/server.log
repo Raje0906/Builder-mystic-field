@@ -2393,3 +2393,373 @@
 [2025-08-02T07:54:58.116Z] [LOG] 🔍 Querying stores from database...
 [2025-08-02T07:54:58.119Z] [LOG] ✅ Found 3 stores
 [2025-08-02T07:54:58.120Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:55:11.967Z] [LOG] [2025-08-02T07:55:11.967Z] GET /api/auth/stores
+[2025-08-02T07:55:11.967Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:55:11.968Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:55:11.971Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:55:11.971Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:55:14.607Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:55:16.722Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:55:16.726Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:55:19.760Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from https://world-laptop.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:113:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T07:56:05.001Z] [LOG] [2025-08-02T07:56:05.001Z] GET /api/auth/stores
+[2025-08-02T07:56:05.002Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:56:05.002Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:56:05.005Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:56:05.006Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T07:58:12.809Z] [LOG] [2025-08-02T07:58:12.809Z] GET /api/auth/stores
+[2025-08-02T07:58:12.830Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T07:58:12.831Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T07:58:12.864Z] [LOG] ✅ Found 3 stores
+[2025-08-02T07:58:12.867Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:37:47.819Z] [LOG] [2025-08-02T08:37:47.819Z] GET /api/auth/stores
+[2025-08-02T08:37:47.822Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:37:47.825Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:37:47.831Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:37:47.845Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:37:53.213Z] [LOG] [2025-08-02T08:37:53.213Z] POST /api/auth/login
+[2025-08-02T08:37:53.268Z] [LOG] Login attempt: {"identifier":"admin@laptopstore.com","store_id":"686be7376d105189a96cf792"}
+[2025-08-02T08:37:53.277Z] [LOG] User found: {"id":"685eb8c1a7512c6387cf2b7e","name":"Admin User","email":"admin@laptopstore.com","role":"admin","store_id":{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"},"isActive":true}
+[2025-08-02T08:37:53.282Z] [LOG] Attempting password verification...
+[2025-08-02T08:37:53.588Z] [LOG] Login successful: {"userId":"685eb8c1a7512c6387cf2b7e","role":"admin","store":"686be7376d105189a96cf792"}
+[2025-08-02T08:40:15.997Z] [LOG] [2025-08-02T08:40:15.997Z] GET /api/auth/me
+[2025-08-02T08:40:25.867Z] [LOG] [2025-08-02T08:40:25.867Z] GET /api/auth/me
+[2025-08-02T08:51:03.682Z] [LOG] [2025-08-02T08:51:03.682Z] GET /api/auth/stores
+[2025-08-02T08:51:03.683Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:51:03.683Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:51:03.686Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:51:03.687Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:51:33.502Z] [LOG] [2025-08-02T08:51:33.502Z] GET /api/auth/stores
+[2025-08-02T08:51:33.502Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:51:33.503Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:51:33.506Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:51:33.508Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:52:39.346Z] [LOG] [2025-08-02T08:52:39.346Z] GET /api/auth/stores
+[2025-08-02T08:52:39.347Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:52:39.351Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:52:39.355Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:52:39.430Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:53:59.271Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-02T08:54:08.123Z] [LOG] Allowed CORS origins: ["http://localhost:3000","http://127.0.0.1:3000","http://localhost:3001","http://127.0.0.1:3001","http://localhost:3002","http://127.0.0.1:3002","https://world-laptop.vercel.app","https://*.vercel.app"]
+[2025-08-02T08:54:08.151Z] [LOG] Registering route: /api/auth
+[2025-08-02T08:54:08.153Z] [LOG] Registering route: /api/customers
+[2025-08-02T08:54:08.154Z] [LOG] Registering route: /api/products
+[2025-08-02T08:54:08.154Z] [LOG] Registering route: /api/sales
+[2025-08-02T08:54:08.155Z] [LOG] Registering route: /api/repairs
+[2025-08-02T08:54:08.155Z] [LOG] Registering route: /api/notifications
+[2025-08-02T08:54:08.156Z] [LOG] Registering route: /api/stores
+[2025-08-02T08:54:08.156Z] [LOG] Registering route: /api/reports
+[2025-08-02T08:54:08.156Z] [LOG] Registering route: /api/users
+[2025-08-02T08:54:08.157Z] [LOG] Registering route: /api
+[2025-08-02T08:54:08.158Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T08:54:08.169Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T08:54:08.169Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T08:54:08.171Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T08:54:08.171Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T08:54:08.173Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T08:54:08.173Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T08:54:08.174Z] [LOG]    - /api/auth
+[2025-08-02T08:54:08.174Z] [LOG]    - /api/customers
+[2025-08-02T08:54:08.174Z] [LOG]    - /api/products
+[2025-08-02T08:54:08.175Z] [LOG]    - /api/sales
+[2025-08-02T08:54:08.175Z] [LOG]    - /api/repairs
+[2025-08-02T08:54:08.176Z] [LOG]    - /api/notifications
+[2025-08-02T08:54:08.177Z] [LOG]    - /api/stores
+[2025-08-02T08:54:08.178Z] [LOG]    - /api/reports
+[2025-08-02T08:54:08.178Z] [LOG]    - /api/users
+[2025-08-02T08:54:08.179Z] [LOG]    - /api
+[2025-08-02T08:54:08.180Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T08:54:08.180Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T08:54:08.181Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T08:54:08.267Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:54:08.269Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:54:08.273Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:54:08.276Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T08:54:08.278Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T08:54:08.278Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:54:08.279Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:54:08.281Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:54:08.285Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T08:54:08.286Z] [LOG] MongoDB connection state: 1
+[2025-08-02T08:54:42.012Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-02T08:54:52.227Z] [LOG] Allowed CORS origins: ["http://localhost:3000","http://127.0.0.1:3000","http://localhost:3001","http://127.0.0.1:3001","http://localhost:3002","http://127.0.0.1:3002","https://world-laptop.vercel.app","https://*.vercel.app"]
+[2025-08-02T08:54:52.335Z] [LOG] Registering route: /api/auth
+[2025-08-02T08:54:52.342Z] [LOG] Registering route: /api/customers
+[2025-08-02T08:54:52.343Z] [LOG] Registering route: /api/products
+[2025-08-02T08:54:52.355Z] [LOG] Registering route: /api/sales
+[2025-08-02T08:54:52.360Z] [LOG] Registering route: /api/repairs
+[2025-08-02T08:54:52.361Z] [LOG] Registering route: /api/notifications
+[2025-08-02T08:54:52.362Z] [LOG] Registering route: /api/stores
+[2025-08-02T08:54:52.362Z] [LOG] Registering route: /api/reports
+[2025-08-02T08:54:52.362Z] [LOG] Registering route: /api/users
+[2025-08-02T08:54:52.364Z] [LOG] Registering route: /api
+[2025-08-02T08:54:52.411Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T08:54:52.482Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T08:54:52.500Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T08:54:52.514Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T08:54:52.532Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T08:54:52.542Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T08:54:52.564Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T08:54:52.584Z] [LOG]    - /api/auth
+[2025-08-02T08:54:52.648Z] [LOG]    - /api/customers
+[2025-08-02T08:54:52.660Z] [LOG]    - /api/products
+[2025-08-02T08:54:52.697Z] [LOG]    - /api/sales
+[2025-08-02T08:54:52.713Z] [LOG]    - /api/repairs
+[2025-08-02T08:54:52.757Z] [LOG]    - /api/notifications
+[2025-08-02T08:54:52.775Z] [LOG]    - /api/stores
+[2025-08-02T08:54:52.786Z] [LOG]    - /api/reports
+[2025-08-02T08:54:52.796Z] [LOG]    - /api/users
+[2025-08-02T08:54:52.810Z] [LOG]    - /api
+[2025-08-02T08:54:52.869Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T08:54:52.883Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T08:54:52.934Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T08:54:53.033Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:54:53.034Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:54:53.035Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:54:53.036Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T08:54:53.037Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T08:54:53.083Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:54:53.084Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:54:53.092Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:54:53.096Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T08:54:53.097Z] [LOG] MongoDB connection state: 1
+[2025-08-02T08:54:59.433Z] [LOG] No origin - allowing (server-side request)
+[2025-08-02T08:54:59.480Z] [LOG] [2025-08-02T08:54:59.480Z] GET /api/auth/stores
+[2025-08-02T08:54:59.498Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:54:59.710Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:54:59.894Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:55:00.133Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:55:00.171Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:55:00.182Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:55:02.330Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:55:02.453Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:55:06.921Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:55:06.924Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:57:52.439Z] [LOG] No origin - allowing (server-side request)
+[2025-08-02T08:57:52.458Z] [LOG] [2025-08-02T08:57:52.458Z] GET /api/auth/stores
+[2025-08-02T08:57:52.460Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T08:57:52.461Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T08:57:52.469Z] [LOG] ✅ Found 3 stores
+[2025-08-02T08:57:52.539Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T08:57:52.558Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:57:52.563Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:57:55.414Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:57:55.415Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:57:59.741Z] [LOG] Origin check: http://localhost:8080 - ❌ Blocked
+[2025-08-02T08:57:59.741Z] [ERROR] Error: Error: The CORS policy for this site does not allow access from http://localhost:8080. Allowed origins: http://localhost:3000, http://127.0.0.1:3000, http://localhost:3001, http://127.0.0.1:3001, http://localhost:3002, http://127.0.0.1:3002, https://world-laptop.vercel.app, https://*.vercel.app
+    at origin (file:///C:/Users/Rajea/OneDrive/Desktop/build3_check/Builder-mystic-field/backend/server.js:157:23)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:219:13
+    at optionsCallback (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:199:9)
+    at corsMiddleware (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\cors\lib\index.js:204:7)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\node_modules\express\lib\middleware\init.js:40:5)
+[2025-08-02T08:59:33.196Z] [LOG] Registering route: /api/auth
+[2025-08-02T08:59:33.198Z] [LOG] Registering route: /api/customers
+[2025-08-02T08:59:33.199Z] [LOG] Registering route: /api/products
+[2025-08-02T08:59:33.200Z] [LOG] Registering route: /api/sales
+[2025-08-02T08:59:33.200Z] [LOG] Registering route: /api/repairs
+[2025-08-02T08:59:33.200Z] [LOG] Registering route: /api/notifications
+[2025-08-02T08:59:33.200Z] [LOG] Registering route: /api/stores
+[2025-08-02T08:59:33.201Z] [LOG] Registering route: /api/reports
+[2025-08-02T08:59:33.201Z] [LOG] Registering route: /api/users
+[2025-08-02T08:59:33.201Z] [LOG] Registering route: /api
+[2025-08-02T08:59:33.202Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T08:59:33.214Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T08:59:33.215Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T08:59:33.215Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T08:59:33.218Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T08:59:33.218Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T08:59:33.220Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T08:59:33.221Z] [LOG]    - /api/auth
+[2025-08-02T08:59:33.222Z] [LOG]    - /api/customers
+[2025-08-02T08:59:33.223Z] [LOG]    - /api/products
+[2025-08-02T08:59:33.227Z] [LOG]    - /api/sales
+[2025-08-02T08:59:33.229Z] [LOG]    - /api/repairs
+[2025-08-02T08:59:33.230Z] [LOG]    - /api/notifications
+[2025-08-02T08:59:33.231Z] [LOG]    - /api/stores
+[2025-08-02T08:59:33.231Z] [LOG]    - /api/reports
+[2025-08-02T08:59:33.232Z] [LOG]    - /api/users
+[2025-08-02T08:59:33.232Z] [LOG]    - /api
+[2025-08-02T08:59:33.233Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T08:59:33.233Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T08:59:33.235Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T08:59:33.303Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:59:33.304Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:59:33.304Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:59:33.305Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T08:59:33.305Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T08:59:33.305Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:59:33.306Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:59:33.306Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:59:33.310Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T08:59:33.311Z] [LOG] MongoDB connection state: 1
+[2025-08-02T08:59:58.424Z] [LOG] Registering route: /api/auth
+[2025-08-02T08:59:58.426Z] [LOG] Registering route: /api/customers
+[2025-08-02T08:59:58.427Z] [LOG] Registering route: /api/products
+[2025-08-02T08:59:58.427Z] [LOG] Registering route: /api/sales
+[2025-08-02T08:59:58.427Z] [LOG] Registering route: /api/repairs
+[2025-08-02T08:59:58.428Z] [LOG] Registering route: /api/notifications
+[2025-08-02T08:59:58.428Z] [LOG] Registering route: /api/stores
+[2025-08-02T08:59:58.428Z] [LOG] Registering route: /api/reports
+[2025-08-02T08:59:58.428Z] [LOG] Registering route: /api/users
+[2025-08-02T08:59:58.428Z] [LOG] Registering route: /api
+[2025-08-02T08:59:58.429Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T08:59:58.440Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T08:59:58.441Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T08:59:58.441Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T08:59:58.442Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T08:59:58.442Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T08:59:58.442Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T08:59:58.443Z] [LOG]    - /api/auth
+[2025-08-02T08:59:58.443Z] [LOG]    - /api/customers
+[2025-08-02T08:59:58.443Z] [LOG]    - /api/products
+[2025-08-02T08:59:58.443Z] [LOG]    - /api/sales
+[2025-08-02T08:59:58.444Z] [LOG]    - /api/repairs
+[2025-08-02T08:59:58.444Z] [LOG]    - /api/notifications
+[2025-08-02T08:59:58.444Z] [LOG]    - /api/stores
+[2025-08-02T08:59:58.444Z] [LOG]    - /api/reports
+[2025-08-02T08:59:58.444Z] [LOG]    - /api/users
+[2025-08-02T08:59:58.444Z] [LOG]    - /api
+[2025-08-02T08:59:58.445Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T08:59:58.445Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T08:59:58.445Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T08:59:58.525Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:59:58.526Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:59:58.527Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:59:58.527Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T08:59:58.528Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T08:59:58.528Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T08:59:58.528Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T08:59:58.529Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T08:59:58.531Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T08:59:58.531Z] [LOG] MongoDB connection state: 1
+[2025-08-02T08:59:58.605Z] [LOG] Origin not allowed by CORS: http://localhost:8080
+[2025-08-02T08:59:58.607Z] [LOG] [2025-08-02T08:59:58.607Z] OPTIONS /api/health
+[2025-08-02T09:00:03.255Z] [LOG] Origin not allowed by CORS: http://localhost:8080
+[2025-08-02T09:00:03.256Z] [LOG] [2025-08-02T09:00:03.256Z] OPTIONS /api/health
+[2025-08-02T09:00:51.381Z] [LOG] [2025-08-02T09:00:51.381Z] GET /api/auth/stores
+[2025-08-02T09:00:51.395Z] [LOG] 🔍 /api/auth/stores endpoint hit
+[2025-08-02T09:00:51.407Z] [LOG] 🔍 Querying stores from database...
+[2025-08-02T09:00:51.427Z] [LOG] Origin not allowed by CORS: http://localhost:8080
+[2025-08-02T09:00:51.435Z] [LOG] [2025-08-02T09:00:51.435Z] OPTIONS /api/health
+[2025-08-02T09:00:51.521Z] [LOG] ✅ Found 3 stores
+[2025-08-02T09:00:51.670Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
+[2025-08-02T09:00:53.945Z] [LOG] Origin not allowed by CORS: http://localhost:8080
+[2025-08-02T09:00:53.972Z] [LOG] [2025-08-02T09:00:53.972Z] OPTIONS /api/health
+[2025-08-02T09:00:58.256Z] [LOG] Origin not allowed by CORS: http://localhost:8080
+[2025-08-02T09:00:58.257Z] [LOG] [2025-08-02T09:00:58.257Z] OPTIONS /api/health
+[2025-08-02T09:02:31.478Z] [LOG] ❌ MongoDB Disconnected

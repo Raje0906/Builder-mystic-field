@@ -96,6 +96,7 @@ const PORT = process.env.PORT || 3002;
 const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
+  'http://localhost:8080',
   'http://localhost:3001',
   'http://127.0.0.1:3001',
   'http://localhost:3002',
@@ -112,88 +113,38 @@ if (process.env.FRONTEND_URL) {
   allowedOrigins.push(...additionalOrigins);
 }
 
-// Remove duplicates and log the final list
-const uniqueOrigins = [...new Set(allowedOrigins)];
-console.log('Allowed CORS origins:', uniqueOrigins);
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, or server-side requests)
-    if (!origin) {
-      console.log('No origin - allowing (server-side request)');
-      return callback(null, true);
-    }
-    
-    // In development, allow all localhost origins
-    if (process.env.NODE_ENV === 'development') {
-      const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-      if (isLocalhost) {
-        console.log(`Development origin allowed: ${origin}`);
-        return callback(null, true);
-      }
-    }
-    
-    // Check if the origin is in the allowed list
-    const isAllowed = uniqueOrigins.some(allowedOrigin => {
-      // Exact match
-      if (origin === allowedOrigin) return true;
-      
-      // Wildcard subdomain match (e.g., *.vercel.app)
-      if (allowedOrigin.startsWith('*.')) {
-        const domain = allowedOrigin.substring(2);
-        return origin.endsWith(domain);
-      }
-      
-      return false;
-    });
-    
-    console.log(`Origin check: ${origin} - ${isAllowed ? '✅ Allowed' : '❌ Blocked'}`);
-    
-    if (!isAllowed) {
-      const msg = `The CORS policy for this site does not allow access from ${origin}. Allowed origins: ${uniqueOrigins.join(', ')}`;
-      console.warn(msg);
-      return callback(new Error(msg), false);
-    }
-    
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,  // Important for cookies, authorization headers with HTTPS
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'X-Access-Token',
-    'X-Refresh-Token',
-    'Cache-Control',
-    'Pragma',
-    'Expires',
-    'Origin',
-    'Accept-Encoding',
-    'Accept-Language'
-  ],
-  exposedHeaders: [
-    'Content-Range',
-    'X-Total-Count',
-    'X-Pagination-Total',
-    'X-Pagination-Page',
-    'X-Pagination-Limit',
-    'X-Access-Token',
-    'X-Refresh-Token',
-    'Content-Length',
-    'X-Foo', 
-    'X-Bar'
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
+// Simple CORS middleware for development
+const allowCors = (req, res, next) => {
+  const origin = req.headers.origin;
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} from ${origin || 'unknown origin'}`);
+  
+  // Always set CORS headers
+  res.header('Access-Control-Allow-Origin', origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   // Handle preflight requests
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  if (req.method === 'OPTIONS') {
+    console.log(`[${new Date().toISOString()}] Handling OPTIONS preflight for ${origin}`);
+    return res.status(200).end();
+  }
+  
+  next();
 };
 
-// Apply CORS middleware first
-app.use(cors(corsOptions));
+// Apply CORS middleware to all routes
+app.use(allowCors);
+
+// Add a test endpoint to verify CORS is working
+app.get('/api/test-cors', (req, res) => {
+  res.json({ 
+    message: 'CORS test successful!',
+    timestamp: new Date().toISOString(),
+    origin: req.headers.origin,
+    allowedOrigins: 'All origins allowed in development'
+  });
+});
 
 // Then apply other middleware
 app.use(helmet({

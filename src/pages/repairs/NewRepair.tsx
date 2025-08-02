@@ -141,7 +141,7 @@ export function NewRepair() {
 
   useEffect(() => {
     // Fetch engineer users from backend
-    fetch('http://localhost:3002/api/users?role=engineer')
+    fetch('/api/users?role=engineer')
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.data)) {

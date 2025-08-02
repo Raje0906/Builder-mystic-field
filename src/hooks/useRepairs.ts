@@ -27,7 +27,7 @@ export function useRepairs() {
   useEffect(() => {
     const fetchRepairs = async () => {
       setLoading(true);
-      const response = await safeApiClient.safeRequest<{ data: Repair[] }>('/repairs');
+      const response = await safeApiClient.safeRequest<{ data: Repair[] }>('/api/repairs');
       if (response.success && response.data) {
         setRepairs(response.data.data);
       } else {

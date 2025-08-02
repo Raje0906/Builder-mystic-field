@@ -16,7 +16,7 @@ export function useDashboardStats() {
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
-      const response = await safeApiClient.safeRequest<{ data: DashboardStats }>('/reports/summary');
+      const response = await safeApiClient.safeRequest<{ data: DashboardStats }>('/api/reports/summary');
       if (response.success && response.data) {
         setStats(response.data.data);
       } else {

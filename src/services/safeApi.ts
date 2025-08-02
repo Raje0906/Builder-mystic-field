@@ -4,19 +4,29 @@
 console.log('Environment:', import.meta.env.MODE);
 console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
-// Force production URL in all environments to ensure consistency
+// Determine the base URL based on the environment
 const getApiBaseUrl = (): string => {
-  // Always use production URL, regardless of environment
-  const prodUrl = 'https://laptop-crm-backend.onrender.com';
-  const url = prodUrl.endsWith('/') ? prodUrl.slice(0, -1) : prodUrl;
+  // Use localhost for development, production URL for Vercel
+  let baseUrl: string;
+  
+  if (import.meta.env.DEV) {
+    // Development environment - use localhost:3002
+    baseUrl = 'http://localhost:3002';
+  } else if (window.location.hostname.includes('vercel.app')) {
+    // Vercel deployment - use production URL
+    baseUrl = 'https://laptop-crm-backend.onrender.com';
+  } else {
+    // Fallback to environment variable or default production URL
+    baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
+  }
+  
+  // Ensure no trailing slash
+  const url = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   console.log('Using API URL:', url);
   return url;
 };
 
 const API_BASE_URL = getApiBaseUrl();
-
-// Add a small delay to prevent rapid reconnection attempts
-const CONNECTION_RETRY_DELAY = 2000; // 2 seconds
 
 class SafeApiClient {
   private isBackendAvailable: boolean = false;
@@ -46,48 +56,72 @@ class SafeApiClient {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      // Increased timeout to 15 seconds to handle slower backend responses
+      const timeoutId = setTimeout(() => {
+        console.warn('Health check timeout reached, aborting request');
+        controller.abort();
+      }, 15000);
 
       console.log(`🔍 Checking backend availability at: ${API_BASE_URL}/api/health`);
       
-      const response = await fetch(`${API_BASE_URL}/api/health`, {
-        signal: controller.signal,
-        method: "GET",
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/health`, {
+          signal: controller.signal,
+          method: "GET",
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
 
-      clearTimeout(timeoutId);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('✅ Backend health check successful:', data);
-        this.isBackendAvailable = true;
-        this.retryCount = 0; // Reset retry counter on success
-        return true;
-      } else {
-        const errorText = await response.text();
-        console.error('❌ Health check failed with status:', response.status, errorText);
-        this.isBackendAvailable = false;
-        return false;
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const data = await response.json().catch(() => ({}));
+          console.log('✅ Backend health check successful:', data);
+          this.isBackendAvailable = true;
+          this.retryCount = 0; // Reset retry counter on success
+          return true;
+        } else {
+          const errorText = await response.text().catch(() => 'No error details');
+          console.error('❌ Health check failed with status:', response.status, errorText);
+          this.isBackendAvailable = false;
+          return false;
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError; // Re-throw to be caught by the outer catch
       }
     } catch (error) {
-      console.error('❌ Error during health check:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Error during health check:', errorMessage);
+      
+      // Special handling for different error types
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          console.warn('Request was aborted, likely due to timeout');
+        } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+          console.warn('Network error - check internet connection or CORS configuration');
+        }
+      }
+      
       this.isBackendAvailable = false;
       this.retryCount++;
       
       // Only log warnings for the first few retries to avoid console spam
       if (this.retryCount <= this.maxRetries) {
+        const retryDelay = Math.min(1000 * Math.pow(2, this.retryCount), 30000); // Exponential backoff with max 30s
         console.warn(
-          `⚠️ Backend server unavailable (attempt ${this.retryCount}/${this.maxRetries}):`,
-          error instanceof Error ? error.message : 'Unknown error'
+          `⚠️ Backend server unavailable (attempt ${this.retryCount}/${this.maxRetries}). ` +
+          `Retrying in ${retryDelay/1000} seconds...`,
+          errorMessage
         );
         
-        // Schedule a retry after a delay
+        // Schedule a retry after a delay with exponential backoff
         if (this.retryCount < this.maxRetries) {
-          setTimeout(() => this.checkBackendAvailability(), CONNECTION_RETRY_DELAY);
+          setTimeout(() => this.checkBackendAvailability(), retryDelay);
         }
       }
       return false;
