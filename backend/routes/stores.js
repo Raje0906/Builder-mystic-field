@@ -1,5 +1,6 @@
 import express from "express";
 import { body, param, query, validationResult } from "express-validator";
+import mongoose from "mongoose";
 import Store from "../models/Store.js";
 
 const router = express.Router();
@@ -26,8 +27,11 @@ router.get(
   ],
   handleValidationErrors,
   async (req, res) => {
+    console.log('GET /api/stores - Request received');
     try {
       const { city, active } = req.query;
+      console.log('Query parameters:', { city, active });
+      
       let query = {};
       
       // Build query based on filters
@@ -38,7 +42,20 @@ router.get(
         query.status = active === 'true' ? 'active' : 'inactive';
       }
       
-      const stores = await Store.find(query).sort({ name: 1 });
+      console.log('MongoDB query:', JSON.stringify(query));
+      
+      // Add error handling for database connection
+      if (mongoose.connection.readyState !== 1) {
+        console.error('MongoDB not connected. Connection state:', mongoose.connection.readyState);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection error',
+          error: 'Not connected to database'
+        });
+      }
+      
+      const stores = await Store.find(query).sort({ name: 1 }).lean();
+      console.log(`Found ${stores.length} stores`);
       
       return res.status(200).json({
         success: true,
@@ -46,11 +63,22 @@ router.get(
         data: stores,
       });
     } catch (error) {
-      console.error('Error fetching stores:', error);
+      console.error('Error in GET /api/stores:', {
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code,
+        keyPattern: error.keyPattern,
+        keyValue: error.keyValue
+      });
+      
       res.status(500).json({
         success: false,
-        message: "Error fetching stores",
-        error: error.message,
+        message: 'Error fetching stores',
+        error: process.env.NODE_ENV === 'production' 
+          ? 'Internal server error' 
+          : error.message,
+        ...(process.env.NODE_ENV !== 'production' && { stack: error.stack })
       });
     }
   },
