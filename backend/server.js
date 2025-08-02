@@ -69,9 +69,6 @@ import healthRouter from './routes/health.js';
 import errorHandler from "./middleware/errorHandler.js";
 import { authenticateToken } from "./middleware/auth.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3002;

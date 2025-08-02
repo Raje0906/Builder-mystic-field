@@ -3274,3 +3274,53 @@
 [2025-08-02T11:46:09.888Z] [LOG] 📤 Sending response: {"success":true,"data":{"stores":[{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","coun...
 [2025-08-02T11:55:26.778Z] [LOG] [2025-08-02T11:55:26.778Z] GET /api/health from https://world-laptop.vercel.app
 [2025-08-02T11:55:26.779Z] [LOG] [2025-08-02T11:55:26.779Z] GET /api/health
+[2025-08-02T12:58:44.014Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-02T12:59:46.621Z] [LOG] Registering route: /api/auth
+[2025-08-02T12:59:46.622Z] [LOG] Registering route: /api/customers
+[2025-08-02T12:59:46.623Z] [LOG] Registering route: /api/products
+[2025-08-02T12:59:46.624Z] [LOG] Registering route: /api/sales
+[2025-08-02T12:59:46.625Z] [LOG] Registering route: /api/repairs
+[2025-08-02T12:59:46.625Z] [LOG] Registering route: /api/notifications
+[2025-08-02T12:59:46.625Z] [LOG] Registering route: /api/stores
+[2025-08-02T12:59:46.625Z] [LOG] Registering route: /api/reports
+[2025-08-02T12:59:46.626Z] [LOG] Registering route: /api/users
+[2025-08-02T12:59:46.626Z] [LOG] Registering route: /api
+[2025-08-02T12:59:46.627Z] [LOG] Environment: production
+[2025-08-02T12:59:46.627Z] [LOG] Client build path: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T12:59:46.627Z] [LOG] Client build exists: true
+[2025-08-02T12:59:46.627Z] [LOG] ✅ Serving static files from: C:\Users\Rajea\OneDrive\Desktop\build3_check\Builder-mystic-field\dist
+[2025-08-02T12:59:46.629Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-02T12:59:46.637Z] [LOG] 
+🚀 Server running at:
+[2025-08-02T12:59:46.638Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-02T12:59:46.638Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-02T12:59:46.638Z] [LOG] 
+🌐 Environment: production
+[2025-08-02T12:59:46.638Z] [LOG] 🔗 API Base URL: https://laptop-crm-backend.onrender.com/api
+[2025-08-02T12:59:46.639Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-02T12:59:46.639Z] [LOG]    - /api/auth
+[2025-08-02T12:59:46.639Z] [LOG]    - /api/customers
+[2025-08-02T12:59:46.639Z] [LOG]    - /api/products
+[2025-08-02T12:59:46.640Z] [LOG]    - /api/sales
+[2025-08-02T12:59:46.640Z] [LOG]    - /api/repairs
+[2025-08-02T12:59:46.640Z] [LOG]    - /api/notifications
+[2025-08-02T12:59:46.640Z] [LOG]    - /api/stores
+[2025-08-02T12:59:46.641Z] [LOG]    - /api/reports
+[2025-08-02T12:59:46.641Z] [LOG]    - /api/users
+[2025-08-02T12:59:46.641Z] [LOG]    - /api
+[2025-08-02T12:59:46.641Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-02T12:59:46.641Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-02T12:59:46.642Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-02T12:59:46.699Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T12:59:46.699Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T12:59:46.699Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T12:59:46.700Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-02T12:59:46.700Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-02T12:59:46.700Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-02T12:59:46.701Z] [LOG] 🏷️  Connection State: 1
+[2025-08-02T12:59:46.701Z] [LOG] ✅ MongoDB Connected
+[2025-08-02T12:59:46.716Z] [LOG] MongoDB Connected to: localhost
+[2025-08-02T12:59:46.716Z] [LOG] MongoDB connection state: 1
