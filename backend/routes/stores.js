@@ -26,15 +26,26 @@ router.get(
     query("active").optional().isBoolean(),
   ],
   handleValidationErrors,
-  async (req, res) => {
-    console.log('GET /api/stores - Request received');
+  async (req, res, next) => {
+    console.log('\n=== GET /api/stores ===');
+    console.log('Request headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Query parameters:', req.query);
+    
+    // Set response headers to ensure JSON
+    res.setHeader('Content-Type', 'application/json');
+    
     try {
       const { city, active } = req.query;
-      console.log('Query parameters:', { city, active });
       
+      // Validate MongoDB connection
+      if (mongoose.connection.readyState !== 1) {
+        const error = new Error('Database not connected');
+        error.statusCode = 503;
+        throw error;
+      }
+      
+      // Build query
       let query = {};
-      
-      // Build query based on filters
       if (city) {
         query.city = { $regex: city, $options: 'i' };
       }
@@ -42,46 +53,41 @@ router.get(
         query.status = active === 'true' ? 'active' : 'inactive';
       }
       
-      console.log('MongoDB query:', JSON.stringify(query));
+      console.log('MongoDB query:', JSON.stringify(query, null, 2));
       
-      // Add error handling for database connection
-      if (mongoose.connection.readyState !== 1) {
-        console.error('MongoDB not connected. Connection state:', mongoose.connection.readyState);
-        return res.status(500).json({
-          success: false,
-          message: 'Database connection error',
-          error: 'Not connected to database'
-        });
-      }
-      
+      // Fetch stores from database
       const stores = await Store.find(query).sort({ name: 1 }).lean();
+      
       console.log(`Found ${stores.length} stores`);
       
-      return res.status(200).json({
+      // Return success response
+      res.status(200).json({
         success: true,
         count: stores.length,
-        data: stores,
+        data: stores
       });
+      
     } catch (error) {
       console.error('Error in GET /api/stores:', {
-        error: error.message,
+        message: error.message,
         stack: error.stack,
         name: error.name,
         code: error.code,
-        keyPattern: error.keyPattern,
-        keyValue: error.keyValue
+        statusCode: error.statusCode || 500
       });
       
-      res.status(500).json({
+      // Ensure we always return JSON, even for errors
+      const statusCode = error.statusCode || 500;
+      res.status(statusCode).json({
         success: false,
-        message: 'Error fetching stores',
-        error: process.env.NODE_ENV === 'production' 
-          ? 'Internal server error' 
-          : error.message,
-        ...(process.env.NODE_ENV !== 'production' && { stack: error.stack })
+        message: error.message || 'Internal server error',
+        ...(process.env.NODE_ENV === 'development' && { 
+          error: error.message,
+          stack: error.stack 
+        })
       });
     }
-  },
+  }
 );
 
 // GET /api/stores/active - Get only active stores
