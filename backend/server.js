@@ -225,6 +225,29 @@ app.get("/api/test-repair", (req, res) => {
   });
 });
 
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    body: req.body,
+    query: req.query,
+    params: req.params
+  });
+
+  // Default to 500 if status code not set
+  const statusCode = err.statusCode || 500;
+  
+  // Return JSON response
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
 // API Routes with debug logging
 const apiRoutes = [
   { path: '/api/auth', router: authRoutes },
@@ -234,18 +257,32 @@ const apiRoutes = [
   { path: '/api/repairs', router: repairRoutes },
   { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
   { path: '/api/stores', router: storeRoutes },
-  { path: '/api/reports', router: reportRoutes },  // Fixed variable name
-  { path: '/api/users', router: userRoutes },      // Fixed variable name
+  { path: '/api/reports', router: reportRoutes },
+  { path: '/api/users', router: userRoutes },
   { path: '/api', router: testEmailRouter },
 ];
 
+// Apply routes with error handling
 apiRoutes.forEach(route => {
   console.log(`Registering route: ${route.path}`);
-  if (route.middleware) {
-    app.use(route.path, route.middleware, route.router);
-  } else {
-    app.use(route.path, route.router);
+  try {
+    if (route.middleware) {
+      app.use(route.path, route.middleware, route.router);
+    } else {
+      app.use(route.path, route.router);
+    }
+  } catch (error) {
+    console.error(`Failed to register route ${route.path}:`, error);
+    // Continue with other routes even if one fails
   }
+});
+
+// 404 handler for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API route not found: ${req.originalUrl}`
+  });
 });
 
 // Serve static files based on environment
