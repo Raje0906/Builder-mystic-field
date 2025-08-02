@@ -27,11 +27,23 @@ dotenv.config();
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
-
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
+
+// Connect to MongoDB before starting the server
+let dbConnection;
+(async () => {
+  try {
+    dbConnection = await connectDB();
+    // Start the server only after database connection is established
+    startServer();
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error);
+    process.exit(1);
+  }
+})();
+
+function startServer() {
 const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
 
@@ -341,43 +353,38 @@ app.use(errorHandler);
 // Get port from environment variable or use default
 const port = process.env.PORT || PORT;
 
-// Start the server
-console.log(`🔵 Starting server on port: ${port}`);
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-const server = app.listen(port, '0.0.0.0', () => {
-  const host = server.address().address;
-  const actualPort = server.address().port;
-  console.log(`\n🚀 Server running at:`);
-  console.log(`   - Local:   http://localhost:${actualPort}`);
-  console.log(`   - Network: http://${host === '::' ? 'localhost' : host}:${actualPort}`);
-  console.log(`\n🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 API Base URL: ${process.env.NODE_ENV === 'production' ? 'https://laptop-crm-backend.onrender.com' : `http://localhost:${actualPort}`}/api`);
-  
-  // Log all registered routes
-  console.log('\n🔍 Registered API Routes:');
-  apiRoutes.forEach(route => {
-    console.log(`   - ${route.path}`);
-  });
-  
-  // Log database connection status
-  console.log(`\n📊 Database Status: ${mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected'}`);
-  if (mongoose.connection.readyState === 1) {
-    console.log(`   - Database Name: ${mongoose.connection.name}`);
-    console.log(`   - Database Host: ${mongoose.connection.host}`);
-    console.log(`   - Database Port: ${mongoose.connection.port}`);
-  }
-  
-  // Test the repair endpoint
-  console.log('\n🔧 Testing repair endpoint...');
-  const testUrl = `http://localhost:${port}/api/repairs/track/status?email=test@example.com`;
-  console.log(`   - Test URL: ${testUrl}`);
-  
-  mongoose.connection.on('connected', () => {
-    console.log('✅ MongoDB Connected');
-  });
-  
-  mongoose.connection.on('error', (err) => {
-    console.error('❌ MongoDB Connection Error:', err);
+// Wait for MongoDB connection to be established
+mongoose.connection.on('connected', () => {
+  console.log('✅ MongoDB Connected');
+
+  // Start server
+  const server = app.listen(port, () => {
+    console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
+    console.log(`📡 API URL: http://localhost:${port}/api`);
+    console.log(`🌍 Web Interface: http://localhost:${port}`);
+    console.log(`🔄 Process ID: ${process.pid}`);
+    console.log('📅 Server Time:', new Date().toISOString());
+    console.log('✅ Server is ready to accept connections');
+
+    // Log all registered routes
+    console.log('\n🔍 Registered API Routes:');
+    apiRoutes.forEach(route => {
+      console.log(`   - ${route.path}`);
+    });
+
+    // Log database connection status
+    console.log(`\n📊 Database Status: ${mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected'}`);
+    if (mongoose.connection.readyState === 1) {
+      console.log(`   - Database Name: ${mongoose.connection.name}`);
+      console.log(`   - Database Host: ${mongoose.connection.host}`);
+      console.log(`   - Database Port: ${mongoose.connection.port}`);
+    }
   });
 });
 
@@ -385,13 +392,17 @@ const server = app.listen(port, '0.0.0.0', () => {
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
   // Close server & exit process
-  server.close(() => process.exit(1));
+  if (server) {
+    server.close(() => process.exit(1));
+  } else {
+    process.exit(1);
+  }
 });
 
 // Handle server errors
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use. Please stop any other servers using this port.`);
+    console.error(`❌ Port ${port} is already in use. Please stop any other servers using this port.`);
     console.error('Try running: netstat -ano | findstr :5002');
     console.error('Then: taskkill /PID <PID> /F');
   } else {
@@ -401,11 +412,28 @@ server.on('error', (error) => {
 });
 
 // Graceful shutdown
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
   console.log("SIGTERM received");
-  db.close();
-  console.log("Database connection closed");
-  process.exit(0);
+  
+  try {
+    // Close the server first
+    if (server) {
+      await new Promise((resolve) => server.close(resolve));
+      console.log('Server closed');
+    }
+    
+    // Then close the database connection
+    if (mongoose.connection) {
+      await mongoose.connection.close();
+      console.log('MongoDB connection closed');
+    }
+    
+    console.log("Process terminated");
+    process.exit(0);
+  } catch (error) {
+    console.error('Error during shutdown:', error);
+    process.exit(1);
+  }
 });
 
 export default app;

@@ -3406,3 +3406,13 @@
 [2025-08-02T13:10:03.646Z] [LOG] [2025-08-02T13:10:03.646Z] Handling OPTIONS preflight for http://localhost:8080
 [2025-08-02T13:10:03.953Z] [LOG] [2025-08-02T13:10:03.953Z] GET /api/health from http://localhost:8080
 [2025-08-02T13:10:03.953Z] [LOG] [2025-08-02T13:10:03.953Z] GET /api/health
+[2025-08-02T13:10:38.076Z] [LOG] [2025-08-02T13:10:38.076Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:10:38.076Z] [LOG] [2025-08-02T13:10:38.076Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:10:38.383Z] [LOG] [2025-08-02T13:10:38.383Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:10:38.383Z] [LOG] [2025-08-02T13:10:38.383Z] GET /api/health
+[2025-08-02T13:11:26.564Z] [LOG] [2025-08-02T13:11:26.564Z] OPTIONS /api/health from http://localhost:8080
+[2025-08-02T13:11:26.564Z] [LOG] [2025-08-02T13:11:26.564Z] Handling OPTIONS preflight for http://localhost:8080
+[2025-08-02T13:11:26.870Z] [LOG] [2025-08-02T13:11:26.870Z] GET /api/health from http://localhost:8080
+[2025-08-02T13:11:26.871Z] [LOG] [2025-08-02T13:11:26.871Z] GET /api/health
+[2025-08-02T13:12:04.680Z] [LOG] [2025-08-02T13:12:04.680Z] GET /api/stores from unknown origin
+[2025-08-02T13:12:04.680Z] [LOG] [2025-08-02T13:12:04.680Z] GET /api/stores
