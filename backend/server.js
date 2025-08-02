@@ -10,8 +10,16 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import connectDB from './config/db.js';
 import { testEmailRouter } from './routes/test-email.js';
-
-
+import authRoutes from './routes/auth.js';
+import customerRoutes from './routes/customers.js';
+import productRoutes from './routes/products.js';
+import saleRoutes from './routes/sales.js';
+import repairRoutes from './routes/repairs.js';
+import notificationRoutes from './routes/notifications.js';
+import storeRoutes from './routes/stores.js';
+import reportRoutes from './routes/reports.js';
+import userRoutes from './routes/users.js';
+import healthRouter from './routes/health.js';
 
 // Load environment variables
 dotenv.config();
