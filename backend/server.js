@@ -383,13 +383,38 @@ apiRoutes.forEach(route => {
   console.log(`Registering route: ${route.path}`);
   try {
     if (route.middleware) {
+      console.log(`  - Adding middleware for ${route.path}`);
       app.use(route.path, route.middleware, route.router);
     } else {
+      console.log(`  - No middleware for ${route.path}`);
       app.use(route.path, route.router);
     }
+    console.log(`  - Successfully registered ${route.path}`);
   } catch (error) {
-    console.error(`Failed to register route ${route.path}:`, error);
+    console.error(`❌ Failed to register route ${route.path}:`, error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      route: route.path,
+      router: route.router ? 'Router exists' : 'Router is undefined!',
+      middleware: route.middleware ? 'Middleware exists' : 'No middleware'
+    });
     // Continue with other routes even if one fails
+  }
+});
+
+// Debug: Log all registered routes
+app._router.stack.forEach((r) => {
+  if (r.route && r.route.path) {
+    console.log(`Registered route: ${r.route.path} [${Object.keys(r.route.methods).map(m => m.toUpperCase()).join(',')}]`);
+  } else if (r.name === 'router') {
+    // This is a router mounted at some path
+    console.log(`Router mounted at: ${r.regexp}`);
+    r.handle.stack.forEach(handler => {
+      if (handler.route) {
+        console.log(`  - ${handler.route.path} [${Object.keys(handler.route.methods).map(m => m.toUpperCase()).join(',')}]`);
+      }
+    });
   }
 });
 
@@ -589,47 +614,80 @@ const startApp = async () => {
 };
 
 // Start the application
-startApp();
+let server;
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-// Graceful shutdown handler
-const gracefulShutdown = async () => {
-  console.log('\n🛑 Received shutdown signal. Closing server...');
+// Start the server and store the server instance
+server = app.listen(port, '0.0.0.0', () => {
+  console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+  console.log(`📡 API URL: http://localhost:${port}/api`);
+  console.log(`🌍 Web Interface: http://localhost:${port}`);
+  console.log(`🔄 Process ID: ${process.pid}`);
+  console.log('📅 Server Time:', new Date().toISOString());
+  console.log('✅ Server is ready to accept connections');
   
-  try {
-    // Close the server
-    server.close(() => {
-      console.log('✅ HTTP server closed');
-      
-      // Close MongoDB connection if connected
+  // Log database connection status
       if (mongoose.connection.readyState === 1) {
-        mongoose.connection.close(false, () => {
-          console.log('✅ MongoDB connection closed');
-          process.exit(0);
-        });
+        console.log('\n📊 Database Connection Status:');
+        console.log(`   - Status: ✅ Connected`);
+        console.log(`   - Database: ${mongoose.connection.name}`);
+        console.log(`   - Host: ${mongoose.connection.host}`);
+        console.log(`   - Port: ${mongoose.connection.port || 'default'}`);
+        console.log(`   - Using: ${mongoose.connection.host.includes('mongodb.net') ? 'MongoDB Atlas' : 'Local MongoDB'}`);
       } else {
-        process.exit(0);
+        console.warn('⚠️  Database connection status: Not connected');
       }
     });
+
+    // Graceful shutdown handler
+    const gracefulShutdown = async () => {
+      console.log('\n🛑 Received shutdown signal. Closing server...');
+      
+      // Close the server
+      server.close(() => {
+        console.log('✅ HTTP server closed');
+        
+        // Close MongoDB connection if connected
+        if (mongoose.connection.readyState === 1) {
+          mongoose.connection.close(false, () => {
+            console.log('✅ MongoDB connection closed');
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      });
+      
+      // Force close after 5 seconds
+      setTimeout(() => {
+        console.error('❌ Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+      }, 5000);
+    };
+
+    // Handle termination signals
+    process.on('SIGTERM', gracefulShutdown);
+    process.on('SIGINT', gracefulShutdown);
+
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      gracefulShutdown().catch(err => {
+        console.error('Error during graceful shutdown:', err);
+        process.exit(1);
+      });
+    });
+
+    return server;
     
-    // Force close after 5 seconds
-    setTimeout(() => {
-      console.error('❌ Could not close connections in time, forcefully shutting down');
-      process.exit(1);
-    }, 5000);
-    
-  } catch (err) {
-    console.error('Error during shutdown:', err);
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
-};
-
-// Handle termination signals
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+});
 
 export default app;
