@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>CORS Test Page</h1>
+    
+    <div class="test">
+        <h2>Test CORS with Production Backend</h2>
+        <p>This will test CORS with the production backend at <code>https://laptop-crm-backend.onrender.com</code></p>
+        <button onclick="testCors('https://laptop-crm-backend.onrender.com/api/health')">Test CORS with /api/health</button>
+        <button onclick="testCors('https://laptop-crm-backend.onrender.com/api/repairs?status=received')">Test CORS with /api/repairs</button>
+        <div id="cors-result"></div>
+    </div>
+
+    <div class="test">
+        <h2>Test with Local Backend</h2>
+        <p>This will test CORS with the local backend at <code>http://localhost:3002</code></p>
+        <button onclick="testCors('http://localhost:3002/api/health')">Test Local /api/health</button>
+        <button onclick="testCors('http://localhost:3002/api/repairs?status=received')">Test Local /api/repairs</button>
+        <div id="local-result"></div>
+    </div>
+
+    <div class="test">
+        <h2>Manual CORS Test</h2>
+        <p>Test a custom endpoint:</p>
+        <input type="text" id="custom-endpoint" placeholder="https://example.com/api/endpoint" style="width: 80%; padding: 5px;">
+        <button onclick="testCustomEndpoint()">Test</button>
+        <div id="custom-result"></div>
+    </div>
+
+    <script>
+        function displayResult(containerId, success, message, details = '') {
+            const container = document.getElementById(containerId);
+            container.className = 'test ' + (success ? 'success' : 'error');
+            container.innerHTML = `
+                <h3>${success ? '✅ Success' : '❌ Error'}</h3>
+                <p>${message}</p>
+                ${details ? `<pre>${JSON.stringify(details, null, 2)}</pre>` : ''}
+            `;
+        }
+
+        function testCors(url) {
+            const containerId = url.includes('localhost') ? 'local-result' : 'cors-result';
+            const resultContainer = document.getElementById(containerId);
+            resultContainer.innerHTML = '<p>Testing... <span class="loading">⏳</span></p>';
+            
+            // First, test OPTIONS (preflight)
+            fetch(url, {
+                method: 'OPTIONS',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                mode: 'cors'
+            })
+            .then(response => {
+                const corsHeaders = {
+                    'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                    'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+                    'access-control-allow-headers': response.headers.get('access-control-allow-headers'),
+                    'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+                    'status': response.status,
+                    'statusText': response.statusText
+                };
+
+                // Then test the actual GET request
+                return fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                    },
+                    credentials: 'include',
+                    mode: 'cors'
+                })
+                .then(getResponse => {
+                    return getResponse.json().then(data => {
+                        displayResult(containerId, true, 
+                            `CORS test successful! Preflight and GET requests completed.`,
+                            {
+                                preflightResponse: corsHeaders,
+                                getResponse: {
+                                    status: getResponse.status,
+                                    statusText: getResponse.statusText,
+                                    headers: {
+                                        'access-control-allow-origin': getResponse.headers.get('access-control-allow-origin'),
+                                        'access-control-allow-credentials': getResponse.headers.get('access-control-allow-credentials')
+                                    },
+                                    data: data
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch(error => {
+                    displayResult(containerId, false, 
+                        `GET request failed: ${error.message}`,
+                        { preflightResponse: corsHeaders, error: error.toString() }
+                    );
+                });
+            })
+            .catch(error => {
+                displayResult(containerId, false, 
+                    `Preflight (OPTIONS) request failed: ${error.message}`,
+                    { error: error.toString() }
+                );
+            });
+        }
+
+        function testCustomEndpoint() {
+            const url = document.getElementById('custom-endpoint').value.trim();
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            const container = document.getElementById('custom-result');
+            container.innerHTML = '<p>Testing... <span class="loading">⏳</span></p>';
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                credentials: 'include',
+                mode: 'cors'
+            })
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                displayResult('custom-result', response.ok, 
+                    `Request to ${url} completed with status ${response.status} ${response.statusText}`,
+                    {
+                        url: url,
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: {
+                            'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                            'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+                            'content-type': response.headers.get('content-type')
+                        },
+                        data: data
+                    }
+                );
+            })
+            .catch(error => {
+                displayResult('custom-result', false, 
+                    `Request to ${url} failed: ${error.message}`,
+                    { error: error.toString() }
+                );
+            });
+        }
+    </script>
+</body>
+</html>

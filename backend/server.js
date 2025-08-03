@@ -23,152 +23,110 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Enable CORS for all routes
+// Configure CORS based on environment
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// Define allowed origins for different environments
+const devOrigins = [
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://127.0.0.1:8080',
+  'http://127.0.0.1:3000',
+  'http://localhost:8081',
+  'http://127.0.0.1:8081'
+];
+
+const prodOrigins = [
+  'https://laptop-crm-backend.onrender.com',
+  'https://laptop-crm-frontend.onrender.com',
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://localhost:8081'
+];
+
+const allowedOrigins = isDevelopment ? [...new Set([...devOrigins, ...prodOrigins])] : prodOrigins;
+
+// CORS configuration using the 'cors' package
 const corsOptions = {
-  origin: ['http://localhost:8080', 'http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      console.log('[CORS] No origin header, allowing request');
+      return callback(null, true);
+    }
+    
+    // In development, allow all origins for easier testing
+    if (isDevelopment) {
+      console.log(`[CORS] Allowing request from origin: ${origin} (development mode)`);
+      return callback(null, true);
+    }
+    
+    // In production, only allow whitelisted origins
+    if (allowedOrigins.includes(origin)) {
+      console.log(`[CORS] Allowing request from whitelisted origin: ${origin}`);
+      return callback(null, true);
+    }
+    
+    console.warn(`[CORS] Blocked request from non-whitelisted origin: ${origin}`);
+    return callback(new Error(`Not allowed by CORS. Origin ${origin} not in whitelist`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type',
     'Authorization',
     'X-Requested-With',
-    'Cache-Control',
+    'X-Request-ID',
     'Accept',
+    'Accept-Version',
+    'Content-Length',
+    'Content-MD5',
+    'Content-Type',
+    'Date',
+    'X-Api-Version',
+    'X-CSRF-Token',
+    'X-HTTP-Method-Override',
+    'X-Forwarded-For',
+    'X-Forwarded-Proto',
+    'X-Forwarded-Port',
+    'X-Forwarded-Host',
+    'X-Real-IP',
+    'Cache-Control',
     'Pragma',
     'If-Modified-Since',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Methods',
-    'Access-Control-Allow-Credentials'
+    'Origin',
+    'Referer',
+    'User-Agent'
   ],
   exposedHeaders: [
     'Content-Length',
     'Content-Type',
     'Authorization',
-    'X-Requested-With'
+    'X-Requested-With',
+    'X-RateLimit-Limit',
+    'X-RateLimit-Remaining',
+    'X-RateLimit-Reset'
   ],
-  credentials: true,
+  maxAge: 86400, // 24 hours
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
-
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
 
-// CORS configuration with enhanced security
-const configureCors = () => {
-  // In development, allow all origins for easier testing
-  if (process.env.NODE_ENV !== 'production') {
-    return (req, res, next) => {
-      // Set CORS headers for all responses
-      const allowedOrigins = ['http://localhost:8080', 'http://localhost:3000'];
-      const origin = req.headers.origin;
-      
-      if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-      }
-      
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD');
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
-      res.header('Access-Control-Allow-Credentials', 'true');
-      
-      // Handle preflight requests
-      if (req.method === 'OPTIONS') {
-        return res.status(200).json({
-          status: 200,
-          message: 'Preflight check successful',
-        });
-      }
-      
-      next();
-    };
-  }
-  
-  // Production CORS settings
-  const allowedOrigins = [
-    'http://localhost:8080',
-    'http://localhost:3000',
-    'http://localhost:3002',
-    'http://127.0.0.1:3002',
-    'http://127.0.0.1:8080',
-    'https://world-laptop.vercel.app',
-    'https://laptop-crm-backend.onrender.com',
-    'https://laptop-crm-frontend.onrender.com'
-  ];
-  
-  return {
-    origin: function(origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin matches any of the allowed origins
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      
-      // For development, allow any localhost or 127.0.0.1 with any port
-      if (process.env.NODE_ENV !== 'production' && 
-          (origin.startsWith('http://localhost:') || 
-           origin.startsWith('http://127.0.0.1:'))) {
-        return callback(null, true);
-      }
-      
-      const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
-      console.warn(msg);
-      return callback(new Error(msg), false);
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'Origin',
-      'Access-Control-Allow-Headers',
-      'X-Access-Token',
-      'X-Refresh-Token'
-    ],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-  };
+// Apply CORS middleware with the configured options
+app.use(cors(corsOptions));
 
-  return corsOptions;
-};
+// Handle preflight requests for all routes
+app.options('*', cors(corsOptions));
 
-// Apply our custom CORS middleware for development
-app.use(configureCors());
-
-// For production, use standard CORS with specific options
-if (process.env.NODE_ENV === 'production') {
-  const corsOptions = {
-    origin: [
-      'https://world-laptop.vercel.app',
-      'https://laptop-crm-backend.onrender.com',
-      'https://laptop-crm-frontend.onrender.com'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'Origin',
-      'Access-Control-Allow-Headers',
-      'X-Access-Token',
-      'X-Refresh-Token'
-    ],
-    credentials: true,
-    optionsSuccessStatus: 200
-  };
-  app.use(cors(corsOptions));
-  app.options('*', cors(corsOptions));
-}
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} from origin: ${req.headers.origin || 'none'}`);
+  console.log('Headers:', req.headers);
+  next();
+});
 
 // Other middleware
 app.use(helmet()); // Security headers

@@ -159,49 +159,140 @@ export function TrackRepair() {
   }, []);
 
   // Function to fetch repairs with 'received' status and filter out 'completed' status
-  const fetchReceivedRepairs = async () => {
+  const fetchReceivedRepairs = async (retryCount = 0) => {
+    const MAX_RETRIES = 2;
+    const RETRY_DELAY = 2000; // 2 seconds
+    
     try {
       setIsLoadingReceived(true);
       const baseUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
-      const response = await axios.get(`${baseUrl}/api/repairs?status=received`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-        },
-        withCredentials: true
+      const token = localStorage.getItem('token') || '';
+      
+      console.log(`[${new Date().toISOString()}] Fetching received repairs (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+      
+      // Check network connectivity
+      if (!navigator.onLine) {
+        throw new Error('No internet connection. Please check your network and try again.');
+      }
+
+      // Check if token exists
+      if (!token) {
+        throw new Error('No authentication token found. Please log in again.');
+      }
+
+      // Add cache-busting parameter to avoid cached responses
+      const timestamp = new Date().getTime();
+      const url = new URL(`${baseUrl}/api/repairs`);
+      url.searchParams.append('status', 'received');
+      url.searchParams.append('_t', timestamp.toString());
+      
+      console.log('API Request URL:', url.toString());
+      console.log('Request Headers:', {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token ? '***' : 'missing'}`,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       });
       
-      console.log('Received repairs response:', response.data); // Debug log
-      
-      if (response.data.success) {
-        // Ensure we have an array and filter for 'received' status as a fallback
-        let repairs = Array.isArray(response.data.data) 
-          ? response.data.data 
-          : [response.data.data].filter(Boolean);
+      try {
+        const response = await axios.get(url.toString(), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          withCredentials: true,
+          timeout: 15000, // 15 second timeout
+          validateStatus: (status) => status < 500 // Don't throw for 4xx errors
+        });
         
-        // Filter out any repairs with 'completed' status (case-insensitive)
-        repairs = repairs.filter(repair => 
-          repair.status && 
-          typeof repair.status === 'string' && 
-          !repair.status.toLowerCase().includes('completed')
-        );
+        console.log('Response Status:', response.status, response.statusText);
+        console.log('Response Headers:', response.headers);
+        console.log('Response Data:', response.data);
+        
+        // Handle specific status codes
+        if (response.status === 401) {
+          // Unauthorized - token might be invalid or expired
+          console.error('Authentication error - token might be invalid or expired');
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+          return;
+        } else if (response.status === 403) {
+          // Forbidden - user doesn't have permission
+          console.error('Forbidden - User does not have permission');
+          throw new Error('You do not have permission to view these repairs.');
+        }
+        
+        if (response.data && response.data.success) {
+          // Process the response data
+          let repairs = Array.isArray(response.data.data) 
+            ? response.data.data 
+            : [response.data.data].filter(Boolean);
           
-        console.log('Setting received repairs (filtered):', repairs); // Debug log
-        setReceivedRepairs(repairs);
-      } else {
-        console.error('Failed to fetch received repairs:', response.data.message);
+          // Filter for 'received' status as an additional safeguard
+          repairs = repairs.filter(repair => repair.status === 'received');
+          
+          // Update state with the received repairs
+          setReceivedRepairs(repairs);
+        } else {
+          const errorMessage = response.data?.message || 'Failed to load received repairs.';
+          console.error('API Error:', errorMessage, response.data);
+          throw new Error(errorMessage);
+        }
+      } catch (error: any) {
+        console.error('Error in fetchReceivedRepairs:', {
+          name: error.name,
+          message: error.message,
+          code: error.code,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          responseData: error.response?.data,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.config?.headers
+          }
+        });
+
+        let errorMessage = "Failed to load received repairs. Please try again.";
+        
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.status === 401) {
+            errorMessage = "Your session has expired. Please log in again.";
+          } else if (error.response.status === 403) {
+            errorMessage = "You don't have permission to view these repairs.";
+          } else if (error.response.status === 404) {
+            errorMessage = "The requested resource was not found.";
+          } else if (error.response.status >= 500) {
+            errorMessage = "Server error. Please try again later.";
+          }
+        } else if (error.request) {
+          // The request was made but no response was received
+          errorMessage = "No response from server. Please check your connection.";
+        } else if (error.message === 'Network Error') {
+          errorMessage = "Network error. Please check your internet connection.";
+        } else if (error.message === 'timeout of 15000ms exceeded') {
+          errorMessage = "Request timed out. The server is taking too long to respond.";
+        }
+
         toast({
           title: "Error",
-          description: response.data.message || "Failed to load received repairs.",
+          description: errorMessage,
           variant: "destructive",
         });
       }
-    } catch (error: any) {
-      console.error('Error fetching received repairs:', error);
+    } catch (error) {
+      console.error('Unexpected error in fetchReceivedRepairs:', error);
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to load received repairs.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {

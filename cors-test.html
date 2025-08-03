@@ -2,12 +2,86 @@
 <html>
 <head>
     <title>CORS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>CORS Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Test Backend Connection</h2>
+        <div>
+            <button onclick="testCors('http://localhost:3002/api/health', 'local')">
+                Test Local Backend
+            </button>
+            <button onclick="testCors('https://laptop-crm-backend.onrender.com/api/health', 'prod')">
+                Test Production Backend
+            </button>
+        </div>
+        <div id="result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Specific Endpoint</h2>
+        <div>
+            <input type="text" id="endpoint" placeholder="Enter endpoint (e.g., /api/repairs?status=received)" style="width: 400px; padding: 5px;">
+            <button onclick="testCustomEndpoint()">Test Endpoint</button>
+        </div>
+        <div id="customResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test with Different Methods</h2>
+        <div>
+            <button onclick="testWithMethod('GET')">Test GET</button>
+            <button onclick="testWithMethod('POST')">Test POST</button>
+            <button onclick="testWithMethod('PUT')">Test PUT</button>
+            <button onclick="testWithMethod('DELETE')">Test DELETE</button>
+        </div>
+        <div id="methodResult" class="result"></div>
+    </div>
+
     <script>
-        async function testCors() {
-            const url = 'http://localhost:3002/api/health';
+        function logToElement(elementId, message, isError = false) {
+            const resultDiv = document.getElementById(elementId);
+            const logEntry = document.createElement('div');
+            logEntry.className = isError ? 'error' : 'success';
+            logEntry.innerHTML = `<pre>${new Date().toISOString()}\n${message}</pre>`;
+            resultDiv.prepend(logEntry);
+            console[isError ? 'error' : 'log'](message);
+        }
+
+        async function testCors(url, env) {
             const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div>Testing ${env} backend at ${url}...</div>`;
             
             try {
+                const startTime = Date.now();
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -17,19 +91,87 @@
                     credentials: 'include'
                 });
                 
+                const responseTime = Date.now() - startTime;
                 const data = await response.json();
-                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                console.log('Success:', data);
+                
+                const result = {
+                    url,
+                    status: response.status,
+                    statusText: response.statusText,
+                    responseTime: `${responseTime}ms`,
+                    headers: Object.fromEntries([...response.headers.entries()]),
+                    data
+                };
+                
+                logToElement('result', `✅ Success!\n${JSON.stringify(result, null, 2)}`);
+                return result;
             } catch (error) {
-                resultDiv.innerHTML = `Error: ${error.message}`;
-                console.error('Error:', error);
+                const errorMessage = `❌ Error: ${error.name}: ${error.message}`;
+                logToElement('result', errorMessage, true);
+                console.error('Error details:', error);
+                throw error;
+            }
+        }
+
+        async function testCustomEndpoint() {
+            const endpoint = document.getElementById('endpoint').value.trim();
+            if (!endpoint) {
+                alert('Please enter an endpoint to test');
+                return;
+            }
+            
+            const localUrl = `http://localhost:3002${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+            const prodUrl = `https://laptop-crm-backend.onrender.com${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+            
+            try {
+                logToElement('customResult', `Testing endpoint: ${endpoint}`);
+                await testCors(localUrl, 'local');
+                await testCors(prodUrl, 'production');
+            } catch (error) {
+                // Error already logged by testCors
+            }
+        }
+
+        async function testWithMethod(method) {
+            const url = 'https://laptop-crm-backend.onrender.com/api/health';
+            const resultDiv = document.getElementById('methodResult');
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Pragma': 'no-cache',
+                        'Cache-Control': 'no-cache'
+                    },
+                    credentials: 'include'
+                });
+                
+                const responseTime = Date.now() - startTime;
+                let responseData;
+                try {
+                    responseData = await response.json();
+                } catch {
+                    responseData = await response.text();
+                }
+                
+                const result = {
+                    method,
+                    status: response.status,
+                    statusText: response.statusText,
+                    responseTime: `${responseTime}ms`,
+                    headers: Object.fromEntries([...response.headers.entries()]),
+                    data: responseData
+                };
+                
+                logToElement('methodResult', `✅ ${method} Request Success!\n${JSON.stringify(result, null, 2)}`);
+            } catch (error) {
+                const errorMessage = `❌ ${method} Request Failed: ${error.name}: ${error.message}`;
+                logToElement('methodResult', errorMessage, true);
+                console.error('Error details:', error);
             }
         }
     </script>
-</head>
-<body>
-    <h1>CORS Test Page</h1>
-    <button onclick="testCors()">Test CORS Request</button>
-    <div id="result" style="margin-top: 20px; white-space: pre-wrap; font-family: monospace;"></div>
 </body>
 </html>
