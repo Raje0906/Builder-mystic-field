@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test</title>
+    <script>
+        async function testCors() {
+            const url = 'http://localhost:3002/api/health';
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Pragma': 'no-cache',
+                        'Cache-Control': 'no-cache'
+                    },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                console.log('Success:', data);
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>CORS Test Page</h1>
+    <button onclick="testCors()">Test CORS Request</button>
+    <div id="result" style="margin-top: 20px; white-space: pre-wrap; font-family: monospace;"></div>
+</body>
+</html>

@@ -37,27 +37,14 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       strictPort: true,
       open: true,
-      proxy: mode === 'production' ? undefined : {
+      proxy: {
         '/api': {
           target: 'http://localhost:3002',
           changeOrigin: true,
           secure: false,
           ws: true,
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('Proxy error:', err);
-            });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('Proxying request:', req.method, req.url);
-              console.log('Proxying to:', proxyReq.path);
-            });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('Received response:', proxyRes.statusCode, req.url);
-            });
-          },
-          pathRewrite: {
-            '^/api': '/api'
-          }
+          // Keep the /api prefix when forwarding to the backend
+          rewrite: (path) => path
         }
       }
     },

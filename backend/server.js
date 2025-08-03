@@ -23,8 +23,164 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Enable CORS for all routes
+const corsOptions = {
+  origin: ['http://localhost:8080', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Cache-Control',
+    'Accept',
+    'Pragma',
+    'If-Modified-Since',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Credentials'
+  ],
+  exposedHeaders: [
+    'Content-Length',
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With'
+  ],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
+
+// CORS configuration with enhanced security
+const configureCors = () => {
+  // In development, allow all origins for easier testing
+  if (process.env.NODE_ENV !== 'production') {
+    return (req, res, next) => {
+      // Set CORS headers for all responses
+      const allowedOrigins = ['http://localhost:8080', 'http://localhost:3000'];
+      const origin = req.headers.origin;
+      
+      if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+      }
+      
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      
+      // Handle preflight requests
+      if (req.method === 'OPTIONS') {
+        return res.status(200).json({
+          status: 200,
+          message: 'Preflight check successful',
+        });
+      }
+      
+      next();
+    };
+  }
+  
+  // Production CORS settings
+  const allowedOrigins = [
+    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://localhost:3002',
+    'http://127.0.0.1:3002',
+    'http://127.0.0.1:8080',
+    'https://world-laptop.vercel.app',
+    'https://laptop-crm-backend.onrender.com',
+    'https://laptop-crm-frontend.onrender.com'
+  ];
+  
+  return {
+    origin: function(origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin matches any of the allowed origins
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      // For development, allow any localhost or 127.0.0.1 with any port
+      if (process.env.NODE_ENV !== 'production' && 
+          (origin.startsWith('http://localhost:') || 
+           origin.startsWith('http://127.0.0.1:'))) {
+        return callback(null, true);
+      }
+      
+      const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
+      console.warn(msg);
+      return callback(new Error(msg), false);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'Access-Control-Allow-Headers',
+      'X-Access-Token',
+      'X-Refresh-Token'
+    ],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
+
+  return corsOptions;
+};
+
+// Apply our custom CORS middleware for development
+app.use(configureCors());
+
+// For production, use standard CORS with specific options
+if (process.env.NODE_ENV === 'production') {
+  const corsOptions = {
+    origin: [
+      'https://world-laptop.vercel.app',
+      'https://laptop-crm-backend.onrender.com',
+      'https://laptop-crm-frontend.onrender.com'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'Access-Control-Allow-Headers',
+      'X-Access-Token',
+      'X-Refresh-Token'
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
+}
+
+// Other middleware
+app.use(helmet()); // Security headers
+app.use(compression()); // Compress responses
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Import database connection
 import connectDB from './config/db.js';
@@ -201,88 +357,10 @@ const startServer = async () => {
   }
 };
 
-// CORS configuration
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:8080',
-      'http://localhost:3000',
-      'http://localhost:3002',
-      'http://127.0.0.1:3002',
-      'https://world-laptop.vercel.app',
-      'https://laptop-crm-backend.onrender.com',
-      'https://laptop-crm-frontend.onrender.com'
-    ];
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
-      console.warn(msg);
-      return callback(new Error(msg), false);
-    }
-    
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Cache-Control',
-    'cache-control',
-    'X-API-Key'
-  ],
-  exposedHeaders: [
-    'Content-Length',
-    'X-Foo',
-    'X-Bar'
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-  preflightContinue: false
-};
 
-// Enable CORS with more permissive settings for development
-const isDevelopment = process.env.NODE_ENV !== 'production';
 
-// Apply CORS middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Set CORS headers
-  if (isDevelopment) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-  } else {
-    // In production, only allow specific origins
-    const allowedOrigins = [
-      'https://world-laptop.vercel.app',
-      'https://laptop-crm-frontend.onrender.com',
-      'https://laptop-crm-backend.onrender.com'
-    ];
-    
-    if (origin && allowedOrigins.includes(origin)) {
-      res.header('Access-Control-Allow-Origin', origin);
-    }
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-API-Key, cache-control');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
 
-// Also apply CORS with the cors package for additional compatibility
-app.use(cors(corsOptions));
+// CORS is already configured at the top of the file with corsOptions
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -486,27 +564,13 @@ app.use((req, res, next) => {
   }
   limiter(req, res, next);
 });
-
-// Stricter rate limiting for notifications
-const notificationLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 10, // limit notification requests
-  message: "Too many notification requests, please try again later.",
-});
-
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-
-// Health check
-app.get("/api/health", (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
-    status: "OK",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    database: "connected",
+    database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
   });
 });
-
 // Simple test endpoint
 app.get("/api/test-repair", (req, res) => {
   console.log('Test repair endpoint hit!');
@@ -547,7 +611,7 @@ const apiRoutes = [
   { path: '/api/products', router: productRoutes },
   { path: '/api/sales', router: saleRoutes },
   { path: '/api/repairs', router: repairRoutes },
-  { path: '/api/notifications', router: notificationRoutes, middleware: notificationLimiter },
+  { path: '/api/notifications', router: notificationRoutes },
   { path: '/api/stores', router: storeRoutes },
   { path: '/api/reports', router: reportRoutes },
   { path: '/api/users', router: userRoutes },

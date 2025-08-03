@@ -6,19 +6,14 @@ console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
 // Determine the base URL based on the environment
 const getApiBaseUrl = (): string => {
-  // Always use VITE_API_URL if it's set in the environment
-  if (import.meta.env.VITE_API_URL) {
-    const envUrl = import.meta.env.VITE_API_URL;
-    return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
-  }
-
-  // In development, use localhost
+  // Force localhost in development
   if (import.meta.env.DEV) {
     return 'http://localhost:3002';
   }
-
-  // In production, always use the production URL
-  return 'https://laptop-crm-backend.onrender.com';
+  
+  // Use VITE_API_URL if set, otherwise use production URL
+  const envUrl = import.meta.env.VITE_API_URL || 'https://laptop-crm-backend.onrender.com';
+  return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
 };
 
 // Get and log the API URL
@@ -65,12 +60,14 @@ class SafeApiClient {
       try {
         const response = await fetch(`${API_BASE_URL}/api/health`, {
           signal: controller.signal,
-          method: "GET",
+          method: 'GET',
           credentials: 'include',
+          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
             'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
+            'Pragma': 'no-cache',
+            'Access-Control-Allow-Credentials': 'true'
           }
         });
 
