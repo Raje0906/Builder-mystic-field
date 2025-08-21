@@ -15,28 +15,38 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only cache GET requests
-  if (url.pathname.startsWith("/api/") && request.method === "GET") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Clone and store in cache
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
+  // Skip non-GET requests and non-API requests
+  if (request.method !== 'GET' || !url.pathname.startsWith('/api/')) {
+    return; // Let the browser handle the request normally
   }
 
-  // For all other requests, try the cache first, then network
   event.respondWith(
-    caches.match(request).then((response) => {
-      return response || fetch(request);
-    })
+    (async () => {
+      // Try to fetch from network first
+      try {
+        const networkResponse = await fetch(request);
+        
+        // Only cache successful responses (status 200-299)
+        if (networkResponse.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (error) {
+        console.log('[Service Worker] Network request failed, trying cache', error);
+        // If network fails, try to get from cache
+        const cachedResponse = await caches.match(request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // If not in cache, return a proper error response
+        return new Response(JSON.stringify({ error: 'Network error' }), {
+          status: 408,
+          statusText: 'Network request failed',
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    })()
   );
 });
 

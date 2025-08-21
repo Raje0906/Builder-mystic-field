@@ -23,11 +23,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Configure CORS based on environment
-const isDevelopment = process.env.NODE_ENV !== 'production';
+// Running in development mode only
+const isDevelopment = true;
 
-// Define allowed origins for different environments
-const devOrigins = [
+// Define allowed origins for local development only
+const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:3000',
   'http://127.0.0.1:8080',
@@ -36,84 +36,33 @@ const devOrigins = [
   'http://127.0.0.1:8081'
 ];
 
-const prodOrigins = [
-  'https://laptop-crm-backend.onrender.com',
-  'https://laptop-crm-frontend.onrender.com',
-  'http://localhost:8080',
-  'http://localhost:3000',
-  'http://localhost:8081'
-];
-
-const allowedOrigins = isDevelopment ? [...new Set([...devOrigins, ...prodOrigins])] : prodOrigins;
-
-// CORS configuration using the 'cors' package
+// CORS configuration for local development only
 const corsOptions = {
-  origin: (origin, callback) => {
+  origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      console.log('[CORS] No origin header, allowing request');
-      return callback(null, true);
-    }
+    if (!origin) return callback(null, true);
     
-    // In development, allow all origins for easier testing
-    if (isDevelopment) {
-      console.log(`[CORS] Allowing request from origin: ${origin} (development mode)`);
-      return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
     }
-    
-    // In production, only allow whitelisted origins
-    if (allowedOrigins.includes(origin)) {
-      console.log(`[CORS] Allowing request from whitelisted origin: ${origin}`);
-      return callback(null, true);
-    }
-    
-    console.warn(`[CORS] Blocked request from non-whitelisted origin: ${origin}`);
-    return callback(new Error(`Not allowed by CORS. Origin ${origin} not in whitelist`));
+    return callback(null, true);
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'X-Request-ID',
-    'Accept',
-    'Accept-Version',
-    'Content-Length',
-    'Content-MD5',
-    'Content-Type',
-    'Date',
-    'X-Api-Version',
-    'X-CSRF-Token',
-    'X-HTTP-Method-Override',
-    'X-Forwarded-For',
-    'X-Forwarded-Proto',
-    'X-Forwarded-Port',
-    'X-Forwarded-Host',
-    'X-Real-IP',
-    'Cache-Control',
-    'Pragma',
-    'If-Modified-Since',
-    'Origin',
-    'Referer',
-    'User-Agent'
-  ],
-  exposedHeaders: [
-    'Content-Length',
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'X-RateLimit-Limit',
-    'X-RateLimit-Remaining',
-    'X-RateLimit-Reset'
-  ],
-  maxAge: 86400, // 24 hours
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
 
 // Set up file logging
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
+
+// Temporarily disable Helmet to test CORS
+// app.use(helmet({
+//   crossOriginResourcePolicy: { policy: "cross-origin" },
+//   crossOriginEmbedderPolicy: false
+// }));
 
 // Apply CORS middleware with the configured options
 app.use(cors(corsOptions));
@@ -124,12 +73,10 @@ app.options('*', cors(corsOptions));
 // Log all requests for debugging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} from origin: ${req.headers.origin || 'none'}`);
-  console.log('Headers:', req.headers);
   next();
 });
 
 // Other middleware
-app.use(helmet()); // Security headers
 app.use(compression()); // Compress responses
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -213,8 +160,8 @@ const startServer = async () => {
       await mongoose.connect(mongoUri, options);
     }
 
-    // Start the Express server
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    // Start the server (localhost only)
+    const server = app.listen(PORT, 'localhost', () => {
       console.log(`\n🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
       console.log(`📡 API URL: http://localhost:${PORT}/api`);
       console.log(`🌍 Web Interface: http://localhost:${PORT}`);
@@ -485,8 +432,8 @@ async function initializeServer() {
   }
 }
 
-// Run notification system test in development
-if (process.env.NODE_ENV !== 'production') {
+// Run notification system test
+if (fs.existsSync('./services/realNotificationService.js')) {
   import('./services/realNotificationService.js')
     .then(notificationService => {
       if (notificationService && notificationService.testNotificationSystem) {
@@ -814,7 +761,7 @@ const startApp = async () => {
 
 
 // Start the server
-startServer().catch(err => {
+startApp().catch(err => {
   console.error('Fatal error during server startup:', err);
   process.exit(1);
 });
